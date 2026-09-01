@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html class="dark" lang="en" ><svg class="inline-defs-container inline-style-1" aria-hidden="true"></svg><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>EduAI | Emotion Analytics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Inter:ital,wght@0,300..900;1,300..900&family=Geist:wght@300..800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "tertiary-fixed": "#6bff8f",
+            "on-secondary-fixed": "#07006c",
+            "surface-variant": "#323537",
+            "on-secondary-fixed-variant": "#2f2ebe",
+            "on-error-container": "#ffdad6",
+            "primary-container": "#4d8eff",
+            "on-tertiary-fixed": "#002109",
+            "primary-fixed": "#d8e2ff",
+            "primary": "#adc6ff",
+            "on-primary-fixed": "#001a42",
+            "on-error": "#690005",
+            "tertiary-container": "#00a74b",
+            "surface-dim": "#101415",
+            "inverse-on-surface": "#2d3133",
+            "error": "#ffb4ab",
+            "tertiary": "#4ae176",
+            "on-surface": "#e0e3e5",
+            "secondary-fixed": "#e1e0ff",
+            "outline": "#8c909f",
+            "secondary": "#c0c1ff",
+            "secondary-container": "#3131c0",
+            "surface-container-low": "#191c1e",
+            "background": "#101415",
+            "tertiary-fixed-dim": "#4ae176",
+            "primary-fixed-dim": "#adc6ff",
+            "on-tertiary": "#003915",
+            "on-primary-container": "#00285d",
+            "surface-container-lowest": "#0b0f10",
+            "on-secondary": "#1000a9",
+            "secondary-fixed-dim": "#c0c1ff",
+            "on-tertiary-fixed-variant": "#005321",
+            "outline-variant": "#424754",
+            "inverse-primary": "#005ac2",
+            "surface-container": "#1d2022",
+            "on-primary-fixed-variant": "#004395",
+            "surface": "#101415",
+            "surface-container-high": "#272a2c",
+            "on-surface-variant": "#c2c6d6",
+            "on-primary": "#002e6a",
+            "on-background": "#e0e3e5",
+            "surface-tint": "#adc6ff",
+            "on-tertiary-container": "#003111",
+            "error-container": "#93000a",
+            "surface-container-highest": "#323537",
+            "inverse-surface": "#e0e3e5",
+            "surface-bright": "#363a3b",
+            "on-secondary-container": "#b0b2ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "glass": "16px",
+            "full": "9999px"
+          },
+          "spacing": {
+            "stack-md": "1.2rem",
+            "section-padding": "2rem",
+            "gutter": "1.5rem",
+            "stack-lg": "2rem",
+            "stack-sm": "0.75rem",
+            "margin-mobile": "1.25rem",
+            "container-max": "100%"
+          },
+          "fontFamily": {
+            "body-lg": ["Inter"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "headline-lg-mobile": ["Plus Jakarta Sans"],
+            "headline-xl": ["Plus Jakarta Sans"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "label-sm": ["Geist"],
+            "body-md": ["Inter"]
+          },
+          "fontSize": {
+            "body-lg": ["1.1rem", {"lineHeight": "1.6", "fontWeight": "400"}],
+            "headline-md": ["1.75rem", {"lineHeight": "1.3", "fontWeight": "600"}],
+            "headline-lg-mobile": ["2rem", {"lineHeight": "1.2", "fontWeight": "700"}],
+            "headline-xl": ["3.5rem", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+            "headline-lg": ["2.5rem", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+            "label-sm": ["0.95rem", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+            "body-md": ["1rem", {"lineHeight": "1.6", "fontWeight": "400"}]
+          }
+        },
+        "screens": {
+          "sm": "640px",
+          "md": "768px",
+          "lg": "1024px",
+          "xl": "1280px",
+          "2xl": "1536px"
+        }
+      }
+    }
+  </script>
+
+  <link rel="stylesheet" href="../css/emotion_analytics_smart_classroom_ai.css">
+<link rel="stylesheet" href="../css/responsive-system.css">
+<script src="../js/page-handlers.js"></script>
+</head>
+<body class="font-body-md text-body-md antialiased"><svg class="inline-defs-container inline-style-1" aria-hidden="true"></svg>
+
+
+
+
+
+
+
+
+
+
+
+<!-- Atmospheric Background Blobs -->
+<div class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 blur-[120px] rounded-full pointer-events-none"></div>
+<div class="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-secondary/10 blur-[150px] rounded-full pointer-events-none"></div>
+<!-- Side Navigation Bar -->
+<aside id="layout-sidebar"></aside>
+<!-- Main Content Area -->
+<main class="px-4 md:px-6 lg:px-8 pb-6">
+<!-- Top Navigation Bar -->
+<header id="layout-navbar"></header>
+<!-- Dashboard Canvas -->
+<div class="pt-28 px-8 pb-12">
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<div class="glass-card p-6 bloom-primary group hover:bg-white/5 transition-all">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 rounded-2xl bg-primary/10 text-primary">
+<span class="material-symbols-outlined inline-style-2">mood</span>
+</div>
+<span class="text-tertiary font-label-sm md:text-base text-xs">+4% vs yesterday</span>
+</div>
+<p class="text-on-surface-variant text-sm font-medium mb-1">Dominant Emotion</p>
+<h3 class="text-2xl font-bold text-on-surface">Happy</h3>
+</div>
+<div class="glass-card p-6 hover:bg-white/5 transition-all">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 rounded-2xl bg-tertiary/10 text-tertiary">
+<span class="material-symbols-outlined inline-style-2">sentiment_satisfied</span>
+</div>
+<div class="flex -space-x-2">
+<div class="w-6 h-6 rounded-full border border-surface bg-slate-400"></div>
+<div class="w-6 h-6 rounded-full border border-surface bg-slate-500"></div>
+</div>
+</div>
+<p class="text-on-surface-variant text-sm font-medium mb-1">Happy Students</p>
+<h3 class="text-2xl font-bold text-on-surface">24 <span class="text-sm font-normal text-on-surface-variant">/ 32</span></h3>
+</div>
+<div class="glass-card p-6 hover:bg-white/5 transition-all">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 rounded-2xl bg-secondary/10 text-secondary">
+<span class="material-symbols-outlined inline-style-2">sentiment_neutral</span>
+</div>
+</div>
+<p class="text-on-surface-variant text-sm font-medium mb-1">Neutral Students</p>
+<h3 class="text-2xl font-bold text-on-surface">6 <span class="text-sm font-normal text-on-surface-variant">/ 32</span></h3>
+</div>
+<div class="glass-card p-6 border-error/20 bg-error/5 group hover:bg-error/10 transition-all">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 rounded-2xl bg-error/10 text-error">
+<span class="material-symbols-outlined inline-style-2">priority_high</span>
+</div>
+<span class="bg-error text-on-error px-2 py-0.5 rounded-full text-[10px] font-bold animate-pulse">ACTION</span>
+</div>
+<p class="text-on-surface-variant text-sm font-medium mb-1">Requiring Attention</p>
+<h3 class="text-2xl font-bold text-error">2 <span class="text-sm font-normal opacity-70">Critical</span></h3>
+</div>
+</div>
+<!-- Bento Grid Main Content -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Emotion Distribution & Trends -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-6">
+<div class="glass-card p-6 flex-1 min-h-[400px]">
+<div class="flex justify-between items-center mb-8">
+<h4 class="text-lg font-bold">Emotion Trends over Time</h4>
+<div class="flex gap-2">
+<button class="px-3 py-1 rounded-full text-xs font-bold bg-primary text-on-primary">Daily</button>
+<button class="px-3 py-1 rounded-full text-xs font-bold text-on-surface-variant hover:bg-white/5">Weekly</button>
+</div>
+</div>
+<div class="relative h-64 w-full flex items-end justify-between px-4 pb-4">
+<!-- Simple SVG Visualization for trend -->
+<svg class="absolute inset-0 w-full h-full px-4" preserveAspectRatio="none" viewBox="0 0 400 100">
+<defs>
+<linearGradient id="trendGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="rgba(173, 198, 255, 0.4)"></stop>
+<stop offset="100%" stop-color="rgba(173, 198, 255, 0)"></stop>
+</linearGradient>
+</defs>
+<path d="M0 80 Q 50 20, 100 60 T 200 30 T 300 70 T 400 20 L 400 100 L 0 100 Z" fill="url(#trendGradient)"></path>
+<path d="M0 80 Q 50 20, 100 60 T 200 30 T 300 70 T 400 20" fill="none" stroke="#adc6ff" stroke-width="3"></path>
+</svg>
+<div class="text-[10px] text-on-surface-variant/50">08:00</div>
+<div class="text-[10px] text-on-surface-variant/50">10:00</div>
+<div class="text-[10px] text-on-surface-variant/50">12:00</div>
+<div class="text-[10px] text-on-surface-variant/50">14:00</div>
+<div class="text-[10px] text-on-surface-variant/50">16:00</div>
+</div>
+</div>
+<!-- Classroom Heatmap -->
+<div class="glass-card p-6">
+<div class="flex justify-between items-center mb-6">
+<h4 class="text-lg font-bold">Classroom Engagement Heatmap</h4>
+<div class="flex items-center gap-4 text-xs font-medium text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-error"></span> Low</span>
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-tertiary"></span> High</span>
+</div>
+</div>
+<div class="grid grid-cols-8 gap-3 w-full py-4">
+<!-- Seat Grid -->
+<script>
+                                const grid = document.currentScript.parentElement;
+                                const emotions = ['bg-tertiary', 'bg-tertiary', 'bg-primary', 'bg-tertiary', 'bg-secondary', 'bg-error', 'bg-tertiary', 'bg-tertiary'];
+                                for(let i=0; i<32; i++) {
+                                    const color = emotions[Math.floor(Math.random() * emotions.length)];
+                                    const opacity = Math.floor(Math.random() * (100 - 40 + 1) + 40);
+                                    grid.innerHTML += `<div class="heatmap-cell aspect-square rounded-lg ${color} opacity-${opacity} border border-white/5 cursor-help" title="Student ${i+1}"></div>`;
+                                }
+                            </script><div class="heatmap-cell aspect-square rounded-lg bg-tertiary opacity-99 border border-white/5 cursor-help" title="Student 1"></div><div class="heatmap-cell aspect-square rounded-lg bg-tertiary opacity-79 border border-white/5 cursor-help" title="Student 2"></div><div class="heatmap-cell aspect-square rounded-lg bg-tertiary opacity-54 border border-white/5 cursor-help" title="Student 3"></div><div class="heatmap-cell aspect-square rounded-lg bg-tertiary opacity-68 border border-white/5 cursor-help" title="Student 4"></div><div class="heatmap-cell aspect-square rounded-lg bg-tertiary opacity-46 border border-white/5 cursor-help" title="Student 5"></div><div class="heatmap-cell aspect-square rounded-lg bg-tertiary opacity-44 border border-white/5 cursor-help" title="Student 6"></div><div class="heatmap-cell aspect-square rounded-lg bg-error opacity-67 border border-white/5 cursor-help" title="Student 7"></div><div class="heatmap-cell aspect-square rounded-lg bg-tertiary opacity-77 border border-white/5 cursor-help" title="Student 8"></div><div class="heatmap-cell aspect-square rounded-lg bg-tertiary opacity-80 border border-white/5 cursor-help" title="Student 9"></div><div class="heatmap-cell aspect-square rounded-lg bg-primary opacity-72 border border-white/5 cursor-help" title="Student 10"></div><div class="heatmap-cell aspect-square rounded-lg bg-tertiary opacity-64 border border-white/5 cursor-help" title="Student 11"></div><div class="heatmap-cell aspect-square rounded-lg bg-secondary opacity-40 border border-white/5 cursor-help" title="Student 12"></div><div class="heatmap-cell aspect-square rounded-lg bg-secondary opacity-97 border border-white/5 cursor-help" title="Student 13"></div><div class="heatmap-cell aspect-square rounded-lg bg-tertiary opacity-64 border border-white/5 cursor-help" title="Student 14"></div><div class="heatmap-cell aspect-square rounded-lg bg-secondary opacity-57 border border-white/5 cursor-help" title="Student 15"></div><div class="heatmap-cell aspect-square rounded-lg bg-tertiary opacity-79 border border-white/5 cursor-help" title="Student 16"></div><div class="heatmap-cell aspect-square rounded-lg bg-tertiary opacity-86 border border-white/5 cursor-help" title="Student 17"></div><div class="heatmap-cell aspect-square rounded-lg bg-tertiary opacity-92 border border-white/5 cursor-help" title="Student 18"></div><div class="heatmap-cell aspect-square rounded-lg bg-tertiary opacity-68 border border-white/5 cursor-help" title="Student 19"></div><div class="heatmap-cell aspect-square rounded-lg bg-tertiary opacity-84 border border-white/5 cursor-help" title="Student 20"></div><div class="heatmap-cell aspect-square rounded-lg bg-tertiary opacity-73 border border-white/5 cursor-help" title="Student 21"></div><div class="heatmap-cell aspect-square rounded-lg bg-primary opacity-50 border border-white/5 cursor-help" title="Student 22"></div><div class="heatmap-cell aspect-square rounded-lg bg-tertiary opacity-47 border border-white/5 cursor-help" title="Student 23"></div><div class="heatmap-cell aspect-square rounded-lg bg-tertiary opacity-47 border border-white/5 cursor-help" title="Student 24"></div><div class="heatmap-cell aspect-square rounded-lg bg-tertiary opacity-85 border border-white/5 cursor-help" title="Student 25"></div><div class="heatmap-cell aspect-square rounded-lg bg-primary opacity-40 border border-white/5 cursor-help" title="Student 26"></div><div class="heatmap-cell aspect-square rounded-lg bg-primary opacity-49 border border-white/5 cursor-help" title="Student 27"></div><div class="heatmap-cell aspect-square rounded-lg bg-tertiary opacity-45 border border-white/5 cursor-help" title="Student 28"></div><div class="heatmap-cell aspect-square rounded-lg bg-tertiary opacity-45 border border-white/5 cursor-help" title="Student 29"></div><div class="heatmap-cell aspect-square rounded-lg bg-error opacity-78 border border-white/5 cursor-help" title="Student 30"></div><div class="heatmap-cell aspect-square rounded-lg bg-primary opacity-61 border border-white/5 cursor-help" title="Student 31"></div><div class="heatmap-cell aspect-square rounded-lg bg-tertiary opacity-97 border border-white/5 cursor-help" title="Student 32"></div>
+</div>
+<div class="mt-4 text-center">
+<p class="text-xs text-on-surface-variant">Front of Class (Teacher Desk)</p>
+</div>
+</div>
+</div>
+<!-- Insights & Alerts -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+<!-- AI Insights Panel -->
+<div class="glass-card p-6 border-primary/20 bg-primary/5">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary">auto_awesome</span>
+<h4 class="text-lg font-bold">AI Smart Insights</h4>
+</div>
+<ul class="space-y-4">
+<li class="flex gap-3">
+<span class="material-symbols-outlined text-tertiary text-lg">check_circle</span>
+<p class="text-sm text-on-surface-variant leading-relaxed">Most students are <span class="text-on-surface font-bold">Highly Engaged</span> during the interactive science demonstration.</p>
+</li>
+<li class="flex gap-3">
+<span class="material-symbols-outlined text-error text-lg">warning</span>
+<p class="text-sm text-on-surface-variant leading-relaxed"><span class="text-error font-bold">Attention drop</span> detected in the back row during the last 20 minutes of lecture.</p>
+</li>
+<li class="flex gap-3">
+<span class="material-symbols-outlined text-secondary text-lg">info</span>
+<p class="text-sm text-on-surface-variant leading-relaxed">Engagement levels typically peak at 10:15 AM after the morning break.</p>
+</li>
+</ul>
+<button class="mt-8 w-full py-2.5 md:py-3 rounded-xl bg-primary/10 border border-primary/20 text-primary text-sm font-bold hover:bg-primary/20 transition-all">Generate Full Analysis</button>
+</div>
+<!-- Alerts Section -->
+<div class="glass-card p-6">
+<h4 class="text-lg font-bold mb-6">Live Alerts</h4>
+<div class="space-y-3">
+<div class="p-3 rounded-xl bg-error/10 border border-error/10 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="A close-up high-definition portrait of a teenage male student with a thoughtful, slightly sad expression. He is wearing a dark navy school sweater. The background is a soft-focus classroom with cool, futuristic blue lighting, maintaining the premium SaaS aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCAfk83GBXFEJfWbFZqkzlSI0h4K-32E5dEKbwHVlItYkTpE1uXiWQa_TQuVIWEI7ecbVEMMwrDIPP2-gosEIlG6SgtlZvEvKUYCun4UV4a1J0nGoBoG4lE3etYESdwQJKvZaXmZJ3ez327O6yLYkA-ZPjjOduBWngCPXTp5SG23HvCLZ-KfqFntRGDD7pM9IAVKMEH2tfCSqscaexOyEurtYWeC0jZfz8K7P97gVCD3uIzUuzeWEf">
+</div>
+<div class="flex-1">
+<p class="text-xs font-bold text-on-surface">Alex Johnson</p>
+<p class="text-[10px] text-error">Prolonged Sadness (15m+)</p>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-white">chat</button>
+</div>
+<div class="p-3 rounded-xl bg-warning-container/10 border border-warning/10 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="A portrait of a diverse teenage female student with a neutral, slightly bored expression. She is in a modern classroom setting with subtle glass reflections and ambient digital glow. The lighting is balanced and clean, fitting a tech-centric educational platform's professional visual style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDN5ZsJUTyjetAdm2DCGBm3Wkwhcm2wSqdHZz_KRQyNR9TeRFw50txi4iaJlxzUCzNAigmZQE4IEpTY09AAxtCTHyvmkLU73VlS_y3D-lHWZm0oS-Bv4EghBThi-GxxdDCC4TgIAn7grJ-d5sKklF2mZur-7td4D_zdjvJj62BPgKxL-BouVSnQiSkb9LQbRunLsaAttJXkeFU1gVFFquNL0muD0rLIzWJ9aB-c2FQRO5UHdGV6Twgb">
+</div>
+<div class="flex-1">
+<p class="text-xs font-bold text-on-surface">Mia Wong</p>
+<p class="text-[10px] text-secondary">Low engagement spike</p>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-white">chat</button>
+</div>
+</div>
+</div>
+<!-- Export Panel -->
+<div class="glass-card p-6 flex flex-col gap-3">
+<button class="flex items-center justify-center gap-2 w-full py-2.5 md:py-3 rounded-xl bg-surface-container-highest text-on-surface text-sm font-bold border border-white/5 hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined">description</span>
+                            Download PDF Report
+                        </button>
+<button class="flex items-center justify-center gap-2 w-full py-2.5 md:py-3 rounded-xl bg-surface-container-highest text-on-surface text-sm font-bold border border-white/5 hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined">table_chart</span>
+                            Export Excel Data
+                        </button>
+</div>
+</div>
+<!-- Student Emotion Table -->
+<div class="col-span-12 glass-card overflow-hidden">
+<div class="p-6 border-b border-white/10 flex justify-between items-center">
+<h4 class="text-lg font-bold">Detailed Student Emotion Metrics</h4>
+<div class="flex gap-2">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="bg-surface-container-low border-white/10 rounded-full pl-9 pr-4 py-2 text-xs focus:ring-primary focus:border-primary w-72" placeholder="Search student..." type="text">
+</div>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-white/5 text-[10px] uppercase tracking-wider text-on-surface-variant">
+<tr>
+<th class="px-6 py-4 font-bold">Student</th>
+<th class="px-6 py-4 font-bold">Roll No</th>
+<th class="px-6 py-4 font-bold">Current Emotion</th>
+<th class="px-6 py-4 font-bold">Dominant Emotion</th>
+<th class="px-6 py-4 font-bold">Engagement</th>
+<th class="px-6 py-4 font-bold">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5">
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-white/10">
+<img class="w-full h-full object-cover" data-alt="A focused young student with glasses looking at a computer screen in a high-tech learning environment. The lighting is dominated by subtle blue and purple digital hues, creating a clean, modern, and serious educational aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvIwpPM5ogSxnh0poj3Mew1PnvqyIQHc_ZcYjjD1wH2OnS2AU2lL051rmlnyDGC68_41wQCzINJx9amv6Z5cqUAOhR2nmbpLxAVg1z1ALD047siyMWNiC8FxwFBkXuXSoqOJJcyq-WWQSlojLHA00z44iJXQdA4TOaVhE-LFB_DZATP13g-0y-uuSG-VuBiYOaI8-zxJrzfxA33ccxWPHGOYlujO4pPsK-zEiZuWNdJnDaVTyDYX65">
+</div>
+<div>
+<p class="text-sm font-bold">Ethan Vance</p>
+<p class="text-[10px] text-on-surface-variant">ethan.v@eduai.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm">S101-A</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-tertiary/10 text-tertiary text-xs font-medium">
+                                            😊 Happy
+                                        </span>
+</td>
+<td class="px-6 py-4 text-sm">Focused</td>
+<td class="px-6 py-4">
+<div class="w-24 h-1.5 bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-tertiary inline-style-3"></div>
+</div>
+</td>
+<td class="px-6 py-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary">more_vert</button>
+</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-white/10">
+<img class="w-full h-full object-cover" data-alt="A bright-eyed teenage girl student smiling, set in a contemporary classroom. The scene is illuminated with a soft, neon-tinted ambient light, emphasizing a high-fidelity SaaS dashboard background style. The mood is positive and tech-forward." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1lDtFyy_JHlJwYPL7bfELrJqUqNTNy3vw2xpcEVZAJhck3adld5RLVcbDvmqkG_s0nEavZeEp-Z2zC7gP3_CW8xfY6jF6xQc3FwDe04mB2Eql5a3AT6mKQJ8Vke5PAOdDbsgiLHaUUBOAw-Tv8hgulpxGT1xY4b-Wt_SMqpEH1bVPr5lZale8nQLZMZ-u22X30JAPfmxTnZi8OSREAcWKmSaQLtZ1ApVBG8vrOc1e4lsl6k3ToSQu">
+</div>
+<div>
+<p class="text-sm font-bold">Sophie Chen</p>
+<p class="text-[10px] text-on-surface-variant">s.chen@eduai.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm">S102-A</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                                            🤔 Neutral
+                                        </span>
+</td>
+<td class="px-6 py-4 text-sm">Neutral</td>
+<td class="px-6 py-4">
+<div class="w-24 h-1.5 bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary inline-style-4"></div>
+</div>
+</td>
+<td class="px-6 py-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary">more_vert</button>
+</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-white/10">
+<img class="w-full h-full object-cover" data-alt="A high-quality, professional portrait of a student looking slightly confused yet engaged. The lighting is moody with dark blue shadows and vibrant primary blue highlights, consistent with a futuristic AI-driven monitoring dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC17Gt3wofMbMGYZd0rbV_9tryiN8mxWeMwnbfKBngRTYFHWAUjNQ1Oy6cMVI7fif1h05jjZOlSk_DBeZnSbVZGYmvhbQtDAd692I3Pfeh2r24Vy80L0e6Vv_uc4RPEXYF749JwotdxKfQHUYwO15YxQ7aIlapZdQD2ai7PgQqOa_3avcuco4gA0NNXMAc7UdyPOXABZsU_ugN5cb4Xvhp1_sfwYxhOR6bvvdUfAxpHo7Mzz9ySfgiv">
+</div>
+<div>
+<p class="text-sm font-bold">Liam Parker</p>
+<p class="text-[10px] text-on-surface-variant">l.parker@eduai.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm">S103-A</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 text-secondary text-xs font-medium">
+                                            ❓ Confused
+                                        </span>
+</td>
+<td class="px-6 py-4 text-sm">Inquisitive</td>
+<td class="px-6 py-4">
+<div class="w-24 h-1.5 bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-secondary inline-style-5"></div>
+</div>
+</td>
+<td class="px-6 py-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary">more_vert</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Interactive Elements Scripts -->
+<script>
+        // Micro-interaction for Heatmap hover
+        document.querySelectorAll('.heatmap-cell').forEach(cell => {
+            cell.addEventListener('mouseenter', () => {
+                cell.classList.add('ring-2', 'ring-white/40');
+            });
+            cell.addEventListener('mouseleave', () => {
+                cell.classList.remove('ring-2', 'ring-white/40');
+            });
+        });
+    </script>
+
+
+</body></html>

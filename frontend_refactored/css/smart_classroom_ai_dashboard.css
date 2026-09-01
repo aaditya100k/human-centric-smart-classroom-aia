@@ -1,0 +1,51 @@
+@import url('./responsive-system.css');
+
+body {
+      background-color: #0F172A;
+      color: #e0e3e5;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+    .glass-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(173, 198, 255, 0.3);
+      transform: translateY(-2px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .glow-primary {
+      box-shadow: 0 0 20px rgba(173, 198, 255, 0.15);
+    }
+    .bg-blob {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      filter: blur(120px);
+      border-radius: 9999px;
+      opacity: 0.15;
+      z-index: -1;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+.inline-style-1 { position:absolute;width:0;height:0;overflow:hidden }
+
+.inline-style-2 { font-variation-settings: "FILL" 1; }
+
+.inline-style-3 { transform: translateY(0px); }
+
+.inline-style-4 { transform: rotate(45deg); }
+
+.inline-style-5 { width: 94% }
+
+.inline-style-6 { width: 82% }
+
+.inline-style-7 { width: 58% }
+
+.inline-style-8 { width: 91% }
+
+.inline-style-9 { background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB2umNhL1nsArolUcxu-NLGAGByKiipJvE5D2wzoZ5hLkoJ0xNUrw2e---I2Ucu-JVSUaZYMzsMdq32IqN-m9AnK1fCppwo0B5r9pZurO_TAOoBaXhXeKaDWTjcf4nDDtlQqptbowxS84-mFTyS1ve8fUiUFjnVhyyF7GVt9_gVZNKeWs1ahcnrhqrrvwRXMBOzjCDCDuJx6ZDsbdcUkkdnqDumJM0H4Too3uk79Mbk3i9JIYY5Ing0"); }

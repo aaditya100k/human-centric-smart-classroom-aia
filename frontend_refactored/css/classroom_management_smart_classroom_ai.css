@@ -1,0 +1,77 @@
+@import url('./responsive-system.css');
+
+body {
+            background-color: #0F172A;
+            color: #e0e3e5;
+            overflow-x: hidden;
+        }
+
+        .glass-card {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 20px rgba(173, 198, 255, 0.1);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #adc6ff 0%, #c0c1ff 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #005ac2 0%, #3131c0 100%);
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 0 15px rgba(173, 198, 255, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+        .glow-dot {
+            animation: pulse-glow 2s infinite ease-in-out;
+        }
+
+.inline-style-1 { --mouse-x: 105.00235748291016px; --mouse-y: -0.521240234375px; }
+
+.inline-style-2 { --mouse-x: 109.01177978515625px; --mouse-y: 165.01415252685547px; }
+
+.inline-style-3 { --mouse-x: 213.0164794921875px; --mouse-y: 22.01415252685547px; }
+
+.inline-style-4 { --mouse-x: 111.0093994140625px; --mouse-y: 16.01415252685547px; }
+
+.inline-style-5 { --mouse-x: 21.01416015625px; --mouse-y: -0.9858474731445312px; }
+
+.inline-style-6 { --mouse-x: 38.01177978515625px; --mouse-y: 136.52359008789062px; }
+
+.inline-style-7 { --mouse-x: 249.03302001953125px; --mouse-y: 139.52359008789062px; }
+
+.inline-style-8 { --mouse-x: 1.05426025390625px; --mouse-y: 139.52359008789062px; }
+
+.inline-style-9 { --mouse-x: 49.075439453125px; --mouse-y: 78.52359008789062px; }
+
+.inline-style-10 { --mouse-x: 90.01177978515625px; --mouse-y: 171.0731201171875px; }

@@ -1,0 +1,50 @@
+@import url('./responsive-system.css');
+
+:root {
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-blur: blur(20px);
+        }
+        body {
+            background-color: #0F172A;
+            color: #e0e3e5;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .glass-card:hover {
+            box-shadow: 0 0 20px rgba(173, 198, 255, 0.1);
+        }
+        .premium-gradient {
+            background: linear-gradient(135deg, #adc6ff 0%, #c0c1ff 100%);
+        }
+        .sidebar-active {
+            color: #adc6ff;
+            font-weight: 700;
+            border-right: 2px solid #adc6ff;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for glass effect */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+.inline-style-1 { --mouse-x: 43.021209716796875px; --mouse-y: 305.0094299316406px; }
+
+.inline-style-2 { --mouse-x: 10.021209716796875px; --mouse-y: 120.5447998046875px; }
+
+.inline-style-3 { --mouse-x: 296.66741943359375px; --mouse-y: 251.00942993164062px; }
+
+.inline-style-4 { --mouse-x: 70.66741943359375px; --mouse-y: 155.03536987304688px; }
+
+.inline-style-5 { --mouse-x: 52.66741943359375px; --mouse-y: 55.075439453125px; }

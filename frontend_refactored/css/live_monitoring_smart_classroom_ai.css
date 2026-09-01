@@ -1,0 +1,38 @@
+@import url('./responsive-system.css');
+
+body {
+            background-color: #0F172A; /* Base Layer */
+            color: #e0e3e5;
+            overflow-x: hidden;
+        }
+        .glass-card {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .glow-primary {
+            box-shadow: 0 0 20px rgba(173, 198, 255, 0.2);
+        }
+        .hud-scanline {
+            background: linear-gradient(to bottom, transparent 50%, rgba(173, 198, 255, 0.05) 50%);
+            background-size: 100% 4px;
+        }
+        .pulse {
+            animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+
+        .inline-style-1 { font-variation-settings: "FILL" 1; }
+
+        .inline-style-2 { width: 85%; }
+
+        .inline-style-3 { width: 70%; }
+
+        .inline-style-4 { width: 20%; }
+
+        .inline-style-5 { width: 10%; }
