@@ -3,8 +3,12 @@
 Final targeted fix for remaining issues
 """
 
+import sys
 from pathlib import Path
 import re
+
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
 
 root = Path(r'c:/Users/HP/OneDrive/Desktop/human centric smart classroom monitoring system')
 html_dir = root / 'frontend_refactored' / 'html'

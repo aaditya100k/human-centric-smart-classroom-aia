@@ -35,6 +35,11 @@ function initCameraSimulation() {
     let mousePos = { x: 640, y: 360 };
     const alertTimers = {};
 
+    // Phase 2 Real-Time Face Detection State
+    let wsMonitoring = null;
+    let realFacesDetected = [];
+    let lastFrameSentTime = 0;
+
     // Mouse listener on canvas to simulate face tracking target lock
     canvas.addEventListener("mousemove", (e) => {
         const rect = canvas.getBoundingClientRect();
@@ -67,6 +72,91 @@ function initCameraSimulation() {
             ctx.fillStyle = "rgba(173, 198, 255, 0.9)";
             ctx.font = "bold 12px Courier New, monospace";
             ctx.fillText("🔴 LIVE CAMERA FEED STREAMING", 30, 40);
+
+            // Draw Real OpenCV Face Detection & Recognition Bounding Boxes
+            if (realFacesDetected && realFacesDetected.length > 0) {
+                realFacesDetected.forEach((face, idx) => {
+                    const x = face.x;
+                    const y = face.y;
+                    const w = face.width;
+                    const h = face.height;
+                    const isRecognized = !!face.recognized;
+                    const name = face.name || (isRecognized ? "Recognized Student" : "Unknown");
+                    const simPct = Math.round((face.similarity || 0) * 100);
+
+                    const strokeColor = isRecognized ? "#4ae176" : "#ffb4ab";
+                    const fillColor = isRecognized ? "rgba(74, 225, 118, 0.08)" : "rgba(255, 180, 171, 0.08)";
+
+                    // Draw bounding box
+                    ctx.strokeStyle = strokeColor;
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(x, y, w, h);
+
+                    // Corner brackets
+                    const len = Math.min(15, w / 4);
+                    ctx.strokeStyle = "#adc6ff";
+                    ctx.lineWidth = 2;
+
+                    ctx.beginPath(); ctx.moveTo(x + len, y); ctx.lineTo(x, y); ctx.lineTo(x, y + len); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(x + w - len, y); ctx.lineTo(x + w); ctx.lineTo(x + w, y + len); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(x, y + h - len); ctx.lineTo(x, y + h); ctx.lineTo(x + len, y + h); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(x + w, y + h - len); ctx.lineTo(x + w, y + h); ctx.lineTo(x + w - len, y + h); ctx.stroke();
+
+                    // Translucent overlay
+                    ctx.fillStyle = fillColor;
+                    ctx.fillRect(x, y, w, h);
+
+                    // Draw tag background with attendance status
+                    let labelText = isRecognized ? `${name} (${simPct}%)` : `Unknown (${simPct}%)`;
+                    let attStatusStr = "";
+                    if (isRecognized && face.attendance) {
+                        if (face.attendance.status === "marked") {
+                            attStatusStr = "✓ Attendance Marked";
+                        } else if (face.attendance.status === "already_marked") {
+                            attStatusStr = "✓ Already Present";
+                        } else {
+                            attStatusStr = "Attendance Not Marked";
+                        }
+                    } else if (!isRecognized) {
+                        attStatusStr = "Not Registered";
+                    }
+
+                    ctx.font = "bold 11px Inter, sans-serif";
+                    const mainWidth = ctx.measureText(labelText).width;
+                    ctx.font = "9px Inter, sans-serif";
+                    const subWidth = attStatusStr ? ctx.measureText(attStatusStr).width : 0;
+                    const textWidth = Math.max(mainWidth, subWidth);
+
+                    const tagHeight = attStatusStr ? 32 : 18;
+                    const tagY = Math.max(0, y - tagHeight - 4);
+
+                    ctx.fillStyle = isRecognized ? "rgba(0, 57, 21, 0.85)" : "rgba(105, 0, 5, 0.85)";
+                    ctx.fillRect(x, tagY, textWidth + 12, tagHeight + 4);
+
+                    // Draw label text
+                    ctx.font = "bold 11px Inter, sans-serif";
+                    ctx.fillStyle = strokeColor;
+                    ctx.fillText(labelText, x + 6, tagY + 14);
+
+                    if (attStatusStr) {
+                        ctx.font = "9px Inter, sans-serif";
+                        ctx.fillStyle = isRecognized ? "#6bff8f" : "#ffdad6";
+                        ctx.fillText(attStatusStr, x + 6, tagY + 27);
+                    }
+                });
+            }
+
+            // Frame Sampling: Send frame over WebSocket at 5–10 FPS (~150ms interval)
+            const now = Date.now();
+            if (wsMonitoring && wsMonitoring.readyState === WebSocket.OPEN && (now - lastFrameSentTime >= 150)) {
+                lastFrameSentTime = now;
+                try {
+                    const frameJpeg = canvas.toDataURL("image/jpeg", 0.5);
+                    wsMonitoring.send(JSON.stringify({ type: "frame", image: frameJpeg }));
+                } catch (err) {
+                    console.warn("WebSocket frame send error:", err);
+                }
+            }
         } else {
             // Clear background & Draw virtual classroom grid
             ctx.fillStyle = "#0c0f10";
@@ -449,47 +539,223 @@ function initCameraSimulation() {
         });
     }
 
-    if (webcamBtn) {
-        webcamBtn.addEventListener("click", () => {
-            useWebcam = !useWebcam;
-            
-            if (useWebcam) {
-                // Style button active
+    // ==========================================
+    // REAL LIVE MONITORING CONTROLLER & WEBCAM
+    // ==========================================
+
+    const btnStartMon = document.getElementById("btn-start-monitoring");
+    const btnStopMon = document.getElementById("btn-stop-monitoring");
+    const btnRetryConn = document.getElementById("btn-retry-connection");
+    const statusDotEl = document.getElementById("monitoring-status-dot");
+    const statusTextEl = document.getElementById("monitoring-status-text");
+    const lastUpdateEl = document.getElementById("monitoring-last-update");
+    const hudCamStatusEl = document.getElementById("hud-camera-status-text");
+    const studentsDetectedEl = document.getElementById("monitoring-students-detected");
+
+    function updateUIStatus(statusData) {
+        if (!statusData) return;
+        const isActive = !!(statusData.active || statusData.is_active);
+        
+        if (statusTextEl) {
+            statusTextEl.textContent = isActive ? "MONITORING ACTIVE" : "MONITORING STOPPED";
+        }
+        if (statusDotEl) {
+            statusDotEl.className = isActive
+                ? "w-2.5 h-2.5 rounded-full bg-tertiary animate-pulse"
+                : "w-2.5 h-2.5 rounded-full bg-error";
+        }
+        if (btnStartMon) {
+            if (isActive) btnStartMon.classList.add("hidden");
+            else btnStartMon.classList.remove("hidden");
+        }
+        if (btnStopMon) {
+            if (isActive) btnStopMon.classList.remove("hidden");
+            else btnStopMon.classList.add("hidden");
+        }
+        if (lastUpdateEl && statusData.last_update) {
+            const timeStr = new Date(statusData.last_update).toLocaleTimeString();
+            lastUpdateEl.textContent = `LAST_UPDATE: ${timeStr}`;
+        }
+        if (studentsDetectedEl) {
+            const count = statusData.students_detected ?? 0;
+            studentsDetectedEl.textContent = `${count} DETECTED (NO AI)`;
+        }
+    }
+
+    async function syncMonitoringStatusWithBackend() {
+        if (typeof ApiService === "undefined" || !ApiService.getMonitoringStatus) return;
+        try {
+            const statusData = await ApiService.getMonitoringStatus();
+            updateUIStatus(statusData);
+        } catch (err) {
+            console.warn("Monitoring status sync failed:", err.message);
+            if (statusTextEl) statusTextEl.textContent = "BACKEND OFFLINE";
+            if (statusDotEl) statusDotEl.className = "w-2.5 h-2.5 rounded-full bg-yellow-500";
+            triggerToast("Backend server offline or unreachable. Click Retry Connection.", "error");
+        }
+    }
+
+    async function populateClassroomsDropdown() {
+        const clsSelect = document.getElementById("monitoring-classroom-select");
+        if (!clsSelect || typeof ApiService === "undefined" || !ApiService.getClassrooms) return;
+        try {
+            const classrooms = await ApiService.getClassrooms();
+            clsSelect.innerHTML = '<option value="">Select Classroom...</option>';
+            classrooms.forEach(c => {
+                const opt = document.createElement("option");
+                opt.value = c.id;
+                opt.textContent = `${c.name} (${c.department})`;
+                clsSelect.appendChild(opt);
+            });
+        } catch (err) {
+            console.warn("Could not load classrooms dropdown:", err.message);
+        }
+    }
+    populateClassroomsDropdown();
+
+    async function startLiveMonitoring() {
+        const clsSelect = document.getElementById("monitoring-classroom-select");
+        const selectedClassroomId = clsSelect && clsSelect.value ? parseInt(clsSelect.value, 10) : null;
+
+        if (!selectedClassroomId) {
+            triggerToast("Select a classroom before starting automatic attendance.", "error");
+            if (statusTextEl) statusTextEl.textContent = "SELECT CLASSROOM";
+            return;
+        }
+
+        triggerToast("Requesting device camera permission...", "info");
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            triggerToast("Browser security restriction: Media device API requires HTTPS or localhost.", "error");
+            if (statusTextEl) statusTextEl.textContent = "CAMERA RESTRICTED";
+            return;
+        }
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+            mediaStream = stream;
+            videoEl = document.createElement("video");
+            videoEl.srcObject = stream;
+            videoEl.autoplay = true;
+            videoEl.playsInline = true;
+            videoEl.muted = true;
+            await videoEl.play();
+
+            useWebcam = true;
+            if (hudCamStatusEl) hudCamStatusEl.textContent = "WEBCAM ACTIVE";
+
+            if (webcamBtn) {
                 webcamBtn.classList.add("bg-primary", "text-on-primary");
                 webcamBtn.classList.remove("glass-card");
-                
-                triggerToast("Initializing device camera stream...", "info");
-                
-                navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 } })
-                    .then(stream => {
-                        mediaStream = stream;
-                        videoEl = document.createElement("video");
-                        videoEl.srcObject = stream;
-                        videoEl.autoplay = true;
-                        videoEl.playsInline = true;
-                        videoEl.addEventListener("loadedmetadata", () => {
-                            videoEl.play();
-                            triggerToast("Device camera feed active!", "success");
-                        });
-                    })
-                    .catch(err => {
-                        console.error("Camera stream error:", err);
-                        useWebcam = false;
-                        webcamBtn.classList.remove("bg-primary", "text-on-primary");
-                        webcamBtn.classList.add("glass-card");
-                        triggerToast("Could not access camera: " + err.message, "error");
-                    });
+            }
+
+            // Call Backend POST /api/monitoring/start
+            if (typeof ApiService !== "undefined" && ApiService.startMonitoring) {
+                const res = await ApiService.startMonitoring(selectedClassroomId);
+                updateUIStatus(res.status || { active: true });
             } else {
-                // Style button inactive
-                webcamBtn.classList.remove("bg-primary", "text-on-primary");
-                webcamBtn.classList.add("glass-card");
-                
-                if (mediaStream) {
-                    mediaStream.getTracks().forEach(track => track.stop());
-                    mediaStream = null;
+                updateUIStatus({ active: true, last_update: new Date().toISOString() });
+            }
+
+            triggerToast("Live camera stream & automatic attendance session started!", "success");
+
+        } catch (err) {
+            console.error("Camera access error:", err);
+            useWebcam = false;
+            
+            let userMsg = "Could not access camera: " + err.message;
+            if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+                userMsg = "Camera permission denied by user. Please allow camera access in browser.";
+            } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+                userMsg = "No webcam device detected. Please attach a camera.";
+            } else if (err.name === "NotReadableError" || err.name === "TrackStartError") {
+                userMsg = "Camera is currently in use by another application.";
+            }
+
+            if (statusTextEl) statusTextEl.textContent = "CAMERA UNAVAILABLE";
+            if (statusDotEl) statusDotEl.className = "w-2.5 h-2.5 rounded-full bg-error";
+            triggerToast(userMsg, "error");
+        }
+    }
+
+    async function stopLiveMonitoring() {
+        if (mediaStream) {
+            mediaStream.getTracks().forEach(track => track.stop());
+            mediaStream = null;
+        }
+        videoEl = null;
+        useWebcam = false;
+
+        if (hudCamStatusEl) hudCamStatusEl.textContent = "SIMULATION FEED";
+
+        if (webcamBtn) {
+            webcamBtn.classList.remove("bg-primary", "text-on-primary");
+            webcamBtn.classList.add("glass-card");
+        }
+
+        // Call Backend POST /api/monitoring/stop
+        if (typeof ApiService !== "undefined" && ApiService.stopMonitoring) {
+            try {
+                const res = await ApiService.stopMonitoring();
+                updateUIStatus(res.status || { active: false });
+            } catch (err) {
+                console.error("Failed to call stop monitoring API:", err);
+                updateUIStatus({ active: false, last_update: new Date().toISOString() });
+            }
+        } else {
+            updateUIStatus({ active: false, last_update: new Date().toISOString() });
+        }
+
+        triggerToast("Live monitoring session stopped.", "info");
+    }
+
+    // Bind Button Click Handlers
+    if (btnStartMon) {
+        btnStartMon.addEventListener("click", startLiveMonitoring);
+    }
+    if (btnStopMon) {
+        btnStopMon.addEventListener("click", stopLiveMonitoring);
+    }
+    if (btnRetryConn) {
+        btnRetryConn.addEventListener("click", () => {
+            triggerToast("Retrying backend connection...", "info");
+            syncMonitoringStatusWithBackend();
+        });
+    }
+    if (webcamBtn) {
+        webcamBtn.addEventListener("click", () => {
+            if (useWebcam) {
+                stopLiveMonitoring();
+            } else {
+                startLiveMonitoring();
+            }
+        });
+    }
+
+    // Initialize backend status sync and WebSocket connection
+    syncMonitoringStatusWithBackend();
+
+    if (typeof ApiService !== "undefined" && ApiService.connectMonitoringWebSocket) {
+        wsMonitoring = ApiService.connectMonitoringWebSocket((msg) => {
+            if (!msg) return;
+            if (msg.event === "monitoring_started" || msg.event === "monitoring_stopped" || msg.event === "connection_established") {
+                updateUIStatus(msg.data);
+            } else if (msg.type === "face_detection" || msg.type === "face_recognition") {
+                realFacesDetected = msg.faces || [];
+                const count = msg.faces_detected ?? 0;
+                if (studentsDetectedEl) {
+                    studentsDetectedEl.textContent = `${count} DETECTED (FACE DETECTION)`;
                 }
-                videoEl = null;
-                triggerToast("Switched back to virtual simulated feed", "info");
+                if (statusTextEl) {
+                    statusTextEl.textContent = "FACE DETECTION: ACTIVE";
+                }
+                if (statusDotEl) {
+                    statusDotEl.className = "w-2.5 h-2.5 rounded-full bg-tertiary animate-pulse";
+                }
+                if (lastUpdateEl && msg.timestamp) {
+                    const timeStr = new Date(msg.timestamp).toLocaleTimeString();
+                    lastUpdateEl.textContent = `LAST_UPDATE: ${timeStr}`;
+                }
             }
         });
     }

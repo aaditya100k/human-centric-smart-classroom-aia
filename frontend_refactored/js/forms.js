@@ -24,6 +24,7 @@ function showStatus(message, type = "success") {
 }
 
 function initLoginForm() {
+    if (window.isLoginApiManaged) return;
     const loginForm = document.getElementById("login-form");
     if (!loginForm) return;
 
@@ -49,6 +50,7 @@ function initLoginForm() {
 }
 
 function initAddStudentForm() {
+    if (window.isStudentManagementApiManaged) return;
     const studentForm = document.getElementById("add-student-form");
     if (!studentForm) return;
 
@@ -104,6 +106,7 @@ function initAddStudentForm() {
 }
 
 function initAddClassroomForm() {
+    if (window.isClassroomManagementApiManaged) return;
     const classroomForm = document.getElementById("add-classroom-form");
     if (!classroomForm) return;
 

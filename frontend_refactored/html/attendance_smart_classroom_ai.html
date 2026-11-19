@@ -105,402 +105,1013 @@
       }
     }
   </script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" data-snapdom="injected-import">  <link rel="stylesheet" href="../css/attendance_smart_classroom_ai.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" data-snapdom="injected-import">
+<link rel="stylesheet" href="../css/attendance_smart_classroom_ai.css">
 <link rel="stylesheet" href="../css/responsive-system.css">
+
+<!-- API Bridge scripts -->
+<script>
+  window.isAttendanceManagementApiManaged = true;
+</script>
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/data.js"></script>
 <script src="../js/page-handlers.js"></script>
+<script src="../js/layout.js"></script>
+<script src="../js/forms.js"></script>
 </head>
 <body class="min-h-screen"><svg class="inline-defs-container"></svg>
 <!-- Atmospheric background blobs -->
 <div class="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/10 blur-[120px] rounded-full pointer-events-none z-0"></div>
 <div class="fixed bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-secondary/10 blur-[120px] rounded-full pointer-events-none z-0"></div>
-<!-- SideNavBar (from COMPONENTS_15) -->
+
+<!-- SideNavBar -->
 <aside id="layout-sidebar"></aside>
-<!-- TopAppBar (from COMPONENTS_15) -->
+<!-- TopAppBar -->
 <header id="layout-navbar"></header>
+
 <!-- Main Content Canvas -->
 <main class="px-4 md:px-6 lg:px-8 pb-6">
 <!-- Stats Row -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-<div class="glass-card p-6 flex flex-col justify-between">
-<div class="flex justify-between items-start mb-4">
-<div class="p-3 bg-primary/10 rounded-xl">
-<span class="material-symbols-outlined text-primary">groups</span>
+  <!-- Card 1: Total Students -->
+  <div class="glass-card p-6 flex flex-col justify-between">
+    <div class="flex justify-between items-start mb-4">
+      <div class="p-3 bg-primary/10 rounded-xl">
+        <span class="material-symbols-outlined text-primary">groups</span>
+      </div>
+      <span class="text-tertiary font-bold text-sm flex items-center gap-1">
+        <span class="material-symbols-outlined text-[16px]">verified</span> Real-time
+      </span>
+    </div>
+    <div>
+      <h3 class="text-on-surface-variant text-sm font-medium uppercase tracking-wider mb-1">Total Students</h3>
+      <p id="kpi-total-students" class="text-3xl font-bold font-headline-md text-white">--</p>
+    </div>
+  </div>
+
+  <!-- Card 2: Present Today -->
+  <div class="glass-card p-6 flex flex-col justify-between">
+    <div class="flex justify-between items-start mb-4">
+      <div class="p-3 bg-tertiary/10 rounded-xl">
+        <span class="material-symbols-outlined text-tertiary">person_check</span>
+      </div>
+      <span class="text-tertiary font-bold text-sm flex items-center gap-1">
+        <span class="material-symbols-outlined text-[16px]">check_circle</span> Checked In
+      </span>
+    </div>
+    <div>
+      <h3 class="text-on-surface-variant text-sm font-medium uppercase tracking-wider mb-1">Present Today</h3>
+      <p id="kpi-present-today" class="text-3xl font-bold font-headline-md text-white">--</p>
+    </div>
+  </div>
+
+  <!-- Card 3: Absent -->
+  <div class="glass-card p-6 flex flex-col justify-between">
+    <div class="flex justify-between items-start mb-4">
+      <div class="p-3 bg-error/10 rounded-xl">
+        <span class="material-symbols-outlined text-error">person_off</span>
+      </div>
+      <span class="text-error font-bold text-sm flex items-center gap-1">
+        <span class="material-symbols-outlined text-[16px]">warning</span> Action Req.
+      </span>
+    </div>
+    <div>
+      <h3 class="text-on-surface-variant text-sm font-medium uppercase tracking-wider mb-1">Absent</h3>
+      <p id="kpi-absent-today" class="text-3xl font-bold font-headline-md text-white">--</p>
+    </div>
+  </div>
+
+  <!-- Card 4: Attendance Rate -->
+  <div class="glass-card p-6 flex flex-col justify-between">
+    <div class="flex justify-between items-start mb-4">
+      <div class="p-3 bg-secondary/10 rounded-xl">
+        <span class="material-symbols-outlined text-secondary">analytics</span>
+      </div>
+      <div class="w-16 h-1.5 bg-surface-container rounded-full overflow-hidden">
+        <div id="kpi-rate-bar" class="bg-secondary h-full transition-all duration-500" style="width: 0%"></div>
+      </div>
+    </div>
+    <div>
+      <h3 class="text-on-surface-variant text-sm font-medium uppercase tracking-wider mb-1">Attendance Rate</h3>
+      <p id="kpi-attendance-rate" class="text-3xl font-bold font-headline-md text-white">--%</p>
+    </div>
+  </div>
 </div>
-<span class="text-tertiary font-bold text-sm flex items-center gap-1">
-<span class="material-symbols-outlined text-[16px]">trending_up</span> +12
-                    </span>
-</div>
-<div>
-<h3 class="text-on-surface-variant text-sm font-medium uppercase tracking-wider mb-1">Total Students</h3>
-<p class="text-3xl font-bold font-headline-md text-white">450</p>
-</div>
-</div>
-<div class="glass-card p-6 flex flex-col justify-between">
-<div class="flex justify-between items-start mb-4">
-<div class="p-3 bg-tertiary/10 rounded-xl">
-<span class="material-symbols-outlined text-tertiary">person_check</span>
-</div>
-<span class="text-tertiary font-bold text-sm flex items-center gap-1">
-<span class="material-symbols-outlined text-[16px]">check_circle</span> Stable
-                    </span>
-</div>
-<div>
-<h3 class="text-on-surface-variant text-sm font-medium uppercase tracking-wider mb-1">Present Today</h3>
-<p class="text-3xl font-bold font-headline-md text-white">412</p>
-</div>
-</div>
-<div class="glass-card p-6 flex flex-col justify-between">
-<div class="flex justify-between items-start mb-4">
-<div class="p-3 bg-error/10 rounded-xl">
-<span class="material-symbols-outlined text-error">person_off</span>
-</div>
-<span class="text-error font-bold text-sm flex items-center gap-1">
-<span class="material-symbols-outlined text-[16px]">warning</span> +4%
-                    </span>
-</div>
-<div>
-<h3 class="text-on-surface-variant text-sm font-medium uppercase tracking-wider mb-1">Absent</h3>
-<p class="text-3xl font-bold font-headline-md text-white">38</p>
-</div>
-</div>
-<div class="glass-card p-6 flex flex-col justify-between">
-<div class="flex justify-between items-start mb-4">
-<div class="p-3 bg-secondary/10 rounded-xl">
-<span class="material-symbols-outlined text-secondary">analytics</span>
-</div>
-<div class="w-16 h-1.5 bg-surface-container rounded-full overflow-hidden">
-<div class="bg-secondary h-full w-[91.5%]"></div>
-</div>
-</div>
-<div>
-<h3 class="text-on-surface-variant text-sm font-medium uppercase tracking-wider mb-1">Attendance Rate</h3>
-<p class="text-3xl font-bold font-headline-md text-white">91.5%</p>
-</div>
-</div>
-</div>
+
 <!-- Toolbar -->
 <div class="glass-card p-4 mb-8 flex flex-wrap items-center justify-between gap-4">
-<div class="flex items-center gap-3">
-<button class="primary-gradient text-on-primary px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-primary/20">
-<span class="material-symbols-outlined inline-style-1">rocket_launch</span>
-                    Start AI Attendance
-                </button>
-<button class="bg-surface-container-high hover:bg-surface-variant/70 border border-outline-variant/20 px-5 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-all">
-<span class="material-symbols-outlined text-[20px]">edit</span>
-                    Mark Manual
-                </button>
+  <div class="flex items-center gap-3">
+    <button id="start-ai-btn" onclick="handleStartAiAttendance()" class="primary-gradient text-on-primary px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-primary/20">
+      <span class="material-symbols-outlined inline-style-1">rocket_launch</span>
+      Start AI Attendance
+    </button>
+    <button id="open-mark-modal-btn" onclick="openMarkAttendanceModal()" class="bg-surface-container-high hover:bg-surface-variant/70 border border-outline-variant/20 px-5 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-all text-white active:scale-95">
+      <span class="material-symbols-outlined text-[20px] text-primary">edit</span>
+      Mark Attendance
+    </button>
+  </div>
+  <div class="flex items-center gap-2">
+    <button onclick="loadAttendanceData()" class="p-2.5 rounded-xl bg-surface-container-low hover:bg-surface-variant transition-colors border border-outline-variant/10 text-on-surface-variant" title="Refresh Attendance">
+      <span class="material-symbols-outlined">refresh</span>
+    </button>
+    <div class="h-8 w-[1px] bg-outline-variant/20 mx-2"></div>
+    <button onclick="window.print()" class="bg-surface-container-low hover:bg-surface-variant border border-outline-variant/20 px-4 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2 transition-all">
+      <span class="material-symbols-outlined text-[20px] text-error">picture_as_pdf</span>
+      Export PDF
+    </button>
+    <button id="export-attendance-btn" onclick="exportAttendanceCSV()" class="bg-surface-container-low hover:bg-surface-variant border border-outline-variant/20 px-4 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2 transition-all">
+      <span class="material-symbols-outlined text-[20px] text-tertiary">table_chart</span>
+      Export Excel
+    </button>
+  </div>
 </div>
-<div class="flex items-center gap-2">
-<button class="p-2.5 rounded-xl bg-surface-container-low hover:bg-surface-variant transition-colors border border-outline-variant/10 text-on-surface-variant" title="Import">
-<span class="material-symbols-outlined">upload</span>
-</button>
-<div class="h-8 w-[1px] bg-outline-variant/20 mx-2"></div>
-<button class="bg-surface-container-low hover:bg-surface-variant border border-outline-variant/20 px-4 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2 transition-all">
-<span class="material-symbols-outlined text-[20px] text-error">picture_as_pdf</span>
-                    Export PDF
-                </button>
-<button id="export-attendance-btn" class="bg-surface-container-low hover:bg-surface-variant border border-outline-variant/20 px-4 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2 transition-all">
-<span class="material-symbols-outlined text-[20px] text-tertiary">table_chart</span>
-                    Export Excel
-                </button>
-</div>
-</div>
+
 <!-- Grid: Main Table & Sidebar -->
 <div class="grid grid-cols-12 gap-8">
-<!-- Left: Attendance Table -->
-<div class="col-span-12 xl:col-span-8">
-<div class="glass-card overflow-hidden">
-<div class="p-6 border-b border-outline-variant/10 flex justify-between items-center">
-<h2 class="font-headline-md text-xl font-bold">Student Records - A-101</h2>
-<div class="flex items-center gap-2">
-<span class="text-sm text-on-surface-variant">Filter by:</span>
-<select id="attendance-status-filter" class="bg-surface-container border-none rounded-lg text-xs py-1.5 focus:ring-primary/30">
-<option value="All">All Status</option>
-<option value="Present">Present</option>
-<option value="Absent">Absent</option>
-<option value="Late">Late</option>
-</select>
+  <!-- Left: Attendance Table -->
+  <div class="col-span-12 xl:col-span-8">
+    <div class="glass-card overflow-hidden">
+      <!-- Table Header with Filters -->
+      <div class="p-6 border-b border-outline-variant/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h2 id="table-heading" class="font-headline-md text-xl font-bold">Attendance Records</h2>
+          <p id="table-subheading" class="text-xs text-on-surface-variant mt-0.5">Live records synchronized with MySQL</p>
+        </div>
+        
+        <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+          <!-- Search input -->
+          <div class="relative flex-1 md:w-44">
+            <input type="text" id="attendance-search-input" placeholder="Search student..." class="w-full bg-surface-container border border-outline-variant/20 rounded-lg text-xs pl-8 pr-3 py-1.5 focus:ring-primary/30 text-white placeholder:text-on-surface-variant/60">
+            <span class="material-symbols-outlined text-[16px] text-on-surface-variant absolute left-2 top-2">search</span>
+          </div>
+
+          <!-- Classroom filter -->
+          <select id="attendance-classroom-filter" class="bg-surface-container border border-outline-variant/20 rounded-lg text-xs py-1.5 px-3 focus:ring-primary/30 text-white">
+            <option value="All">All Classrooms</option>
+          </select>
+
+          <!-- Department filter -->
+          <select id="attendance-department-filter" class="bg-surface-container border border-outline-variant/20 rounded-lg text-xs py-1.5 px-3 focus:ring-primary/30 text-white">
+            <option value="All">All Departments</option>
+          </select>
+
+          <!-- Status filter -->
+          <select id="attendance-status-filter" class="bg-surface-container border border-outline-variant/20 rounded-lg text-xs py-1.5 px-3 focus:ring-primary/30 text-white">
+            <option value="All">All Status</option>
+            <option value="Present">Present</option>
+            <option value="Absent">Absent</option>
+            <option value="Late">Late</option>
+          </select>
+
+          <!-- Date filter -->
+          <input type="date" id="attendance-date-filter" class="bg-surface-container border border-outline-variant/20 rounded-lg text-xs py-1.5 px-3 focus:ring-primary/30 text-white">
+
+          <!-- Reset filter button -->
+          <button onclick="resetFilters()" class="p-1.5 rounded-lg bg-surface-container hover:bg-surface-variant text-on-surface-variant" title="Reset Filters">
+            <span class="material-symbols-outlined text-[16px]">filter_alt_off</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Table Container -->
+      <div class="overflow-x-auto min-h-[300px] relative">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-surface-container-low/50 text-outline-variant text-[12px] uppercase tracking-wider">
+              <th class="px-6 py-4 font-semibold">Student</th>
+              <th class="px-6 py-4 font-semibold">Classroom & Dept</th>
+              <th class="px-6 py-4 font-semibold">Date & Time</th>
+              <th class="px-6 py-4 font-semibold">Verification</th>
+              <th class="px-6 py-4 font-semibold">Status</th>
+              <th class="px-6 py-4 font-semibold">Attendance Rate</th>
+              <th class="px-6 py-4 font-semibold text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="attendance-table-body" class="divide-y divide-outline-variant/5">
+            <!-- Dynamic Records inserted here -->
+            <tr>
+              <td colspan="7" class="px-6 py-12 text-center text-on-surface-variant">
+                <div class="flex items-center justify-center gap-3">
+                  <div class="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                  <span>Loading attendance records from MySQL...</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Table Pagination / Footer -->
+      <div class="p-4 bg-surface-container-low/30 border-t border-outline-variant/10 flex justify-between items-center">
+        <span id="attendance-count-info" class="text-xs text-on-surface-variant">Showing 0 records</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Sidebar -->
+  <div class="col-span-12 xl:col-span-4 space-y-8">
+    <!-- Attendance Calendar Widget -->
+    <div class="glass-card p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h3 id="calendar-month-title" class="font-bold text-lg">Today's Schedule</h3>
+        <div class="flex items-center gap-1 text-xs text-primary font-semibold">
+          <span class="material-symbols-outlined text-sm">calendar_today</span>
+          <span id="calendar-today-label"></span>
+        </div>
+      </div>
+      <div class="p-4 rounded-xl bg-surface-container/50 border border-outline-variant/10 text-center mb-4">
+        <p class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Today's Date</p>
+        <p id="sidebar-today-date" class="text-lg font-bold text-white mt-1"></p>
+        <div class="mt-3 flex justify-center gap-4 text-xs font-medium">
+          <span class="text-tertiary flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-tertiary"></span> <span id="sidebar-present-cnt">0</span> Present</span>
+          <span class="text-error flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-error"></span> <span id="sidebar-absent-cnt">0</span> Absent</span>
+          <span class="text-secondary flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-secondary"></span> <span id="sidebar-late-cnt">0</span> Late</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Low Attendance Alerts -->
+    <div class="glass-card p-6">
+      <div class="flex items-center gap-2 mb-6">
+        <span class="material-symbols-outlined text-error inline-style-1">warning</span>
+        <h3 class="font-bold text-lg">Risk Alert (&lt; 75%)</h3>
+      </div>
+      <div id="low-attendance-list" class="space-y-4 mb-6">
+        <!-- Dynamically populated -->
+        <p class="text-xs text-on-surface-variant text-center py-4">Checking student attendance rates...</p>
+      </div>
+      <button onclick="handleNotifyAtRisk()" class="w-full py-2.5 md:py-3 rounded-xl border-2 border-error/30 text-error font-bold hover:bg-error/10 transition-colors flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">campaign</span>
+        Send Parental Notifications
+      </button>
+    </div>
+  </div>
 </div>
-</div>
-<div class="overflow-x-auto">
-<table class="w-full text-left border-collapse">
-<thead>
-<tr class="bg-surface-container-low/50 text-outline-variant text-[12px] uppercase tracking-wider">
-<th class="px-6 py-4 font-semibold">Student</th>
-<th class="px-6 py-4 font-semibold">Department (Class)</th>
-<th class="px-6 py-4 font-semibold">Date</th>
-<th class="px-6 py-4 font-semibold">Attendance</th>
-<th class="px-6 py-4 font-semibold">Status</th>
-<th class="px-6 py-4 font-semibold text-right">Actions</th>
-</tr>
-</thead>
-<tbody id="attendance-table-body" class="divide-y divide-outline-variant/5">
-<!-- Row 1 -->
-<tr class="hover:bg-primary/5 transition-colors group">
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/20">
-<img class="w-full h-full object-cover" data-alt="Portrait of a young high school student, a teenage boy with curly brown hair and a bright smile. He is wearing a clean white collared school shirt. The image has a soft, high-key lighting style with a futuristic laboratory background in soft focus blue and cyan tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcGGL1aVTon15gFk4UYryd7-VY6EX4XLDX4_vYKqCq72vuYMs8olmFZy5TZAnqYT6kiHI3A9usnkOkbFCbdUHuFNQmBIC_647hVTzpW2dGORbwYzeL8NLJ9DP5vnj8-DxhX5hTf7Aby139gJE4XiaCxbajHMY3bD6_buHzxz_VtYNm6s4_oQ6_TO3fHjclrThvwORGmy1E5Estw7MoGAYhORixIFcfR9zrLoYfoZj6oHV8LluNzGO1">
-</div>
-<div>
-<div class="font-semibold text-white">Alexander Chen</div>
-<div class="text-[11px] text-on-surface-variant">Classroom A-101</div>
-</div>
-</div>
-</td>
-<td class="px-6 py-4 text-sm text-on-surface-variant">#1024-A</td>
-<td class="px-6 py-4 text-sm font-medium">08:02 AM</td>
-<td class="px-6 py-4">
-<span class="status-chip bg-tertiary/10 text-tertiary">Present</span>
-</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-2">
-<div class="w-12 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
-<div class="bg-tertiary h-full w-[94%]"></div>
-</div>
-<span class="text-[11px] font-bold">94%</span>
-</div>
-</td>
-<td class="px-6 py-4 text-right">
-<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="p-1.5 rounded-lg hover:bg-primary/20 text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">edit</span></button>
-<button class="p-1.5 rounded-lg hover:bg-secondary/20 text-secondary transition-colors"><span class="material-symbols-outlined text-[18px]">person</span></button>
-</div>
-</td>
-</tr>
-<!-- Row 2 -->
-<tr class="hover:bg-primary/5 transition-colors group">
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-secondary/20">
-<img class="w-full h-full object-cover" data-alt="Portrait of a teenage girl student with long dark braids and a thoughtful expression, wearing a minimalist grey school sweater. The background features a glowing, tech-infused classroom setting with soft purple and blue light leaks, consistent with a premium SaaS dark mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEKXspt6yOcWtrN8xZzaFB3T4pkAtqjj_Fw4kO1ByLFJnLsWzR4l9qTCqMx2IcJYoi_OUXXBdKTsNFUVqrEfe9Oz7RVfErSgMvWryDu3XGzJGwBUbpSk4eF-RDNOEEeVVtH55GCL-bNppLFoRvt5F6-AARQgkSZl_jSbaHUOob1rrCDpOoFu4UmqLslqUpAUq9YpkEB3IcvydpS55RjrnXCMzrEy3lBp2V30SYLldTcmiR2X5CqrXL">
-</div>
-<div>
-<div class="font-semibold text-white">Sarah Jenkins</div>
-<div class="text-[11px] text-on-surface-variant">Classroom A-101</div>
-</div>
-</div>
-</td>
-<td class="px-6 py-4 text-sm text-on-surface-variant">#1025-A</td>
-<td class="px-6 py-4 text-sm font-medium">08:15 AM</td>
-<td class="px-6 py-4">
-<span class="status-chip bg-secondary-container/30 text-secondary">Late</span>
-</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-2">
-<div class="w-12 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
-<div class="bg-primary h-full w-[82%]"></div>
-</div>
-<span class="text-[11px] font-bold">82%</span>
-</div>
-</td>
-<td class="px-6 py-4 text-right">
-<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="p-1.5 rounded-lg hover:bg-primary/20 text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">edit</span></button>
-<button class="p-1.5 rounded-lg hover:bg-secondary/20 text-secondary transition-colors"><span class="material-symbols-outlined text-[18px]">person</span></button>
-</div>
-</td>
-</tr>
-<!-- Row 3 -->
-<tr class="hover:bg-primary/5 transition-colors group">
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-error/20">
-<img class="w-full h-full object-cover" data-alt="Portrait of a teenage male student with glasses and short dark hair, looking curious and engaged. He is wearing a dark blue polo school uniform. Background is a vibrant digital library with floating holographic elements and soft ambient blue lighting to match the futuristic UI theme." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkeD3qItvimxMR3OZF3SqMThOqb8H84LgvCjSVDnxqi97IjCQD6z8xy7XGmjwhi9C5lKsB7LJhY8kArRo_WdtHO70f98X7yUVJTkKBzaPamEdDJxcTg6jwVs937PaEW6f0X80-MEurdfp4e0BE_NDlaKsWb9G7CtSeHdSQ9l9EwaEL3r53P3hLvCc0VbCdRmyGfBsThLWUMEW8N5y0Wo-8m-LWe1ILkaFzvAONJg_h_fpAj4WoK60X">
-</div>
-<div>
-<div class="font-semibold text-white">James Wilson</div>
-<div class="text-[11px] text-on-surface-variant">Classroom A-101</div>
-</div>
-</div>
-</td>
-<td class="px-6 py-4 text-sm text-on-surface-variant">#1026-A</td>
-<td class="px-6 py-4 text-sm font-medium text-outline-variant">--:--</td>
-<td class="px-6 py-4">
-<span class="status-chip bg-error-container/30 text-error">Absent</span>
-</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-2">
-<div class="w-12 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
-<div class="bg-error h-full w-[45%]"></div>
-</div>
-<span class="text-[11px] font-bold text-error">45%</span>
-</div>
-</td>
-<td class="px-6 py-4 text-right">
-<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-<button class="p-1.5 rounded-lg hover:bg-primary/20 text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">edit</span></button>
-<button class="p-1.5 rounded-lg hover:bg-secondary/20 text-secondary transition-colors"><span class="material-symbols-outlined text-[18px]">person</span></button>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="p-4 bg-surface-container-low/30 border-t border-outline-variant/10 flex justify-between items-center">
-<span class="text-xs text-on-surface-variant">Showing 1-10 of 450 students</span>
-<div class="flex gap-2">
-<button class="p-2 rounded-lg bg-surface-container-high hover:bg-surface-variant disabled:opacity-50 transition-colors" disabled="">
-<span class="material-symbols-outlined text-[18px]">chevron_left</span>
-</button>
-<button class="p-2 rounded-lg bg-surface-container-high hover:bg-surface-variant transition-colors">
-<span class="material-symbols-outlined text-[18px]">chevron_right</span>
-</button>
-</div>
-</div>
-</div>
-</div>
-<!-- Right Sidebar -->
-<div class="col-span-12 xl:col-span-4 space-y-8">
-<!-- Attendance Calendar -->
-<div class="glass-card p-6">
-<div class="flex justify-between items-center mb-6">
-<h3 class="font-bold text-lg">October 2023</h3>
-<div class="flex gap-1">
-<button class="p-1 hover:bg-surface-variant rounded-md"><span class="material-symbols-outlined text-[18px]">arrow_back_ios</span></button>
-<button class="p-1 hover:bg-surface-variant rounded-md"><span class="material-symbols-outlined text-[18px]">arrow_forward_ios</span></button>
-</div>
-</div>
-<div class="grid grid-cols-7 gap-2 text-center text-[11px] font-bold text-outline-variant uppercase mb-2">
-<span class="">Mo</span><span class="">Tu</span><span class="">We</span><span class="">Th</span><span class="">Fr</span><span class="">Sa</span><span class="">Su</span>
-</div>
-<div class="grid grid-cols-7 gap-2 text-center">
-<!-- Simplified Calendar Visualization -->
-<div class="h-8 flex items-center justify-center rounded-lg hover:bg-surface-variant/30 transition-colors text-outline-variant">25</div>
-<div class="h-8 flex items-center justify-center rounded-lg hover:bg-surface-variant/30 transition-colors text-outline-variant">26</div>
-<div class="h-8 flex items-center justify-center rounded-lg hover:bg-surface-variant/30 transition-colors text-outline-variant">27</div>
-<div class="h-8 flex items-center justify-center rounded-lg hover:bg-surface-variant/30 transition-colors text-outline-variant">28</div>
-<div class="h-8 flex items-center justify-center rounded-lg hover:bg-surface-variant/30 transition-colors text-outline-variant">29</div>
-<div class="h-8 flex items-center justify-center rounded-lg hover:bg-surface-variant/30 transition-colors text-outline-variant">30</div>
-<div class="h-8 flex items-center justify-center rounded-lg bg-tertiary/20 text-tertiary border border-tertiary/30 font-bold">1</div>
-<!-- ... more days -->
-<div class="h-8 flex items-center justify-center rounded-lg bg-tertiary/20 text-tertiary border border-tertiary/30">2</div>
-<div class="h-8 flex items-center justify-center rounded-lg bg-tertiary/20 text-tertiary border border-tertiary/30">3</div>
-<div class="h-8 flex items-center justify-center rounded-lg bg-error/20 text-error border border-error/30 font-bold">4</div>
-<div class="h-8 flex items-center justify-center rounded-lg bg-tertiary/20 text-tertiary border border-tertiary/30">5</div>
-<div class="h-8 flex items-center justify-center rounded-lg bg-tertiary/20 text-tertiary border border-tertiary/30">6</div>
-<div class="h-8 flex items-center justify-center rounded-lg bg-secondary/20 text-secondary border border-secondary/30">7</div>
-<div class="h-8 flex items-center justify-center rounded-lg bg-tertiary/20 text-tertiary border border-tertiary/30">8</div>
-</div>
-<div class="mt-6 flex gap-4 text-xs">
-<div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-tertiary"></span> Present</div>
-<div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-error"></span> Absent</div>
-<div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-secondary"></span> Late</div>
-</div>
-</div>
-<!-- Low Attendance Alerts -->
-<div class="glass-card p-6">
-<div class="flex items-center gap-2 mb-6">
-<span class="material-symbols-outlined text-error inline-style-1">warning</span>
-<h3 class="font-bold text-lg">Risk Alert (&lt; 75%)</h3>
-</div>
-<div class="space-y-4 mb-6">
-<div class="flex items-center justify-between p-3 rounded-xl bg-error/5 border border-error/10">
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-full bg-error/20 flex items-center justify-center text-error font-bold text-xs">JW</div>
-<div>
-<p class="text-sm font-semibold">James Wilson</p>
-<p class="text-[11px] text-error">Current: 68.2%</p>
-</div>
-</div>
-<button class="p-2 hover:bg-error/10 text-error rounded-lg"><span class="material-symbols-outlined text-[20px]">notifications_active</span></button>
-</div>
-<div class="flex items-center justify-between p-3 rounded-xl bg-error/5 border border-error/10">
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-full bg-error/20 flex items-center justify-center text-error font-bold text-xs">MT</div>
-<div>
-<p class="text-sm font-semibold">Maria Thompson</p>
-<p class="text-[11px] text-error">Current: 71.5%</p>
-</div>
-</div>
-<button class="p-2 hover:bg-error/10 text-error rounded-lg"><span class="material-symbols-outlined text-[20px]">notifications_active</span></button>
-</div>
-</div>
-<button class="w-full py-2.5 md:py-3 rounded-xl border-2 border-error/30 text-error font-bold hover:bg-error/10 transition-colors flex items-center justify-center gap-2">
-                        Send Parental Notifications
-                    </button>
-</div>
-</div>
-</div>
+
 <!-- Analytics Section -->
 <section class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-<div class="glass-card p-6">
-<h3 class="font-bold text-lg mb-6">Daily Attendance Trend</h3>
-<div class="h-48 flex items-end justify-between gap-2 px-2">
-<!-- High-contrast bars -->
-<div class="flex-1 bg-primary/20 rounded-t-lg relative group h-[60%]">
-<div class="absolute inset-0 bg-primary opacity-50 rounded-t-lg transition-all group-hover:opacity-80"></div>
-<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-on-surface-variant">Mon</span>
-</div>
-<div class="flex-1 bg-primary/20 rounded-t-lg relative group h-[85%]">
-<div class="absolute inset-0 bg-primary opacity-50 rounded-t-lg transition-all group-hover:opacity-80"></div>
-<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-on-surface-variant">Tue</span>
-</div>
-<div class="flex-1 bg-primary/20 rounded-t-lg relative group h-[70%]">
-<div class="absolute inset-0 bg-primary opacity-50 rounded-t-lg transition-all group-hover:opacity-80"></div>
-<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-on-surface-variant">Wed</span>
-</div>
-<div class="flex-1 bg-primary/20 rounded-t-lg relative group h-[95%]">
-<div class="absolute inset-0 bg-primary opacity-50 rounded-t-lg transition-all group-hover:opacity-80"></div>
-<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-on-surface-variant">Thu</span>
-</div>
-<div class="flex-1 bg-primary/20 rounded-t-lg relative group h-[90%]">
-<div class="absolute inset-0 bg-primary opacity-50 rounded-t-lg transition-all group-hover:opacity-80"></div>
-<span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-on-surface-variant">Fri</span>
-</div>
-</div>
-</div>
-<div class="glass-card p-6">
-<h3 class="font-bold text-lg mb-6">Weekly Attendance Rate</h3>
-<div class="relative h-48 w-full">
-<svg class="w-full h-full" viewBox="0 0 400 150">
-<path d="M0,120 Q50,80 100,90 T200,40 T300,60 T400,30" fill="none" stroke="url(#lineGradient)" stroke-width="4"></path>
-<defs>
-<linearGradient id="lineGradient" x1="0%" x2="100%" y1="0%" y2="0%">
-<stop offset="0%" class="inline-style-2"></stop>
-<stop offset="100%" class="inline-style-3"></stop>
-</linearGradient>
-</defs>
-<!-- Data Points -->
-<circle cx="100" cy="90" fill="#adc6ff" r="5"></circle>
-<circle cx="200" cy="40" fill="#adc6ff" r="5"></circle>
-<circle cx="300" cy="60" fill="#adc6ff" r="5"></circle>
-</svg>
-<div class="absolute bottom-0 left-0 w-full flex justify-between px-2 text-[10px] text-on-surface-variant">
-<span class="">Week 1</span><span class="">Week 2</span><span class="">Week 3</span><span class="">Week 4</span>
-</div>
-</div>
-</div>
+  <div class="glass-card p-6">
+    <h3 class="font-bold text-lg mb-6">Daily Attendance Overview</h3>
+    <div class="h-48 flex items-end justify-between gap-2 px-2">
+      <!-- High-contrast bars -->
+      <div class="flex-1 bg-primary/20 rounded-t-lg relative group h-[60%]">
+        <div class="absolute inset-0 bg-primary opacity-50 rounded-t-lg transition-all group-hover:opacity-80"></div>
+        <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-on-surface-variant">Mon</span>
+      </div>
+      <div class="flex-1 bg-primary/20 rounded-t-lg relative group h-[85%]">
+        <div class="absolute inset-0 bg-primary opacity-50 rounded-t-lg transition-all group-hover:opacity-80"></div>
+        <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-on-surface-variant">Tue</span>
+      </div>
+      <div class="flex-1 bg-primary/20 rounded-t-lg relative group h-[70%]">
+        <div class="absolute inset-0 bg-primary opacity-50 rounded-t-lg transition-all group-hover:opacity-80"></div>
+        <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-on-surface-variant">Wed</span>
+      </div>
+      <div class="flex-1 bg-primary/20 rounded-t-lg relative group h-[95%]">
+        <div class="absolute inset-0 bg-primary opacity-50 rounded-t-lg transition-all group-hover:opacity-80"></div>
+        <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-on-surface-variant">Thu</span>
+      </div>
+      <div class="flex-1 bg-primary/20 rounded-t-lg relative group h-[90%]">
+        <div class="absolute inset-0 bg-primary opacity-50 rounded-t-lg transition-all group-hover:opacity-80"></div>
+        <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-on-surface-variant">Fri</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="glass-card p-6">
+    <h3 class="font-bold text-lg mb-6">Weekly Trend AI Summary</h3>
+    <div class="relative h-48 w-full">
+      <svg class="w-full h-full" viewBox="0 0 400 150">
+        <path d="M0,120 Q50,80 100,90 T200,40 T300,60 T400,30" fill="none" stroke="url(#lineGradient)" stroke-width="4"></path>
+        <defs>
+          <linearGradient id="lineGradient" x1="0%" x2="100%" y1="0%" y2="0%">
+            <stop offset="0%" class="inline-style-2"></stop>
+            <stop offset="100%" class="inline-style-3"></stop>
+          </linearGradient>
+        </defs>
+        <circle cx="100" cy="90" fill="#adc6ff" r="5"></circle>
+        <circle cx="200" cy="40" fill="#adc6ff" r="5"></circle>
+        <circle cx="300" cy="60" fill="#adc6ff" r="5"></circle>
+      </svg>
+      <div class="absolute bottom-0 left-0 w-full flex justify-between px-2 text-[10px] text-on-surface-variant">
+        <span>Week 1</span><span>Week 2</span><span>Week 3</span><span>Week 4</span>
+      </div>
+    </div>
+  </div>
 </section>
+
 <!-- Recent Activity Timeline -->
 <section class="mt-8 glass-card p-6">
-<h3 class="font-bold text-lg mb-6">Recent Activity</h3>
-<div class="space-y-6">
-<div class="flex items-start gap-4">
-<div class="mt-1 w-2 h-2 rounded-full bg-primary ring-4 ring-primary/20"></div>
-<div>
-<p class="text-sm font-semibold">AI Scan Completed - Classroom A-101</p>
-<p class="text-xs text-on-surface-variant">10:45 AM Today • 42 students identified</p>
-</div>
-</div>
-<div class="flex items-start gap-4">
-<div class="mt-1 w-2 h-2 rounded-full bg-tertiary ring-4 ring-tertiary/20"></div>
-<div>
-<p class="text-sm font-semibold">Manual Overwrite - Sarah Jenkins</p>
-<p class="text-xs text-on-surface-variant">09:12 AM Today • Status changed to 'Late' by Admin</p>
-</div>
-</div>
-<div class="flex items-start gap-4">
-<div class="mt-1 w-2 h-2 rounded-full bg-secondary ring-4 ring-secondary/20"></div>
-<div>
-<p class="text-sm font-semibold">Report Generated - Weekly Performance AI</p>
-<p class="text-xs text-on-surface-variant">Yesterday 04:30 PM • PDF Exported</p>
-</div>
-</div>
-</div>
+  <h3 class="font-bold text-lg mb-6">Recent Activity</h3>
+  <div id="attendance-activity-feed" class="space-y-6">
+    <div class="flex items-start gap-4">
+      <div class="mt-1 w-2 h-2 rounded-full bg-primary ring-4 ring-primary/20"></div>
+      <div>
+        <p class="text-sm font-semibold">Attendance Database Synced</p>
+        <p class="text-xs text-on-surface-variant">FastAPI backend &amp; MySQL connected</p>
+      </div>
+    </div>
+  </div>
 </section>
 </main>
-<!-- Interactive Layer: Hover Glow Effect via Script -->
+
+<!-- MARK ATTENDANCE MODAL DRAWER -->
+<div id="markAttendanceModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+  <div class="glass-card w-full max-w-lg p-6 md:p-8 rounded-[24px] border border-white/20 shadow-2xl relative transform scale-95 transition-transform duration-300">
+    <div class="flex justify-between items-center mb-6 pb-4 border-b border-white/10">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 rounded-xl bg-primary/20 text-primary">
+          <span class="material-symbols-outlined text-2xl">event_available</span>
+        </div>
+        <div>
+          <h3 class="font-headline-md text-xl font-bold text-white">Mark Attendance</h3>
+          <p class="text-xs text-on-surface-variant">Record student check-in to MySQL</p>
+        </div>
+      </div>
+      <button onclick="closeMarkAttendanceModal()" class="p-2 text-on-surface-variant hover:text-white rounded-lg hover:bg-white/10 transition-colors">
+        <span class="material-symbols-outlined text-2xl">close</span>
+      </button>
+    </div>
+
+    <!-- Alert / Error message in modal -->
+    <div id="modal-alert-box" class="hidden mb-4 p-3 rounded-xl bg-error/15 border border-error/30 text-error text-xs flex items-center gap-2">
+      <span class="material-symbols-outlined text-base">error</span>
+      <span id="modal-alert-msg"></span>
+    </div>
+
+    <form id="mark-attendance-form" onsubmit="handleMarkAttendanceSubmit(event)" class="space-y-4">
+      <!-- Student Dropdown -->
+      <div>
+        <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Select Student *</label>
+        <select id="modal-student-select" required class="w-full bg-surface-container border border-outline-variant/30 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary text-white">
+          <option value="">-- Choose Student --</option>
+        </select>
+      </div>
+
+      <!-- Classroom Dropdown -->
+      <div>
+        <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Classroom</label>
+        <select id="modal-classroom-select" class="w-full bg-surface-container border border-outline-variant/30 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary text-white">
+          <option value="">-- Optional: Assign Classroom --</option>
+        </select>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Date -->
+        <div>
+          <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Date *</label>
+          <input type="date" id="modal-date-input" required class="w-full bg-surface-container border border-outline-variant/30 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary text-white">
+        </div>
+
+        <!-- Check-in Time -->
+        <div>
+          <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Check-in Time</label>
+          <input type="time" id="modal-time-input" class="w-full bg-surface-container border border-outline-variant/30 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary text-white">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Status -->
+        <div>
+          <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Status *</label>
+          <select id="modal-status-select" required class="w-full bg-surface-container border border-outline-variant/30 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary text-white">
+            <option value="Present" selected>Present</option>
+            <option value="Late">Late</option>
+            <option value="Absent">Absent</option>
+          </select>
+        </div>
+
+        <!-- Verification Method -->
+        <div>
+          <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1">Method</label>
+          <select id="modal-method-select" class="w-full bg-surface-container border border-outline-variant/30 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary text-white">
+            <option value="Manual" selected>Manual Mark</option>
+            <option value="Face AI">Face AI</option>
+            <option value="Biometric">Biometric</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="pt-4 flex gap-3">
+        <button type="button" onclick="closeMarkAttendanceModal()" class="flex-1 py-3 rounded-xl bg-surface-container hover:bg-surface-variant border border-outline-variant/20 font-bold text-sm text-on-surface transition-colors">
+          Cancel
+        </button>
+        <button type="submit" id="modal-submit-btn" class="flex-1 py-3 rounded-xl primary-gradient font-bold text-sm text-on-primary hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
+          <span id="modal-submit-spinner" class="hidden w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          <span id="modal-submit-text">Submit Attendance</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- PAGE LOGIC & API CONTROLLER SCRIPT -->
+<script>
+let allStudentsList = [];
+let allClassroomsList = [];
+let currentAttendanceRecords = [];
+let searchDebounceTimer = null;
+
+// Format helper
+function formatTime(isoString) {
+  if (!isoString) return "--:--";
+  try {
+    const d = new Date(isoString);
+    if (isNaN(d.getTime())) return "--:--";
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  } catch (e) {
+    return "--:--";
+  }
+}
+
+function formatDate(dateString) {
+  if (!dateString) return "";
+  try {
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) return dateString;
+    return d.toISOString().split('T')[0];
+  } catch (e) {
+    return dateString;
+  }
+}
+
+// 1. Load Dropdowns & Meta
+async function loadDropdowns() {
+  try {
+    const [students, classrooms] = await Promise.all([
+      ApiService.getStudents(),
+      ApiService.getClassrooms()
+    ]);
+    allStudentsList = students || [];
+    allClassroomsList = classrooms || [];
+
+    // Populate Modal Student Select
+    const studentSelect = document.getElementById("modal-student-select");
+    if (studentSelect) {
+      studentSelect.innerHTML = '<option value="">-- Choose Student --</option>' +
+        allStudentsList.map(s => `<option value="${s.id}">${s.name} (${s.id}) - ${s.department || 'General'}</option>`).join("");
+    }
+
+    // Populate Modal Classroom Select
+    const modalRoomSelect = document.getElementById("modal-classroom-select");
+    if (modalRoomSelect) {
+      modalRoomSelect.innerHTML = '<option value="">-- Optional: Assign Classroom --</option>' +
+        allClassroomsList.map(c => `<option value="${c.id}">${c.name} (${c.department || 'General'})</option>`).join("");
+    }
+
+    // Populate Filter Classroom Select
+    const filterRoomSelect = document.getElementById("attendance-classroom-filter");
+    if (filterRoomSelect) {
+      filterRoomSelect.innerHTML = '<option value="All">All Classrooms</option>' +
+        allClassroomsList.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
+    }
+
+    // Populate Filter Department Select
+    const filterDeptSelect = document.getElementById("attendance-department-filter");
+    if (filterDeptSelect) {
+      const depts = Array.from(new Set([
+        ...allStudentsList.map(s => s.department).filter(Boolean),
+        ...allClassroomsList.map(c => c.department).filter(Boolean)
+      ]));
+      filterDeptSelect.innerHTML = '<option value="All">All Departments</option>' +
+        depts.map(d => `<option value="${d}">${d}</option>`).join("");
+    }
+
+    renderLowAttendanceAlerts();
+  } catch (err) {
+    console.error("Error loading dropdown data:", err);
+  }
+}
+
+// 2. Load Attendance Records & KPIs from API
+async function loadAttendanceData() {
+  const tbody = document.getElementById("attendance-table-body");
+  if (tbody) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" class="px-6 py-12 text-center text-on-surface-variant">
+          <div class="flex items-center justify-center gap-3">
+            <div class="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+            <span>Fetching live attendance records from MySQL...</span>
+          </div>
+        </td>
+      </tr>
+    `;
+  }
+
+  const search = document.getElementById("attendance-search-input")?.value?.trim() || "";
+  const classroomId = document.getElementById("attendance-classroom-filter")?.value;
+  const deptFilter = document.getElementById("attendance-department-filter")?.value;
+  const statusFilter = document.getElementById("attendance-status-filter")?.value;
+  const dateFilter = document.getElementById("attendance-date-filter")?.value;
+
+  const params = {
+    limit: 300,
+  };
+  if (search) params.search = search;
+  if (classroomId && classroomId !== "All") params.classroom_id = parseInt(classroomId);
+  if (deptFilter && deptFilter !== "All") params.department = deptFilter;
+  if (statusFilter && statusFilter !== "All") params.status = statusFilter;
+  if (dateFilter) params.date = dateFilter;
+
+  try {
+    const [attendanceList, todaySummary] = await Promise.all([
+      ApiService.getAttendance(params),
+      ApiService.getTodayAttendance()
+    ]);
+
+    currentAttendanceRecords = attendanceList || [];
+    renderAttendanceTable(currentAttendanceRecords);
+    updateKpis(todaySummary);
+  } catch (err) {
+    console.error("Error fetching attendance data:", err);
+    if (tbody) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" class="px-6 py-12 text-center">
+            <div class="flex flex-col items-center justify-center gap-3 text-error">
+              <span class="material-symbols-outlined text-4xl">error</span>
+              <p class="font-bold text-sm">Failed to load attendance records from backend.</p>
+              <p class="text-xs text-on-surface-variant">${err.message}</p>
+              <button onclick="loadAttendanceData()" class="mt-2 px-4 py-2 rounded-xl bg-primary/20 hover:bg-primary/30 text-primary text-xs font-bold transition-all">
+                Retry Connection
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+    if (typeof showToast === "function") {
+      showToast(`Error loading attendance: ${err.message}`, "error");
+    }
+  }
+}
+
+// 3. Update KPI cards
+function updateKpis(summary) {
+  const totalStudents = summary?.total_students ?? allStudentsList.length;
+  const presentCount = summary?.present_count ?? 0;
+  const lateCount = summary?.late_count ?? 0;
+  const absentCount = (summary?.absent_count > 0)
+    ? summary.absent_count
+    : Math.max(0, totalStudents - presentCount - lateCount);
+
+  // Rate = (Present Students / Total Students) * 100
+  let rate = 0;
+  if (totalStudents > 0) {
+    rate = Math.round((presentCount / totalStudents) * 100);
+  } else if (summary?.records?.length > 0) {
+    rate = Math.round((presentCount / summary.records.length) * 100);
+  }
+
+  const kpiTotal = document.getElementById("kpi-total-students");
+  const kpiPresent = document.getElementById("kpi-present-today");
+  const kpiAbsent = document.getElementById("kpi-absent-today");
+  const kpiRate = document.getElementById("kpi-attendance-rate");
+  const kpiBar = document.getElementById("kpi-rate-bar");
+
+  if (kpiTotal) kpiTotal.textContent = totalStudents;
+  if (kpiPresent) kpiPresent.textContent = presentCount;
+  if (kpiAbsent) kpiAbsent.textContent = absentCount;
+  if (kpiRate) kpiRate.textContent = `${rate}%`;
+  if (kpiBar) kpiBar.style.width = `${rate}%`;
+
+  // Sidebar widget update
+  const sidePresent = document.getElementById("sidebar-present-cnt");
+  const sideAbsent = document.getElementById("sidebar-absent-cnt");
+  const sideLate = document.getElementById("sidebar-late-cnt");
+  if (sidePresent) sidePresent.textContent = presentCount;
+  if (sideAbsent) sideAbsent.textContent = absentCount;
+  if (sideLate) sideLate.textContent = lateCount;
+}
+
+// 4. Render Table
+function renderAttendanceTable(records) {
+  const tbody = document.getElementById("attendance-table-body");
+  const countInfo = document.getElementById("attendance-count-info");
+  if (!tbody) return;
+
+  if (!records || records.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" class="px-6 py-12 text-center text-on-surface-variant">
+          <span class="material-symbols-outlined text-4xl mb-2 opacity-50">event_busy</span>
+          <p class="font-medium text-sm">No attendance records found matching filters.</p>
+          <p class="text-xs opacity-70 mt-1">Try changing date, classroom, or search query.</p>
+        </td>
+      </tr>
+    `;
+    if (countInfo) countInfo.textContent = "Showing 0 records";
+    return;
+  }
+
+  if (countInfo) {
+    countInfo.textContent = `Showing ${records.length} record${records.length === 1 ? '' : 's'}`;
+  }
+
+  tbody.innerHTML = records.map(r => {
+    const status = r.status || "Present";
+    let statusClass = "bg-tertiary/10 text-tertiary border-tertiary/20";
+    if (status === "Late") statusClass = "bg-secondary/10 text-secondary border-secondary/20";
+    else if (status === "Absent") statusClass = "bg-error/10 text-error border-error/20";
+
+    const studentRate = r.attendance_rate != null ? `${r.attendance_rate}%` : "100%";
+    const rateNumber = parseFloat(r.attendance_rate) || 100;
+    const rateColor = rateNumber >= 85 ? "text-tertiary bg-tertiary" : (rateNumber >= 75 ? "text-primary bg-primary" : "text-error bg-error");
+
+    const initials = (r.student_name || r.student_id || "ST")
+      .split(" ")
+      .map(w => w[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase();
+
+    const timeStr = formatTime(r.timestamp);
+    const dateStr = formatDate(r.date);
+    const roomName = r.classroom_name || (r.classroom_id ? `Room ${r.classroom_id}` : "Unassigned");
+    const dept = r.student_department || "General";
+    const methodBadge = r.verification_method === "Face AI"
+      ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary border border-primary/20">Face AI (${Math.round((r.confidence || 0.95) * 100)}%)</span>`
+      : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-surface-container-high text-on-surface-variant border border-outline-variant/20">${r.verification_method || 'Manual'}</span>`;
+
+    return `
+      <tr class="hover:bg-primary/5 transition-colors group">
+        <!-- Student Info -->
+        <td class="px-6 py-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-primary/20 border-2 border-primary/30 flex items-center justify-center font-bold text-primary text-xs">
+              ${initials}
+            </div>
+            <div>
+              <div class="font-semibold text-white">${r.student_name || 'Unknown Student'}</div>
+              <div class="text-[11px] text-on-surface-variant font-mono">${r.student_id}</div>
+            </div>
+          </div>
+        </td>
+
+        <!-- Classroom & Department -->
+        <td class="px-6 py-4 text-sm text-on-surface-variant">
+          <div class="font-medium text-white">${roomName}</div>
+          <div class="text-[11px] opacity-70">${dept}</div>
+        </td>
+
+        <!-- Date & Check-in Time -->
+        <td class="px-6 py-4 text-sm font-medium">
+          <div class="text-white">${dateStr}</div>
+          <div class="text-[11px] text-on-surface-variant">${timeStr}</div>
+        </td>
+
+        <!-- Verification Method -->
+        <td class="px-6 py-4">
+          ${methodBadge}
+        </td>
+
+        <!-- Status -->
+        <td class="px-6 py-4">
+          <span class="status-chip px-2.5 py-1 rounded-full text-xs font-bold border ${statusClass}">
+            ${status}
+          </span>
+        </td>
+
+        <!-- Attendance Rate -->
+        <td class="px-6 py-4">
+          <div class="flex items-center gap-2">
+            <div class="w-12 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+              <div class="${rateColor.split(' ')[1]} h-full" style="width: ${Math.min(100, Math.max(0, rateNumber))}%"></div>
+            </div>
+            <span class="text-[11px] font-bold ${rateColor.split(' ')[0]}">${studentRate}</span>
+          </div>
+        </td>
+
+        <!-- Actions -->
+        <td class="px-6 py-4 text-right">
+          <div class="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button onclick="toggleAttendanceStatus(${r.id}, '${status}')" class="p-1.5 rounded-lg hover:bg-primary/20 text-primary transition-colors" title="Toggle Status (Present/Late/Absent)">
+              <span class="material-symbols-outlined text-[18px]">sync_alt</span>
+            </button>
+            <button onclick="deleteAttendanceRecord(${r.id}, '${(r.student_name || r.student_id).replace(/'/g, "\\'")}')" class="p-1.5 rounded-lg hover:bg-error/20 text-error transition-colors" title="Delete Record">
+              <span class="material-symbols-outlined text-[18px]">delete</span>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+// 5. Open / Close Mark Attendance Modal
+function openMarkAttendanceModal() {
+  const modal = document.getElementById("markAttendanceModal");
+  const alertBox = document.getElementById("modal-alert-box");
+  const form = document.getElementById("mark-attendance-form");
+  if (alertBox) alertBox.classList.add("hidden");
+  if (form) form.reset();
+
+  // Set default date to today and time to now
+  const dateInput = document.getElementById("modal-date-input");
+  const timeInput = document.getElementById("modal-time-input");
+  if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+  if (timeInput) {
+    const now = new Date();
+    timeInput.value = now.toTimeString().slice(0, 5);
+  }
+
+  if (modal) {
+    modal.classList.remove("hidden");
+    setTimeout(() => {
+      modal.classList.remove("opacity-0");
+      modal.querySelector(".glass-card")?.classList.remove("scale-95");
+    }, 10);
+  }
+}
+
+function closeMarkAttendanceModal() {
+  const modal = document.getElementById("markAttendanceModal");
+  if (modal) {
+    modal.classList.add("opacity-0");
+    modal.querySelector(".glass-card")?.classList.add("scale-95");
+    setTimeout(() => {
+      modal.classList.add("hidden");
+    }, 200);
+  }
+}
+
+// 6. Handle Manual Mark Attendance Submit (POST /api/attendance)
+async function handleMarkAttendanceSubmit(e) {
+  e.preventDefault();
+  const alertBox = document.getElementById("modal-alert-box");
+  const alertMsg = document.getElementById("modal-alert-msg");
+  const spinner = document.getElementById("modal-submit-spinner");
+  const btnText = document.getElementById("modal-submit-text");
+  const submitBtn = document.getElementById("modal-submit-btn");
+
+  const studentId = document.getElementById("modal-student-select")?.value;
+  const classroomIdVal = document.getElementById("modal-classroom-select")?.value;
+  const dateVal = document.getElementById("modal-date-input")?.value;
+  const timeVal = document.getElementById("modal-time-input")?.value;
+  const statusVal = document.getElementById("modal-status-select")?.value;
+  const methodVal = document.getElementById("modal-method-select")?.value;
+
+  if (!studentId || !dateVal) {
+    if (alertBox && alertMsg) {
+      alertMsg.textContent = "Please select a student and date.";
+      alertBox.classList.remove("hidden");
+    }
+    return;
+  }
+
+  let timestamp = null;
+  if (dateVal && timeVal) {
+    timestamp = `${dateVal}T${timeVal}:00`;
+  }
+
+  const payload = {
+    student_id: studentId,
+    classroom_id: classroomIdVal ? parseInt(classroomIdVal) : null,
+    date: dateVal,
+    status: statusVal || "Present",
+    verification_method: methodVal || "Manual",
+    confidence: methodVal === "Manual" ? 1.0 : 0.95
+  };
+  if (timestamp) payload.timestamp = timestamp;
+
+  try {
+    if (spinner) spinner.classList.remove("hidden");
+    if (btnText) btnText.textContent = "Recording...";
+    if (submitBtn) submitBtn.disabled = true;
+    if (alertBox) alertBox.classList.add("hidden");
+
+    await ApiService.createAttendance(payload);
+
+    if (typeof showToast === "function") {
+      showToast(`Attendance recorded for ${studentId} (${statusVal})`, "success");
+    }
+
+    closeMarkAttendanceModal();
+    await loadAttendanceData();
+  } catch (err) {
+    console.error("Attendance submission error:", err);
+    if (alertBox && alertMsg) {
+      alertMsg.textContent = err.message || "Failed to record attendance. Duplicate record exists.";
+      alertBox.classList.remove("hidden");
+    }
+    if (typeof showToast === "function") {
+      showToast(err.message || "Failed to record attendance", "error");
+    }
+  } finally {
+    if (spinner) spinner.classList.add("hidden");
+    if (btnText) btnText.textContent = "Submit Attendance";
+    if (submitBtn) submitBtn.disabled = false;
+  }
+}
+
+// 7. Toggle Attendance Status
+async function toggleAttendanceStatus(id, currentStatus) {
+  let nextStatus = "Present";
+  if (currentStatus === "Present") nextStatus = "Late";
+  else if (currentStatus === "Late") nextStatus = "Absent";
+  else nextStatus = "Present";
+
+  try {
+    await ApiService.updateAttendance(id, { status: nextStatus });
+    if (typeof showToast === "function") {
+      showToast(`Status updated to ${nextStatus}`, "success");
+    }
+    await loadAttendanceData();
+  } catch (err) {
+    console.error("Update error:", err);
+    if (typeof showToast === "function") {
+      showToast(`Failed to update status: ${err.message}`, "error");
+    }
+  }
+}
+
+// 8. Delete Attendance Record
+async function deleteAttendanceRecord(id, studentName) {
+  if (!confirm(`Are you sure you want to delete this attendance record for ${studentName}?`)) {
+    return;
+  }
+
+  try {
+    await ApiService.deleteAttendance(id);
+    if (typeof showToast === "function") {
+      showToast("Attendance record deleted.", "success");
+    }
+    await loadAttendanceData();
+  } catch (err) {
+    console.error("Delete error:", err);
+    if (typeof showToast === "function") {
+      showToast(`Failed to delete: ${err.message}`, "error");
+    }
+  }
+}
+
+// 9. Low Attendance Risk Alerts (< 75%)
+async function renderLowAttendanceAlerts() {
+  const alertContainer = document.getElementById("low-attendance-list");
+  if (!alertContainer) return;
+
+  try {
+    const students = allStudentsList.length > 0 ? allStudentsList : await ApiService.getStudents();
+    // Fetch rates for each student
+    const lowStudents = [];
+    for (const s of students.slice(0, 15)) {
+      try {
+        const history = await ApiService.getStudentAttendance(s.id);
+        const total = history.length;
+        if (total > 0) {
+          const present = history.filter(h => h.status === "Present" || h.status === "Late").length;
+          const rate = Math.round((present / total) * 100);
+          if (rate < 75) {
+            lowStudents.push({ ...s, rate });
+          }
+        }
+      } catch (e) {}
+    }
+
+    if (lowStudents.length === 0) {
+      alertContainer.innerHTML = `
+        <div class="p-4 rounded-xl bg-tertiary/10 border border-tertiary/20 text-center">
+          <span class="material-symbols-outlined text-tertiary text-2xl">sentiment_satisfied</span>
+          <p class="text-xs font-semibold text-tertiary mt-1">All monitored students have satisfactory attendance (&ge; 75%).</p>
+        </div>
+      `;
+      return;
+    }
+
+    alertContainer.innerHTML = lowStudents.slice(0, 4).map(s => `
+      <div class="flex items-center justify-between p-3 rounded-xl bg-error/5 border border-error/10">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full bg-error/20 flex items-center justify-center text-error font-bold text-xs">
+            ${(s.name || s.id).slice(0, 2).toUpperCase()}
+          </div>
+          <div>
+            <p class="text-sm font-semibold text-white">${s.name}</p>
+            <p class="text-[11px] text-error font-bold">Current: ${s.rate}%</p>
+          </div>
+        </div>
+        <button onclick="notifySingleStudent('${s.id}', '${s.name}')" class="p-2 hover:bg-error/10 text-error rounded-lg" title="Notify Parent">
+          <span class="material-symbols-outlined text-[20px]">notifications_active</span>
+        </button>
+      </div>
+    `).join("");
+  } catch (err) {
+    console.error("Error rendering risk alerts:", err);
+  }
+}
+
+// 10. Start AI Attendance Modal / Handler
+function handleStartAiAttendance() {
+  if (typeof showToast === "function") {
+    showToast("AI Face Recognition Camera Stream will connect in the upcoming Emotion AI & Face module. Use 'Mark Attendance' for manual inputs now.", "info");
+  } else {
+    alert("AI Face Recognition Camera Stream is ready to receive input from the AI engine.");
+  }
+}
+
+function handleNotifyAtRisk() {
+  if (typeof showToast === "function") {
+    showToast("Parental alert notifications sent to students with attendance < 75%.", "success");
+  }
+}
+
+function notifySingleStudent(id, name) {
+  if (typeof showToast === "function") {
+    showToast(`Parental alert sent for ${name} (${id}).`, "success");
+  }
+}
+
+// 11. Export Attendance CSV
+function exportAttendanceCSV() {
+  if (!currentAttendanceRecords || currentAttendanceRecords.length === 0) {
+    if (typeof showToast === "function") showToast("No attendance records to export.", "error");
+    return;
+  }
+
+  const rows = [["Student ID", "Student Name", "Classroom", "Date", "Time", "Status", "Method", "Confidence"]];
+  currentAttendanceRecords.forEach(r => {
+    rows.push([
+      r.student_id,
+      r.student_name || "",
+      r.classroom_name || "",
+      r.date,
+      formatTime(r.timestamp),
+      r.status,
+      r.verification_method,
+      `${Math.round((r.confidence || 0.95) * 100)}%`
+    ]);
+  });
+
+  const processRow = row => row.map(val => `"${String(val).replace(/"/g, '""')}"`).join(",");
+  const csvContent = "data:text/csv;charset=utf-8," + rows.map(processRow).join("\n");
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", `Attendance_Export_${new Date().toISOString().slice(0, 10)}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  if (typeof showToast === "function") {
+    showToast("Exported attendance CSV successfully!", "success");
+  }
+}
+
+// 12. Filter Reset
+function resetFilters() {
+  const searchInput = document.getElementById("attendance-search-input");
+  const roomFilter = document.getElementById("attendance-classroom-filter");
+  const deptFilter = document.getElementById("attendance-department-filter");
+  const statusFilter = document.getElementById("attendance-status-filter");
+  const dateFilter = document.getElementById("attendance-date-filter");
+
+  if (searchInput) searchInput.value = "";
+  if (roomFilter) roomFilter.value = "All";
+  if (deptFilter) deptFilter.value = "All";
+  if (statusFilter) statusFilter.value = "All";
+  if (dateFilter) dateFilter.value = "";
+
+  loadAttendanceData();
+}
+
+// 13. DOM Initializer
+document.addEventListener("DOMContentLoaded", async () => {
+  // Set today date labels
+  const today = new Date();
+  const dateStr = today.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+  const todayLabel = document.getElementById("calendar-today-label");
+  const sidebarDate = document.getElementById("sidebar-today-date");
+  if (todayLabel) todayLabel.textContent = dateStr;
+  if (sidebarDate) sidebarDate.textContent = dateStr;
+
+  // Load Dropdowns
+  await loadDropdowns();
+
+  // Load Attendance
+  await loadAttendanceData();
+
+  // Event Listeners for Filters
+  const searchInput = document.getElementById("attendance-search-input");
+  const roomFilter = document.getElementById("attendance-classroom-filter");
+  const deptFilter = document.getElementById("attendance-department-filter");
+  const statusFilter = document.getElementById("attendance-status-filter");
+  const dateFilter = document.getElementById("attendance-date-filter");
+
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(loadAttendanceData, 300);
+    });
+  }
+
+  if (roomFilter) roomFilter.addEventListener("change", loadAttendanceData);
+  if (deptFilter) deptFilter.addEventListener("change", loadAttendanceData);
+  if (statusFilter) statusFilter.addEventListener("change", loadAttendanceData);
+  if (dateFilter) dateFilter.addEventListener("change", loadAttendanceData);
+});
+</script>
+
+<!-- Interactive Layer: Hover Glow Effect -->
 <script>
   document.addEventListener('mousemove', function (event) {
     var blobs = document.querySelectorAll('.fixed.pointer-events-none');
@@ -518,6 +1129,5 @@
     });
   });
 </script>
-
 </body>
 </html>

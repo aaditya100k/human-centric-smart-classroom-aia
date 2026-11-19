@@ -3,6 +3,9 @@
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>Student Management | Aura AI</title>
+<script>window.isStudentManagementApiManaged = true;</script>
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
 <script src="../js/data.js"></script>
 <script src="../js/page-handlers.js"></script>
 <script src="../js/layout.js"></script>
@@ -137,7 +140,7 @@
 </div>
 <p class="text-label-sm font-label-sm md:text-base text-on-surface-variant uppercase">Total Students</p>
 <div class="flex items-end gap-2">
-<span class="text-3xl font-bold">450</span>
+<span class="text-3xl font-bold" id="stat-total-students">--</span>
 <span class="text-tertiary text-xs font-bold mb-1">+4%</span>
 </div>
 </div>
@@ -147,8 +150,8 @@
 </div>
 <p class="text-label-sm font-label-sm md:text-base text-on-surface-variant uppercase">Active Students</p>
 <div class="flex items-end gap-2">
-<span class="text-3xl font-bold">412</span>
-<span class="text-primary text-xs font-bold mb-1">91.5%</span>
+<span class="text-3xl font-bold" id="stat-active-students">--</span>
+<span class="text-primary text-xs font-bold mb-1" id="stat-active-percent">--%</span>
 </div>
 </div>
 <div class="glass-card p-4 md:p-5 lg:p-6 rounded-[20px] flex flex-col gap-2 relative overflow-hidden group inline-style-4">
@@ -157,7 +160,7 @@
 </div>
 <p class="text-label-sm font-label-sm md:text-base text-on-surface-variant uppercase">New Registrations</p>
 <div class="flex items-end gap-2">
-<span class="text-3xl font-bold">15</span>
+<span class="text-3xl font-bold" id="stat-new-registrations">--</span>
 <span class="text-on-surface-variant/50 text-xs mb-1">this month</span>
 </div>
 </div>
@@ -167,7 +170,7 @@
 </div>
 <p class="text-label-sm font-label-sm md:text-base text-on-surface-variant uppercase">Low Attendance</p>
 <div class="flex items-end gap-2">
-<span class="text-3xl font-bold text-error">24</span>
+<span class="text-3xl font-bold text-error" id="stat-low-attendance">--</span>
 <span class="text-error/70 text-xs font-bold mb-1">Action Req.</span>
 </div>
 </div>
@@ -175,7 +178,7 @@
 <!-- Toolbar Section -->
 <div class="flex flex-wrap items-center justify-between gap-4 md:p-5 lg:p-6 mb-6">
 <div class="flex gap-2">
-<button class="gradient-btn text-on-primary-container px-6 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2" onclick="openModal()">
+<button class="gradient-btn text-on-primary-container px-6 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2" onclick="openAddModal()">
 <span class="material-symbols-outlined text-xl">person_add</span>
                     Add Student
                 </button>
@@ -218,7 +221,7 @@
 </div>
 <!-- Pagination -->
 <div class="px-6 py-4 flex items-center justify-between border-t border-white/10 bg-white/2">
-<p class="text-sm text-on-surface-variant">Showing 1 to 4 of 450 students</p>
+<p class="text-sm text-on-surface-variant" id="pagination-info">Loading students...</p>
 <div class="flex gap-2">
 <button class="p-2 rounded-lg border border-white/10 hover:bg-white/5 transition-colors disabled:opacity-50" disabled="">
 <span class="material-symbols-outlined">chevron_left</span>
@@ -239,13 +242,14 @@
 <div class="h-full flex flex-col p-8 overflow-y-auto custom-scrollbar">
 <!-- Header -->
 <div class="flex items-center justify-between mb-8">
-<h3 class="font-headline-md text-headline-md md:text-2xl lg:text-3xl text-primary">Register New Student</h3>
-<button class="p-2 hover:bg-white/10 rounded-full transition-colors" onclick="closeModal()">
+<h3 class="font-headline-md text-headline-md md:text-2xl lg:text-3xl text-primary" id="modal-title">Register New Student</h3>
+<button class="p-2 hover:bg-white/10 rounded-full transition-colors" onclick="closeModal()" type="button">
 <span class="material-symbols-outlined">close</span>
 </button>
 </div>
 <!-- Form -->
 <form class="space-y-6" id="add-student-form">
+<input type="hidden" id="student-edit-id" value="">
 <!-- Photo Upload -->
 <div class="space-y-2">
 <label class="text-sm font-bold text-on-surface-variant uppercase tracking-wider">Student Profile Photo</label>
@@ -261,31 +265,44 @@
 </div>
 <div class="grid grid-cols-2 gap-4">
 <div class="space-y-1">
-<label class="text-xs font-bold text-on-surface-variant uppercase">Full Name</label>
-<input class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 md:py-3 text-sm focus:ring-2 focus:ring-primary/30 focus:border-primary focus:outline-none transition-all" placeholder="e.g. Alex Johnson" type="text">
+<label class="text-xs font-bold text-on-surface-variant uppercase">Full Name *</label>
+<input id="student-name-input" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 md:py-3 text-sm focus:ring-2 focus:ring-primary/30 focus:border-primary focus:outline-none transition-all" placeholder="e.g. Alex Johnson" type="text">
 </div>
 <div class="space-y-1">
-<label class="text-xs font-bold text-on-surface-variant uppercase">Roll Number</label>
-<input class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 md:py-3 text-sm focus:ring-2 focus:ring-primary/30 focus:border-primary focus:outline-none transition-all" placeholder="ST-2024-XXX" type="text">
+<label class="text-xs font-bold text-on-surface-variant uppercase">Roll Number *</label>
+<input id="student-roll-input" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 md:py-3 text-sm focus:ring-2 focus:ring-primary/30 focus:border-primary focus:outline-none transition-all" placeholder="ST-2024-XXX" type="text">
 </div>
-</div>
-<div class="space-y-1">
-<label class="text-xs font-bold text-on-surface-variant uppercase">Email Address</label>
-<input class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 md:py-3 text-sm focus:ring-2 focus:ring-primary/30 focus:border-primary focus:outline-none transition-all" placeholder="student@aura.edu" type="email">
 </div>
 <div class="grid grid-cols-2 gap-4">
 <div class="space-y-1">
-<label class="text-xs font-bold text-on-surface-variant uppercase">Department</label>
-<select class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 md:py-3 text-sm focus:ring-2 focus:ring-primary/30 focus:border-primary focus:outline-none transition-all appearance-none">
+<label class="text-xs font-bold text-on-surface-variant uppercase">Email Address *</label>
+<input id="student-email-input" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 md:py-3 text-sm focus:ring-2 focus:ring-primary/30 focus:border-primary focus:outline-none transition-all" placeholder="student@aura.edu" type="email">
+</div>
+<div class="space-y-1">
+<label class="text-xs font-bold text-on-surface-variant uppercase">Status</label>
+<select id="student-status-select" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 md:py-3 text-sm focus:ring-2 focus:ring-primary/30 focus:border-primary focus:outline-none transition-all appearance-none">
+<option class="bg-surface" value="Active">Active</option>
+<option class="bg-surface" value="Inactive">Inactive</option>
+</select>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1">
+<label class="text-xs font-bold text-on-surface-variant uppercase">Department *</label>
+<select id="student-dept-select" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 md:py-3 text-sm focus:ring-2 focus:ring-primary/30 focus:border-primary focus:outline-none transition-all appearance-none">
 <option class="bg-surface" value="">Select Department</option>
-<option class="bg-surface" value="science">Science</option>
-<option class="bg-surface" value="arts">Arts</option>
-<option class="bg-surface" value="engineering">Engineering</option>
+<option class="bg-surface" value="Science">Science</option>
+<option class="bg-surface" value="Arts">Arts</option>
+<option class="bg-surface" value="Engineering">Engineering</option>
+<option class="bg-surface" value="Computer Science">Computer Science</option>
+<option class="bg-surface" value="Business">Business</option>
 </select>
 </div>
 <div class="space-y-1">
 <label class="text-xs font-bold text-on-surface-variant uppercase">Assigned Room</label>
-<input class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 md:py-3 text-sm focus:ring-2 focus:ring-primary/30 focus:border-primary focus:outline-none transition-all" placeholder="e.g. 101" type="text">
+<select id="student-room-select" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 md:py-3 text-sm focus:ring-2 focus:ring-primary/30 focus:border-primary focus:outline-none transition-all appearance-none">
+<option class="bg-surface" value="">No Classroom Assigned</option>
+</select>
 </div>
 </div>
 <!-- AI Section -->
@@ -317,7 +334,9 @@
                         </button>
 </div>
 <div class="pt-4 flex gap-4">
-<button class="flex-1 gradient-btn text-on-primary-container py-2.5 md:py-3.5 rounded-xl font-bold shadow-lg" type="button">Save Student Profile</button>
+<button id="student-submit-btn" class="flex-1 gradient-btn text-on-primary-container py-2.5 md:py-3.5 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2" type="submit">
+    <span id="submit-btn-text">Save Student Profile</span>
+</button>
 <button class="px-6 py-2.5 md:py-3.5 bg-white/5 border border-white/10 rounded-xl text-sm font-bold hover:bg-white/10 transition-all" onclick="closeModal()" type="button">Cancel</button>
 </div>
 </form>
@@ -329,74 +348,221 @@
 
 
 <script>
-function renderStudentsTable() {
+// State cache
+let currentStudents = [];
+let availableClassrooms = [];
+let searchDebounceTimer = null;
+
+// Helper: Show notification toast using page-handlers.js showToast or fallback
+function notifyUser(message, type = "success") {
+    if (typeof showToast === "function") {
+        showToast(message, type);
+    } else {
+        alert(`${type.toUpperCase()}: ${message}`);
+    }
+}
+
+// 1. Fetch and render classrooms in the room dropdown
+async function loadClassroomOptions() {
+    const roomSelect = document.getElementById("student-room-select");
+    if (!roomSelect) return;
+
+    try {
+        availableClassrooms = await ApiService.getClassrooms();
+        roomSelect.innerHTML = `<option class="bg-surface" value="">No Classroom Assigned</option>` +
+            availableClassrooms.map(c => `
+                <option class="bg-surface" value="${c.id}">${c.name} (${c.department})</option>
+            `).join("");
+    } catch (err) {
+        console.warn("Could not load classrooms:", err);
+    }
+}
+
+// 2. Fetch and render students table from MySQL
+async function renderStudentsTable() {
     const tbody = document.getElementById("students-table-body");
     if (!tbody) return;
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const searchQuery = (urlParams.get("search") || "").toLowerCase().trim();
-    const deptFilter = (document.getElementById("dept-filter")?.value || "").toLowerCase();
-
-    let students = DataAPI.getStudents();
-
-    if (searchQuery) {
-        students = students.filter(s => 
-            s.name.toLowerCase().includes(searchQuery) ||
-            s.id.toLowerCase().includes(searchQuery) ||
-            s.email.toLowerCase().includes(searchQuery) ||
-            s.dept.toLowerCase().includes(searchQuery) ||
-            s.class.toLowerCase().includes(searchQuery)
-        );
-    }
-
-    if (deptFilter) {
-        students = students.filter(s => s.dept.toLowerCase() === deptFilter);
-    }
-
-    if (students.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-8 text-center text-on-surface-variant">No student records match your search criteria.</td></tr>`;
-        return;
-    }
-
-    tbody.innerHTML = students.map(s => `
-        <tr class="hover:bg-white/5 transition-colors">
-            <td class="px-6 py-4 flex items-center gap-3">
-                <div class="w-9 h-9 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center font-bold text-primary text-xs">${s.name.split(" ").map(n => n[0]).join("")}</div>
-                <div>
-                    <p class="font-bold text-sm text-on-surface">${s.name}</p>
-                    <p class="text-xs text-on-surface-variant opacity-70">${s.id}</p>
+    // Show loading state
+    tbody.innerHTML = `
+        <tr id="table-loading-row">
+            <td colspan="7" class="px-6 py-12 text-center text-on-surface-variant">
+                <div class="flex items-center justify-center gap-3">
+                    <div class="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <span class="text-sm font-medium">Loading student records from MySQL...</span>
                 </div>
-            </td>
-            <td class="px-6 py-4 text-sm text-on-surface-variant">${s.id}</td>
-            <td class="px-6 py-4 text-sm text-on-surface-variant">${s.dept} (${s.class})</td>
-            <td class="px-6 py-4 text-sm text-on-surface-variant">${s.email}</td>
-            <td class="px-6 py-4 text-sm">
-                <div class="flex items-center gap-2">
-                    <div class="w-16 bg-white/10 rounded-full h-2 overflow-hidden">
-                        <div class="bg-tertiary h-full rounded-full" style="width: ${s.attendance}%"></div>
-                    </div>
-                    <span class="font-bold text-xs text-tertiary">${s.attendance}%</span>
-                </div>
-            </td>
-            <td class="px-6 py-4 text-sm">
-                <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-tertiary/10 text-tertiary border border-tertiary/20">${s.status}</span>
-            </td>
-            <td class="px-6 py-4 text-sm text-right">
-                <button class="p-1.5 text-on-surface-variant hover:text-error transition-colors" onclick="deleteStudent('${s.id}')">
-                    <span class="material-symbols-outlined text-lg">delete</span>
-                </button>
             </td>
         </tr>
-    `).join("");
-}
+    `;
 
-function deleteStudent(id) {
-    if (confirm(`Are you sure you want to delete student ${id}?`)) {
-        DataAPI.deleteStudent(id);
-        renderStudentsTable();
+    const urlParams = new URLSearchParams(window.location.search);
+    const navSearch = document.getElementById("nav-search-input");
+    const searchQuery = (navSearch && navSearch.value.trim()) || (urlParams.get("search") || "").trim();
+    const deptFilter = (document.getElementById("dept-filter")?.value || "").trim();
+
+    try {
+        const params = {};
+        if (searchQuery) params.search = searchQuery;
+        if (deptFilter) params.department = deptFilter;
+
+        currentStudents = await ApiService.getStudents(params);
+        updateStatistics(currentStudents);
+
+        if (!currentStudents || currentStudents.length === 0) {
+            const hasFilter = searchQuery || deptFilter;
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="px-6 py-12 text-center text-on-surface-variant">
+                        <div class="flex flex-col items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-4xl opacity-30">group_off</span>
+                            <p class="text-sm font-medium">
+                                ${hasFilter ? 'No student records match your search criteria.' : 'No students registered in the database yet.'}
+                            </p>
+                            ${hasFilter ? `
+                                <button class="mt-2 text-xs font-bold text-primary underline" onclick="clearFilters()">Clear Filters</button>
+                            ` : `
+                                <button class="mt-2 gradient-btn text-on-primary-container px-4 py-2 rounded-xl text-xs font-bold" onclick="openAddModal()">Add First Student</button>
+                            `}
+                        </div>
+                    </td>
+                </tr>
+            `;
+            const pagination = document.getElementById("pagination-info");
+            if (pagination) pagination.textContent = "Showing 0 of 0 students";
+            return;
+        }
+
+        // Render table rows
+        tbody.innerHTML = currentStudents.map(s => {
+            const initials = s.name ? s.name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2) : "ST";
+            const attendance = Math.round(s.attendance_rate != null ? s.attendance_rate : 100);
+            const statusClass = s.status === "Active" 
+                ? "bg-tertiary/10 text-tertiary border-tertiary/20" 
+                : "bg-white/10 text-on-surface-variant border-white/10";
+            const attendanceColor = attendance >= 85 ? "bg-tertiary text-tertiary" : (attendance >= 75 ? "bg-primary text-primary" : "bg-error text-error");
+            const attendanceText = attendance >= 85 ? "text-tertiary" : (attendance >= 75 ? "text-primary" : "text-error");
+
+            return `
+                <tr class="hover:bg-white/5 transition-colors group">
+                    <td class="px-6 py-4 flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center font-bold text-primary text-xs shrink-0">${initials}</div>
+                        <div>
+                            <p class="font-bold text-sm text-on-surface">${escapeHtml(s.name)}</p>
+                            <p class="text-xs text-on-surface-variant opacity-70">${escapeHtml(s.id)}</p>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm font-mono text-on-surface-variant">${escapeHtml(s.id)}</td>
+                    <td class="px-6 py-4 text-sm text-on-surface-variant">
+                        <span class="font-medium text-on-surface">${escapeHtml(s.department)}</span>
+                        ${s.classroom_name ? `<span class="text-xs opacity-70 block">${escapeHtml(s.classroom_name)}</span>` : '<span class="text-xs opacity-40 block">Unassigned</span>'}
+                    </td>
+                    <td class="px-6 py-4 text-sm text-on-surface-variant font-mono text-xs">${escapeHtml(s.email)}</td>
+                    <td class="px-6 py-4 text-sm">
+                        <div class="flex items-center gap-2">
+                            <div class="w-16 bg-white/10 rounded-full h-2 overflow-hidden">
+                                <div class="${attendanceColor.split(' ')[0]} h-full rounded-full transition-all duration-500" style="width: ${attendance}%"></div>
+                            </div>
+                            <span class="font-bold text-xs ${attendanceText}">${attendance}%</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold border ${statusClass}">${escapeHtml(s.status || "Active")}</span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-right">
+                        <div class="flex items-center justify-end gap-1">
+                            <button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-white/10 rounded-lg transition-colors" onclick="openEditModal('${escapeAttr(s.id)}')" title="Edit Student">
+                                <span class="material-symbols-outlined text-lg">edit</span>
+                            </button>
+                            <button class="p-1.5 text-on-surface-variant hover:text-error hover:bg-white/10 rounded-lg transition-colors" onclick="deleteStudent('${escapeAttr(s.id)}', '${escapeAttr(s.name)}')" title="Delete Student">
+                                <span class="material-symbols-outlined text-lg">delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join("");
+
+        const pagination = document.getElementById("pagination-info");
+        if (pagination) {
+            pagination.textContent = `Showing 1 to ${currentStudents.length} of ${currentStudents.length} students`;
+        }
+    } catch (err) {
+        console.error("Error loading students:", err);
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="px-6 py-10 text-center">
+                    <div class="flex flex-col items-center justify-center gap-2 text-error">
+                        <span class="material-symbols-outlined text-4xl">error</span>
+                        <p class="text-sm font-bold">Failed to load students from backend</p>
+                        <p class="text-xs text-on-surface-variant max-w-md">${escapeHtml(err.message)}</p>
+                        <button class="mt-3 px-4 py-2 bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 rounded-xl text-xs font-bold transition-all" onclick="renderStudentsTable()">
+                            Retry Connection
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+        notifyUser(`Backend error: ${err.message}`, "error");
     }
 }
 
+// 3. Update top KPI statistics dynamically from real data
+function updateStatistics(students) {
+    if (!Array.isArray(students)) return;
+    const total = students.length;
+    const active = students.filter(s => (s.status || "Active").toLowerCase() === "active").length;
+    const activePct = total > 0 ? ((active / total) * 100).toFixed(1) : 0;
+    const lowAttendance = students.filter(s => (s.attendance_rate != null ? s.attendance_rate : 100) < 80).length;
+
+    const statTotal = document.getElementById("stat-total-students");
+    const statActive = document.getElementById("stat-active-students");
+    const statActivePct = document.getElementById("stat-active-percent");
+    const statNew = document.getElementById("stat-new-registrations");
+    const statLow = document.getElementById("stat-low-attendance");
+
+    if (statTotal) statTotal.textContent = total;
+    if (statActive) statActive.textContent = active;
+    if (statActivePct) statActivePct.textContent = `${activePct}%`;
+    if (statNew) statNew.textContent = total;
+    if (statLow) statLow.textContent = lowAttendance;
+}
+
+// 4. Clear filters helper
+function clearFilters() {
+    const navSearch = document.getElementById("nav-search-input");
+    const deptFilter = document.getElementById("dept-filter");
+    if (navSearch) navSearch.value = "";
+    if (deptFilter) deptFilter.value = "";
+    if (window.location.search) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    renderStudentsTable();
+}
+
+// 5. Open Modal for Adding New Student
+function openAddModal() {
+    const form = document.getElementById("add-student-form");
+    if (form) form.reset();
+
+    const editIdInput = document.getElementById("student-edit-id");
+    if (editIdInput) editIdInput.value = "";
+
+    const rollInput = document.getElementById("student-roll-input");
+    if (rollInput) {
+        rollInput.removeAttribute("readonly");
+        rollInput.classList.remove("opacity-60", "cursor-not-allowed");
+    }
+
+    const modalTitle = document.getElementById("modal-title");
+    if (modalTitle) modalTitle.textContent = "Register New Student";
+
+    const submitBtnText = document.getElementById("submit-btn-text");
+    if (submitBtnText) submitBtnText.textContent = "Save Student Profile";
+
+    openModal();
+}
+
+// Alias for toolbar button
 function openModal() {
     const modal = document.getElementById("addStudentModal");
     const container = document.getElementById("modalContainer");
@@ -408,6 +574,7 @@ function openModal() {
     }
 }
 
+// Close Modal Drawer
 function closeModal() {
     const modal = document.getElementById("addStudentModal");
     const container = document.getElementById("modalContainer");
@@ -419,10 +586,193 @@ function closeModal() {
     }, 300);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    renderStudentsTable();
+// 6. Open Modal for Editing Existing Student
+async function openEditModal(studentId) {
+    const editIdInput = document.getElementById("student-edit-id");
+    if (editIdInput) editIdInput.value = studentId;
+
+    const modalTitle = document.getElementById("modal-title");
+    if (modalTitle) modalTitle.textContent = "Edit Student Profile";
+
+    const submitBtnText = document.getElementById("submit-btn-text");
+    if (submitBtnText) submitBtnText.textContent = "Update Student Profile";
+
+    const rollInput = document.getElementById("student-roll-input");
+    if (rollInput) {
+        rollInput.setAttribute("readonly", "true");
+        rollInput.classList.add("opacity-60", "cursor-not-allowed");
+    }
+
+    // Find student in local cache or fetch from API
+    let student = currentStudents.find(s => s.id === studentId);
+    if (!student) {
+        try {
+            student = await ApiService.getStudent(studentId);
+        } catch (err) {
+            notifyUser(`Error finding student: ${err.message}`, "error");
+            return;
+        }
+    }
+
+    // Prepopulate form fields
+    const nameInput = document.getElementById("student-name-input");
+    const emailInput = document.getElementById("student-email-input");
+    const deptSelect = document.getElementById("student-dept-select");
+    const roomSelect = document.getElementById("student-room-select");
+    const statusSelect = document.getElementById("student-status-select");
+
+    if (nameInput) nameInput.value = student.name || "";
+    if (rollInput) rollInput.value = student.id || "";
+    if (emailInput) emailInput.value = student.email || "";
+    if (statusSelect) statusSelect.value = student.status || "Active";
+    if (deptSelect) deptSelect.value = student.department || "";
+    if (roomSelect) roomSelect.value = student.classroom_id != null ? String(student.classroom_id) : "";
+
+    openModal();
+}
+
+// 7. Form Submission Handler (Handles both Create [POST] and Update [PUT])
+async function handleStudentSubmit(e) {
+    e.preventDefault();
+
+    const submitBtn = document.getElementById("student-submit-btn");
+    const submitBtnText = document.getElementById("submit-btn-text");
+    const editId = document.getElementById("student-edit-id")?.value.trim();
+
+    const nameInput = document.getElementById("student-name-input");
+    const rollInput = document.getElementById("student-roll-input");
+    const emailInput = document.getElementById("student-email-input");
+    const deptSelect = document.getElementById("student-dept-select");
+    const roomSelect = document.getElementById("student-room-select");
+    const statusSelect = document.getElementById("student-status-select");
+
+    const name = nameInput?.value.trim();
+    const roll = rollInput?.value.trim().toUpperCase();
+    const email = emailInput?.value.trim().toLowerCase();
+    const dept = deptSelect?.value.trim();
+    const roomId = roomSelect?.value ? parseInt(roomSelect.value, 10) : null;
+    const status = statusSelect?.value || "Active";
+
+    if (!name || (!editId && !roll) || !email || !dept) {
+        notifyUser("Please fill in all required fields (Name, Roll, Email, Department).", "error");
+        return;
+    }
+
+    // Button loading state
+    if (submitBtn) submitBtn.disabled = true;
+    if (submitBtnText) submitBtnText.innerHTML = `
+        <div class="flex items-center gap-2">
+            <div class="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+            <span>${editId ? 'Updating...' : 'Saving...'}</span>
+        </div>
+    `;
+
+    try {
+        if (editId) {
+            // Update Student [PUT /api/students/{id}]
+            const updatePayload = {
+                name: name,
+                email: email,
+                department: dept,
+                classroom_id: roomId,
+                status: status
+            };
+            await ApiService.updateStudent(editId, updatePayload);
+            notifyUser(`Student ${name} (${editId}) updated successfully!`, "success");
+        } else {
+            // Create Student [POST /api/students]
+            const createPayload = {
+                id: roll,
+                name: name,
+                email: email,
+                department: dept,
+                classroom_id: roomId,
+                status: status
+            };
+            await ApiService.createStudent(createPayload);
+            notifyUser(`Student ${name} (${roll}) registered successfully!`, "success");
+        }
+
+        closeModal();
+        await renderStudentsTable();
+    } catch (err) {
+        console.error("Save error:", err);
+        notifyUser(`Error: ${err.message}`, "error");
+    } finally {
+        if (submitBtn) submitBtn.disabled = false;
+        if (submitBtnText) submitBtnText.textContent = editId ? "Update Student Profile" : "Save Student Profile";
+    }
+}
+
+// 8. Delete Student Handler [DELETE /api/students/{id}]
+async function deleteStudent(id, name) {
+    const displayName = name ? `student "${name}" (${id})` : `student ${id}`;
+    if (!confirm(`Are you sure you want to delete ${displayName}? This action will permanently remove their records from MySQL.`)) {
+        return;
+    }
+
+    try {
+        await ApiService.deleteStudent(id);
+        notifyUser(`Student ${id} was deleted successfully.`, "success");
+        await renderStudentsTable();
+    } catch (err) {
+        console.error("Delete error:", err);
+        notifyUser(`Failed to delete student: ${err.message}`, "error");
+    }
+}
+
+// Utility: HTML escaping to prevent XSS
+function escapeHtml(text) {
+    if (text == null) return "";
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function escapeAttr(text) {
+    if (text == null) return "";
+    return String(text).replace(/'/g, "\\'").replace(/"/g, "&quot;");
+}
+
+// 9. Initial Setup on DOM Ready
+document.addEventListener("DOMContentLoaded", async () => {
+    // Load classrooms for modal dropdown
+    await loadClassroomOptions();
+
+    // Load initial student records from MySQL
+    await renderStudentsTable();
+
+    // Bind form submission
+    const form = document.getElementById("add-student-form");
+    if (form) {
+        form.addEventListener("submit", handleStudentSubmit);
+    }
+
+    // Bind department filter
     const deptFilter = document.getElementById("dept-filter");
-    if (deptFilter) deptFilter.addEventListener("change", renderStudentsTable);
+    if (deptFilter) {
+        deptFilter.addEventListener("change", () => renderStudentsTable());
+    }
+
+    // Bind search input in navbar if present
+    const navSearch = document.getElementById("nav-search-input");
+    if (navSearch) {
+        // Pre-fill if search param exists
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get("search")) {
+            navSearch.value = urlParams.get("search");
+        }
+
+        navSearch.addEventListener("input", () => {
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(() => {
+                renderStudentsTable();
+            }, 300);
+        });
+    }
 });
 </script>
 </body>

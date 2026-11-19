@@ -70,6 +70,7 @@ function exportToCSV(filename, rows) {
 // ==========================================
 
 function initDashboardPage() {
+    if (window.isDashboardApiManaged) return;
     const statsContainer = document.querySelector("main section.grid");
     if (!statsContainer || !window.location.pathname.includes("dashboard")) return;
 
@@ -226,6 +227,7 @@ function closeClassroomModal() {
 // ==========================================
 
 function initAttendancePage() {
+    if (window.isAttendanceManagementApiManaged) return;
     const tbody = document.getElementById("attendance-table-body");
     if (!tbody) return;
 

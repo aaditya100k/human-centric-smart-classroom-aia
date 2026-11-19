@@ -51,8 +51,11 @@
             }
         }
     </script>
-    <link rel="stylesheet" href="../css/edumonitor_ai_login_page.css">
-    <link rel="stylesheet" href="../css/responsive-system.css">
+    <script>
+        window.isLoginApiManaged = true;
+    </script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
     <script src="../js/data.js"></script>
     <script src="../js/forms.js"></script>
     <script src="../js/page-handlers.js"></script>
@@ -141,14 +144,19 @@
                     </div>
 
                     <!-- Login Form -->
-                    <form id="login-form" class="space-y-5">
+                    <form id="login-form" onsubmit="handleLoginSubmit(event)" class="space-y-5">
+                        <!-- Alert Box for Error Messages -->
+                        <div id="login-error-alert" class="hidden p-3 rounded-xl bg-error/15 border border-error/30 text-error text-xs flex items-center gap-2">
+                            <span class="material-symbols-outlined text-base">error</span>
+                            <span id="login-error-msg"></span>
+                        </div>
                         
-                        <!-- Email Input -->
+                        <!-- Email / Username Input -->
                         <div class="space-y-1.5 login-input-group">
-                            <label for="email" class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Email Address</label>
+                            <label for="email" class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Email Address or Username</label>
                             <div class="relative flex items-center">
                                 <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant/70 text-xl pointer-events-none">alternate_email</span>
-                                <input type="email" id="email" required placeholder="admin@aura.edu" value="admin@aura.edu" class="w-full py-3 pr-4 text-sm font-medium">
+                                <input type="text" id="email" required placeholder="admin@aura.edu" value="admin@aura.edu" class="w-full py-3 pr-4 text-sm font-medium">
                             </div>
                         </div>
 
@@ -170,14 +178,15 @@
                         <!-- Remember Me Checkbox -->
                         <div class="flex items-center justify-between pt-1">
                             <label class="flex items-center gap-2 cursor-pointer select-none text-xs text-on-surface-variant">
-                                <input type="checkbox" checked class="rounded border-white/20 bg-white/5 text-primary focus:ring-primary/40 w-4 h-4">
+                                <input type="checkbox" id="remember-me" checked class="rounded border-white/20 bg-white/5 text-primary focus:ring-primary/40 w-4 h-4">
                                 Keep me signed in
                             </label>
                         </div>
 
                         <!-- Submit Button -->
-                        <button type="submit" class="w-full btn-gradient py-3.5 rounded-xl text-white font-bold text-sm flex items-center justify-center gap-2 group">
-                            <span>Sign In to System</span>
+                        <button type="submit" id="login-submit-btn" class="w-full btn-gradient py-3.5 rounded-xl text-white font-bold text-sm flex items-center justify-center gap-2 group transition-all">
+                            <span id="login-spinner" class="hidden w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                            <span id="login-btn-text">Sign In to System</span>
                             <span class="material-symbols-outlined text-lg transition-transform group-hover:translate-x-1">arrow_forward</span>
                         </button>
                     </form>
@@ -252,6 +261,57 @@
                 emailInput.value = "teacher@aura.edu";
                 passwordInput.value = "teacher123";
                 showToast("Autofilled Teacher Demo Credentials");
+            }
+        }
+
+        async function handleLoginSubmit(e) {
+            e.preventDefault();
+            const alertBox = document.getElementById("login-error-alert");
+            const alertMsg = document.getElementById("login-error-msg");
+            const submitBtn = document.getElementById("login-submit-btn");
+            const btnSpinner = document.getElementById("login-spinner");
+            const btnText = document.getElementById("login-btn-text");
+
+            const emailVal = document.getElementById("email")?.value;
+            const passwordVal = document.getElementById("password")?.value;
+            const rememberVal = document.getElementById("remember-me")?.checked !== false;
+
+            if (!emailVal || !passwordVal) {
+                if (alertBox && alertMsg) {
+                    alertMsg.textContent = "Please enter both email/username and password.";
+                    alertBox.classList.remove("hidden");
+                }
+                return;
+            }
+
+            try {
+                if (alertBox) alertBox.classList.add("hidden");
+                if (btnSpinner) btnSpinner.classList.remove("hidden");
+                if (btnText) btnText.textContent = "Authenticating...";
+                if (submitBtn) submitBtn.disabled = true;
+
+                await AuthService.login(emailVal, passwordVal, rememberVal);
+
+                if (typeof showToast === "function") {
+                    showToast("Login successful! Redirecting to Dashboard...", "success");
+                }
+
+                setTimeout(() => {
+                    window.location.href = "smart_classroom_ai_dashboard.html";
+                }, 300);
+            } catch (err) {
+                console.error("Login error:", err);
+                if (alertBox && alertMsg) {
+                    alertMsg.textContent = err.message || "Invalid username/email or password.";
+                    alertBox.classList.remove("hidden");
+                }
+                if (typeof showToast === "function") {
+                    showToast(err.message || "Login failed", "error");
+                }
+            } finally {
+                if (btnSpinner) btnSpinner.classList.add("hidden");
+                if (btnText) btnText.textContent = "Sign In to System";
+                if (submitBtn) submitBtn.disabled = false;
             }
         }
     </script>

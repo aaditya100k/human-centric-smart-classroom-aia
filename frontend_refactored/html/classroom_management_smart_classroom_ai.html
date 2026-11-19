@@ -105,9 +105,14 @@
     }
   </script>
   <link rel="stylesheet" href="../css/classroom_management_smart_classroom_ai.css">
-
 <link rel="stylesheet" href="../css/responsive-system.css">
+<script>window.isClassroomManagementApiManaged = true;</script>
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/data.js"></script>
 <script src="../js/page-handlers.js"></script>
+<script src="../js/layout.js"></script>
+<script src="../js/forms.js"></script>
 </head>
 <body class="font-body-md text-body-md antialiased">
 <!-- Atmospheric Background Layers -->
@@ -130,12 +135,12 @@
 <span class="material-symbols-outlined" data-icon="meeting_room">meeting_room</span>
 </div>
 <span class="text-tertiary text-xs font-bold flex items-center gap-1">
-<span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span> +2
+<span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span> Total
                     </span>
 </div>
 <div class="mt-4">
 <h3 class="text-on-surface-variant text-label-sm font-label-sm md:text-base">Total Classrooms</h3>
-<p class="text-headline-md font-headline-md text-on-surface">12</p>
+<p class="text-headline-md font-headline-md text-on-surface" id="stat-total-classrooms">--</p>
 </div>
 </div>
 <div class="glass-card p-6 rounded-2xl flex flex-col justify-between inline-style-3">
@@ -149,33 +154,33 @@
 </div>
 <div class="mt-4">
 <h3 class="text-on-surface-variant text-label-sm font-label-sm md:text-base">Active Classes</h3>
-<p class="text-headline-md font-headline-md text-on-surface">08</p>
+<p class="text-headline-md font-headline-md text-on-surface" id="stat-active-classrooms">--</p>
 </div>
 </div>
 <div class="glass-card p-6 rounded-2xl flex flex-col justify-between inline-style-4">
 <div class="flex justify-between items-start">
 <div class="p-3 rounded-xl bg-tertiary/10 text-tertiary">
-<span class="material-symbols-outlined" data-icon="book">book</span>
+<span class="material-symbols-outlined" data-icon="sensors_off">sensors_off</span>
 </div>
-<span class="text-on-surface-variant/50 text-xs font-medium">Across all depts</span>
+<span class="text-on-surface-variant/50 text-xs font-medium">Standby / Off</span>
 </div>
 <div class="mt-4">
-<h3 class="text-on-surface-variant text-label-sm font-label-sm md:text-base">Total Subjects</h3>
-<p class="text-headline-md font-headline-md text-on-surface">45</p>
+<h3 class="text-on-surface-variant text-label-sm font-label-sm md:text-base">Inactive Classes</h3>
+<p class="text-headline-md font-headline-md text-on-surface" id="stat-inactive-classrooms">--</p>
 </div>
 </div>
 <div class="glass-card p-6 rounded-2xl flex flex-col justify-between inline-style-5">
 <div class="flex justify-between items-start">
 <div class="p-3 rounded-xl bg-primary-fixed/10 text-primary-fixed">
-<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
 </div>
 <span class="text-tertiary text-xs font-bold flex items-center gap-1">
-<span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span> 100%
+<span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span> Max Seats
                     </span>
 </div>
 <div class="mt-4">
-<h3 class="text-on-surface-variant text-label-sm font-label-sm md:text-base">Assigned Teachers</h3>
-<p class="text-headline-md font-headline-md text-on-surface">18</p>
+<h3 class="text-on-surface-variant text-label-sm font-label-sm md:text-base">Total Capacity</h3>
+<p class="text-headline-md font-headline-md text-on-surface" id="stat-total-capacity">--</p>
 </div>
 </div>
 </div>
@@ -261,211 +266,564 @@
 <h3 class="text-headline-md font-headline-md text-on-surface text-lg">Inventory &amp; Allocation</h3>
 <p class="text-sm text-on-surface-variant">Manage physical and digital classroom spaces</p>
 </div>
-<div class="flex flex-wrap gap-2">
-<button class="px-4 py-2 bg-surface-container-high hover:bg-surface-variant text-on-surface rounded-xl text-sm font-medium flex items-center gap-2 transition-colors">
-<span class="material-symbols-outlined text-sm" data-icon="upload">upload</span> Import
-                    </button>
-<button class="px-4 py-2 bg-surface-container-high hover:bg-surface-variant text-on-surface rounded-xl text-sm font-medium flex items-center gap-2 transition-colors">
-<span class="material-symbols-outlined text-sm" data-icon="download">download</span> Export
-                    </button>
-<button class="px-4 py-2 bg-surface-container-high hover:bg-surface-variant text-on-surface rounded-xl text-sm font-medium flex items-center gap-2 transition-colors">
-<span class="material-symbols-outlined text-sm" data-icon="library_add">library_add</span> Add Subject
-                    </button>
-<button class="px-5 py-2 btn-primary text-white rounded-xl text-sm font-medium flex items-center gap-2 shadow-lg" onclick="openClassroomModal()">
-<span class="material-symbols-outlined text-sm" data-icon="add">add</span> Add Classroom
-                    </button>
+<div class="flex flex-wrap items-center gap-3">
+    <!-- Department Filter -->
+    <select id="classroom-dept-filter" class="bg-white/5 border border-white/10 text-on-surface px-4 py-2 rounded-xl text-sm font-medium transition-all focus:ring-1 focus:ring-primary appearance-none">
+        <option class="bg-surface" value="">All Departments</option>
+        <option class="bg-surface" value="Science">Science</option>
+        <option class="bg-surface" value="Engineering">Engineering</option>
+        <option class="bg-surface" value="Arts">Arts</option>
+        <option class="bg-surface" value="History">History</option>
+        <option class="bg-surface" value="Computer Science">Computer Science</option>
+        <option class="bg-surface" value="Business">Business</option>
+    </select>
+    <!-- Status Filter -->
+    <select id="classroom-status-filter" class="bg-white/5 border border-white/10 text-on-surface px-4 py-2 rounded-xl text-sm font-medium transition-all focus:ring-1 focus:ring-primary appearance-none">
+        <option class="bg-surface" value="">All Statuses</option>
+        <option class="bg-surface" value="Active">Active</option>
+        <option class="bg-surface" value="Inactive">Inactive</option>
+    </select>
+    <button class="px-5 py-2 btn-primary text-white rounded-xl text-sm font-medium flex items-center gap-2 shadow-lg hover:opacity-90 transition-all" onclick="openAddClassroomModal()">
+        <span class="material-symbols-outlined text-sm" data-icon="add">add</span> Add Classroom
+    </button>
 </div>
 </div>
 <!-- Management Table -->
 <div class="overflow-x-auto">
-<table class="w-full text-left">
+<table class="w-full text-left border-collapse">
 <thead>
 <tr class="bg-white/5">
 <th class="px-6 py-4 text-label-sm font-label-sm md:text-base text-on-surface-variant uppercase tracking-wider">Classroom</th>
-<th class="px-6 py-4 text-label-sm font-label-sm md:text-base text-on-surface-variant uppercase tracking-wider">Dept / Year</th>
-<th class="px-6 py-4 text-label-sm font-label-sm md:text-base text-on-surface-variant uppercase tracking-wider">Assigned Teacher</th>
+<th class="px-6 py-4 text-label-sm font-label-sm md:text-base text-on-surface-variant uppercase tracking-wider">Department</th>
 <th class="px-6 py-4 text-label-sm font-label-sm md:text-base text-on-surface-variant uppercase tracking-wider">Capacity</th>
+<th class="px-6 py-4 text-label-sm font-label-sm md:text-base text-on-surface-variant uppercase tracking-wider">Occupancy</th>
+<th class="px-6 py-4 text-label-sm font-label-sm md:text-base text-on-surface-variant uppercase tracking-wider">Attention Score</th>
 <th class="px-6 py-4 text-label-sm font-label-sm md:text-base text-on-surface-variant uppercase tracking-wider">Status</th>
 <th class="px-6 py-4 text-label-sm font-label-sm md:text-base text-on-surface-variant uppercase tracking-wider text-right">Actions</th>
 </tr>
 </thead>
 <tbody class="divide-y divide-white/5" id="classroom-cards-container">
-<tr class="hover:bg-white/5 transition-colors">
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-<span class="material-symbols-outlined" data-icon="meeting_room">meeting_room</span>
-</div>
-<div>
-<p class="font-semibold text-on-surface">Room 101</p>
-<p class="text-xs text-on-surface-variant">North Wing, Floor 1</p>
-</div>
-</div>
-</td>
-<td class="px-6 py-4">
-<p class="text-sm text-on-surface">Science</p>
-<p class="text-[10px] text-on-surface-variant uppercase">AY 2024-25</p>
-</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-2">
-<div class="w-6 h-6 rounded-full overflow-hidden">
-<img class="w-full h-full object-cover" data-alt="A small circular avatar of a professional female teacher with glasses and a friendly smile, representing educational expertise in a dark mode dashboard environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCD0XH9CPLP5fhxy9mWqYyiuu-hMZjNntoJV5b8SK6B7WdYEm1PUniOT4kQDUO0wyWMBHdxMIjeNvGxm5mLawNLRXfcjEH_YdBOB0PmA6k9jRhWon1LgD9Ii5FrCIXRUvphCt4HqGzfyvYxG9ASzQi0npWSGC7ZwFjcZjBGEgQ2ZEfysFuX78Jb0CvfW6nkCZaUSyLAjIFVkirRXowm0mY3awEcvZahmSeDubyG0LbxWSlEX6XsYwM6">
-</div>
-<span class="text-sm text-on-surface">Dr. Aris P.</span>
-</div>
-</td>
-<td class="px-6 py-4">
-<div class="flex flex-col gap-1 w-24">
-<div class="flex justify-between text-[10px] text-on-surface-variant">
-<span class="">42/50</span>
-<span class="">84%</span>
-</div>
-<div class="h-1 w-full bg-white/10 rounded-full overflow-hidden">
-<div class="h-full bg-primary w-[84%]"></div>
-</div>
-</div>
-</td>
-<td class="px-6 py-4">
-<button class="relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-tertiary/20">
-<span class="translate-x-5 pointer-events-none inline-block h-4 w-4 transform rounded-full bg-tertiary shadow ring-0 transition duration-200 ease-in-out"></span>
-</button>
-<span class="ml-2 text-xs font-bold text-tertiary">ACTIVE</span>
-</td>
-<td class="px-6 py-4 text-right space-x-2">
-<button class="p-2 hover:text-primary transition-colors text-on-surface-variant">
-<span class="material-symbols-outlined text-[18px]" data-icon="visibility">visibility</span>
-</button>
-<button class="p-2 hover:text-primary transition-colors text-on-surface-variant">
-<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
-</button>
-<button class="p-2 hover:text-error transition-colors text-on-surface-variant">
-<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
-</button>
-</td>
-</tr>
-<tr class="hover:bg-white/5 transition-colors">
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
-<span class="material-symbols-outlined" data-icon="biotech">biotech</span>
-</div>
-<div>
-<p class="font-semibold text-on-surface">Lab B</p>
-<p class="text-xs text-on-surface-variant">Science Block, Ground</p>
-</div>
-</div>
-</td>
-<td class="px-6 py-4">
-<p class="text-sm text-on-surface">Engineering</p>
-<p class="text-[10px] text-on-surface-variant uppercase">AY 2024-25</p>
-</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-2">
-<div class="w-6 h-6 rounded-full overflow-hidden">
-<img class="w-full h-full object-cover" data-alt="A professional male teacher's headshot, looking focused and wearing high-tech glasses, styled for a modern smart classroom application's staff directory." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSKcQ5ZESQ_vpDmgtAS0AU0kXb6ZS-dN8rsG9RHXx7T41XtQgJ4K8eHy0YTNvUWvckjVr4B5vqNCB9z3LEUSvshZ7-yXdakWY7yeZnlauU3oWsbndAG7oS5S3X9c9SBrAuQyYUlM955eTdsiMbyYnWEJVby4nzxcGMCp5PS5dDn8d9u9lB42gLTUSLURBcV2imUwpmSQTY686rlS6JYF6N9-qqpIhOOto5QPhgurw7WKFThIg2xx0t">
-</div>
-<span class="text-sm text-on-surface">Prof. Elena</span>
-</div>
-</td>
-<td class="px-6 py-4">
-<div class="flex flex-col gap-1 w-24">
-<div class="flex justify-between text-[10px] text-on-surface-variant">
-<span class="">28/30</span>
-<span class="">93%</span>
-</div>
-<div class="h-1 w-full bg-white/10 rounded-full overflow-hidden">
-<div class="h-full bg-secondary w-[93%]"></div>
-</div>
-</div>
-</td>
-<td class="px-6 py-4">
-<button class="relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-tertiary/20">
-<span class="translate-x-5 pointer-events-none inline-block h-4 w-4 transform rounded-full bg-tertiary shadow ring-0 transition duration-200 ease-in-out"></span>
-</button>
-<span class="ml-2 text-xs font-bold text-tertiary">ACTIVE</span>
-</td>
-<td class="px-6 py-4 text-right space-x-2">
-<button class="p-2 hover:text-primary transition-colors text-on-surface-variant">
-<span class="material-symbols-outlined text-[18px]" data-icon="visibility">visibility</span>
-</button>
-<button class="p-2 hover:text-primary transition-colors text-on-surface-variant">
-<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
-</button>
-<button class="p-2 hover:text-error transition-colors text-on-surface-variant">
-<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
-</button>
-</td>
-</tr>
-<tr class="hover:bg-white/5 transition-colors">
-<td class="px-6 py-4">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 rounded-lg bg-outline/10 flex items-center justify-center text-on-surface-variant">
-<span class="material-symbols-outlined" data-icon="school">school</span>
-</div>
-<div>
-<p class="font-semibold text-on-surface">Auditorium 2</p>
-<p class="text-xs text-on-surface-variant">Main Hall, Floor 2</p>
-</div>
-</div>
-</td>
-<td class="px-6 py-4">
-<p class="text-sm text-on-surface">Arts</p>
-<p class="text-[10px] text-on-surface-variant uppercase">AY 2024-25</p>
-</td>
-<td class="px-6 py-4">
-<div class="flex items-center gap-2">
-<div class="w-6 h-6 rounded-full overflow-hidden">
-<img class="w-full h-full object-cover" data-alt="A portrait of a senior professor with white hair and a kind expression, representing veteran leadership in a high-end educational AI platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAASRwW4T1ROtSdOdzJbVeLyCsg_lY5kWjJcuTqf7BGoAz9T5Fg6ocbMC9jHgi3N5aSYOE-IFAbn80Dx6wfx_LvOqzCXE_hYIZG9Vlyx1hm2u0g7SXgqAM9GVyovI4JmpMtGLOgj7IFYqqUHxJa9XF-JK_T15xWkECnH4Pccrg9LsUvDlADNw8TGbeGp9sxivQ6NFZ6X48EFOxET6rmyeBTnj9sY73fRNIAa90sGABfFmbvtjlDUnQB">
-</div>
-<span class="text-sm text-on-surface">Dr. Marcus</span>
-</div>
-</td>
-<td class="px-6 py-4">
-<div class="flex flex-col gap-1 w-24">
-<div class="flex justify-between text-[10px] text-on-surface-variant">
-<span class="">12/150</span>
-<span class="">8%</span>
-</div>
-<div class="h-1 w-full bg-white/10 rounded-full overflow-hidden">
-<div class="h-full bg-outline w-[8%]"></div>
-</div>
-</div>
-</td>
-<td class="px-6 py-4">
-<button class="relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-outline/20">
-<span class="translate-x-0 pointer-events-none inline-block h-4 w-4 transform rounded-full bg-surface-variant shadow ring-0 transition duration-200 ease-in-out"></span>
-</button>
-<span class="ml-2 text-xs font-bold text-on-surface-variant">INACTIVE</span>
-</td>
-<td class="px-6 py-4 text-right space-x-2">
-<button class="p-2 hover:text-primary transition-colors text-on-surface-variant">
-<span class="material-symbols-outlined text-[18px]" data-icon="visibility">visibility</span>
-</button>
-<button class="p-2 hover:text-primary transition-colors text-on-surface-variant">
-<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
-</button>
-<button class="p-2 hover:text-error transition-colors text-on-surface-variant">
-<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
-</button>
-</td>
-</tr>
+    <!-- Populated dynamically from MySQL via API -->
 </tbody>
 </table>
 </div>
 <!-- Table Footer -->
 <div class="p-6 border-t border-white/10 flex items-center justify-between text-sm text-on-surface-variant">
-<span class="">Showing 1 to 3 of 12 entries</span>
+<span id="classroom-pagination-info">Loading classrooms...</span>
 <div class="flex gap-2">
 <button class="px-3 py-1 rounded-lg border border-white/10 hover:bg-white/5 disabled:opacity-30" disabled="">Previous</button>
 <button class="px-3 py-1 rounded-lg border border-primary bg-primary/10 text-primary">1</button>
-<button class="px-3 py-1 rounded-lg border border-white/10 hover:bg-white/5">2</button>
-<button class="px-3 py-1 rounded-lg border border-white/10 hover:bg-white/5">3</button>
-<button class="px-3 py-1 rounded-lg border border-white/10 hover:bg-white/5">Next</button>
+<button class="px-3 py-1 rounded-lg border border-white/10 hover:bg-white/5 disabled:opacity-30" disabled="">Next</button>
 </div>
 </div>
 </section>
 </main>
 
+<!-- Slide-over Modal/Drawer for Add / Edit Classroom -->
+<div class="fixed inset-0 z-[100] invisible" id="addClassroomModal">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 opacity-0" id="classroomModalBackdrop" onclick="closeClassroomModal()"></div>
+    <!-- Drawer Container -->
+    <div class="absolute right-0 top-0 h-full w-full max-w-lg bg-surface/80 backdrop-blur-2xl border-l border-white/10 transform translate-x-full transition-transform duration-300 ease-out shadow-2xl" id="classroomModalContainer">
+        <div class="h-full flex flex-col p-8 overflow-y-auto custom-scrollbar">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="font-headline-md text-headline-md md:text-2xl lg:text-3xl text-primary" id="classroom-modal-title">Add New Classroom</h3>
+                <button class="p-2 hover:bg-white/10 rounded-full transition-colors" onclick="closeClassroomModal()" type="button">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <!-- Form -->
+            <form class="space-y-6" id="add-classroom-form">
+                <input type="hidden" id="classroom-edit-id" value="">
+                
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-on-surface-variant uppercase">Classroom Name *</label>
+                    <input id="classroom-name-input" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 md:py-3 text-sm focus:ring-2 focus:ring-primary/30 focus:border-primary focus:outline-none transition-all" placeholder="e.g. Room 101, Lab B" type="text">
+                </div>
 
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-on-surface-variant uppercase">Department *</label>
+                    <select id="classroom-dept-input" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 md:py-3 text-sm focus:ring-2 focus:ring-primary/30 focus:border-primary focus:outline-none transition-all appearance-none">
+                        <option class="bg-surface" value="">Select Department</option>
+                        <option class="bg-surface" value="Science">Science</option>
+                        <option class="bg-surface" value="Engineering">Engineering</option>
+                        <option class="bg-surface" value="Arts">Arts</option>
+                        <option class="bg-surface" value="History">History</option>
+                        <option class="bg-surface" value="Computer Science">Computer Science</option>
+                        <option class="bg-surface" value="Business">Business</option>
+                    </select>
+                </div>
 
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-on-surface-variant uppercase">Seating Capacity *</label>
+                        <input id="classroom-capacity-input" required min="1" max="500" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 md:py-3 text-sm focus:ring-2 focus:ring-primary/30 focus:border-primary focus:outline-none transition-all" placeholder="e.g. 40" type="number" value="35">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-on-surface-variant uppercase">Status</label>
+                        <select id="classroom-status-input" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 md:py-3 text-sm focus:ring-2 focus:ring-primary/30 focus:border-primary focus:outline-none transition-all appearance-none">
+                            <option class="bg-surface" value="Active">Active</option>
+                            <option class="bg-surface" value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-primary/5 border border-primary/20 space-y-3">
+                    <div class="flex items-center gap-2 text-primary">
+                        <span class="material-symbols-outlined">sensors</span>
+                        <h4 class="font-bold text-sm">AI Sensor &amp; Camera Setup</h4>
+                    </div>
+                    <p class="text-xs text-on-surface-variant">Classrooms registered here are automatically initialized for live video emotion recognition, attention calculation, and attendance monitoring.</p>
+                </div>
+
+                <div class="pt-4 flex gap-4">
+                    <button id="classroom-submit-btn" class="flex-1 gradient-btn text-on-primary-container py-2.5 md:py-3.5 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2" type="submit">
+                        <span id="classroom-submit-btn-text">Save Classroom</span>
+                    </button>
+                    <button class="px-6 py-2.5 md:py-3.5 bg-white/5 border border-white/10 rounded-xl text-sm font-bold hover:bg-white/10 transition-all" onclick="closeClassroomModal()" type="button">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// State cache
+let currentClassrooms = [];
+let classroomSearchDebounceTimer = null;
+
+// Helper: Show toast notification
+function notify(message, type = "success") {
+    if (typeof showToast === "function") {
+        showToast(message, type);
+    } else {
+        alert(`${type.toUpperCase()}: ${message}`);
+    }
+}
+
+// 1. Fetch and render classrooms table from MySQL via FastAPI
+async function renderClassroomsList() {
+    const tbody = document.getElementById("classroom-cards-container");
+    if (!tbody) return;
+
+    // Show loading state
+    tbody.innerHTML = `
+        <tr id="classroom-loading-row">
+            <td colspan="7" class="px-6 py-12 text-center text-on-surface-variant">
+                <div class="flex items-center justify-center gap-3">
+                    <div class="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <span class="text-sm font-medium">Loading classrooms from MySQL...</span>
+                </div>
+            </td>
+        </tr>
+    `;
+
+    const deptFilter = document.getElementById("classroom-dept-filter")?.value.trim() || "";
+    const statusFilter = document.getElementById("classroom-status-filter")?.value.trim() || "";
+    const navSearch = document.getElementById("nav-search-input");
+    const searchQuery = (navSearch && navSearch.value.trim().toLowerCase()) || "";
+
+    try {
+        const params = {};
+        if (deptFilter) params.department = deptFilter;
+        if (statusFilter) params.status = statusFilter;
+
+        let data = await ApiService.getClassrooms(params);
+
+        // Safe frontend filter for search query across room name & dept
+        if (searchQuery) {
+            data = data.filter(c => 
+                (c.name && c.name.toLowerCase().includes(searchQuery)) ||
+                (c.department && c.department.toLowerCase().includes(searchQuery))
+            );
+        }
+
+        currentClassrooms = data;
+        updateClassroomStatistics(currentClassrooms);
+
+        if (!currentClassrooms || currentClassrooms.length === 0) {
+            const hasFilter = deptFilter || statusFilter || searchQuery;
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="px-6 py-12 text-center text-on-surface-variant">
+                        <div class="flex flex-col items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-4xl opacity-30">meeting_room</span>
+                            <p class="text-sm font-medium">
+                                ${hasFilter ? 'No classrooms match your search/filter criteria.' : 'No classrooms registered in the database yet.'}
+                            </p>
+                            ${hasFilter ? `
+                                <button class="mt-2 text-xs font-bold text-primary underline" onclick="clearClassroomFilters()">Clear Filters</button>
+                            ` : `
+                                <button class="mt-2 gradient-btn text-on-primary-container px-4 py-2 rounded-xl text-xs font-bold" onclick="openAddClassroomModal()">Add First Classroom</button>
+                            `}
+                        </div>
+                    </td>
+                </tr>
+            `;
+            const pagination = document.getElementById("classroom-pagination-info");
+            if (pagination) pagination.textContent = "Showing 0 of 0 classrooms";
+            return;
+        }
+
+        // Render table rows
+        tbody.innerHTML = currentClassrooms.map(c => {
+            const isLive = c.status === "Active";
+            const statusClass = isLive 
+                ? "bg-tertiary/10 text-tertiary border-tertiary/20" 
+                : "bg-white/10 text-on-surface-variant border-white/10";
+            
+            const occupancy = c.occupancy_rate != null ? c.occupancy_rate : 0;
+            const occupancyColor = occupancy > 90 ? "bg-error" : (occupancy > 70 ? "bg-primary" : "bg-tertiary");
+            const attention = c.average_attention != null ? Math.round(c.average_attention) : 85;
+            const attentionColor = attention >= 80 ? "text-tertiary" : (attention >= 65 ? "text-primary" : "text-error");
+
+            // Dynamic room icon based on department
+            let roomIcon = "meeting_room";
+            let iconBg = "bg-primary/10 text-primary";
+            const deptLower = (c.department || "").toLowerCase();
+            if (deptLower.includes("science") || deptLower.includes("bio")) {
+                roomIcon = "science";
+                iconBg = "bg-primary/10 text-primary";
+            } else if (deptLower.includes("art")) {
+                roomIcon = "palette";
+                iconBg = "bg-secondary/10 text-secondary";
+            } else if (deptLower.includes("eng") || deptLower.includes("comp")) {
+                roomIcon = "memory";
+                iconBg = "bg-tertiary/10 text-tertiary";
+            } else if (deptLower.includes("history")) {
+                roomIcon = "history_edu";
+                iconBg = "bg-primary/10 text-primary";
+            }
+
+            return `
+                <tr class="hover:bg-white/5 transition-colors group">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg ${iconBg} flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined">${roomIcon}</span>
+                            </div>
+                            <div>
+                                <p class="font-bold text-sm text-on-surface">${escapeHtml(c.name)}</p>
+                                <p class="text-xs text-on-surface-variant opacity-70">ID: #${c.id}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="font-medium text-sm text-on-surface">${escapeHtml(c.department)}</span>
+                    </td>
+                    <td class="px-6 py-4 text-sm font-mono text-on-surface-variant">
+                        ${c.capacity} seats
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex flex-col gap-1 w-28">
+                            <div class="flex justify-between text-[11px] text-on-surface-variant font-medium">
+                                <span>${c.students_count || 0}/${c.capacity}</span>
+                                <span class="font-bold">${occupancy}%</span>
+                            </div>
+                            <div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+                                <div class="h-full ${occupancyColor} rounded-full transition-all duration-500" style="width: ${Math.min(occupancy, 100)}%"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm">
+                        <div class="flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-sm ${attentionColor}">psychology</span>
+                            <span class="font-bold text-xs ${attentionColor}">${attention}%</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm">
+                        <button class="px-2.5 py-1 rounded-full text-xs font-bold border transition-all hover:scale-105 ${statusClass}" onclick="toggleClassroomStatus(${c.id}, '${escapeAttr(c.status)}')" title="Click to toggle status">
+                            ${escapeHtml(c.status || "Active")}
+                        </button>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-right">
+                        <div class="flex items-center justify-end gap-1">
+                            <a href="live_monitoring_smart_classroom_ai.html" class="p-1.5 text-on-surface-variant hover:text-secondary hover:bg-white/10 rounded-lg transition-colors" title="Live AI Monitoring">
+                                <span class="material-symbols-outlined text-lg">videocam</span>
+                            </a>
+                            <button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-white/10 rounded-lg transition-colors" onclick="openEditClassroomModal(${c.id})" title="Edit Classroom">
+                                <span class="material-symbols-outlined text-lg">edit</span>
+                            </button>
+                            <button class="p-1.5 text-on-surface-variant hover:text-error hover:bg-white/10 rounded-lg transition-colors" onclick="deleteClassroom(${c.id}, '${escapeAttr(c.name)}')" title="Delete Classroom">
+                                <span class="material-symbols-outlined text-lg">delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join("");
+
+        const pagination = document.getElementById("classroom-pagination-info");
+        if (pagination) {
+            pagination.textContent = `Showing 1 to ${currentClassrooms.length} of ${currentClassrooms.length} classrooms`;
+        }
+    } catch (err) {
+        console.error("Error loading classrooms:", err);
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="px-6 py-10 text-center">
+                    <div class="flex flex-col items-center justify-center gap-2 text-error">
+                        <span class="material-symbols-outlined text-4xl">error</span>
+                        <p class="text-sm font-bold">Failed to load classrooms from backend</p>
+                        <p class="text-xs text-on-surface-variant max-w-md">${escapeHtml(err.message)}</p>
+                        <button class="mt-3 px-4 py-2 bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 rounded-xl text-xs font-bold transition-all" onclick="renderClassroomsList()">
+                            Retry Connection
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+        notify(`Backend error: ${err.message}`, "error");
+    }
+}
+
+// 2. Update Top KPI Stats dynamically from MySQL data
+function updateClassroomStatistics(classrooms) {
+    if (!Array.isArray(classrooms)) return;
+    const total = classrooms.length;
+    const active = classrooms.filter(c => (c.status || "Active").toLowerCase() === "active").length;
+    const inactive = total - active;
+    const totalCapacity = classrooms.reduce((acc, c) => acc + (parseInt(c.capacity, 10) || 0), 0);
+
+    const statTotal = document.getElementById("stat-total-classrooms");
+    const statActive = document.getElementById("stat-active-classrooms");
+    const statInactive = document.getElementById("stat-inactive-classrooms");
+    const statCapacity = document.getElementById("stat-total-capacity");
+
+    if (statTotal) statTotal.textContent = total < 10 && total > 0 ? `0${total}` : total;
+    if (statActive) statActive.textContent = active < 10 && active > 0 ? `0${active}` : active;
+    if (statInactive) statInactive.textContent = inactive < 10 && inactive > 0 ? `0${inactive}` : inactive;
+    if (statCapacity) statCapacity.textContent = totalCapacity;
+}
+
+// 3. Clear Filters Helper
+function clearClassroomFilters() {
+    const deptFilter = document.getElementById("classroom-dept-filter");
+    const statusFilter = document.getElementById("classroom-status-filter");
+    const navSearch = document.getElementById("nav-search-input");
+
+    if (deptFilter) deptFilter.value = "";
+    if (statusFilter) statusFilter.value = "";
+    if (navSearch) navSearch.value = "";
+
+    renderClassroomsList();
+}
+
+// 4. Open Modal for Adding New Classroom
+function openAddClassroomModal() {
+    const form = document.getElementById("add-classroom-form");
+    if (form) form.reset();
+
+    const editIdInput = document.getElementById("classroom-edit-id");
+    if (editIdInput) editIdInput.value = "";
+
+    const modalTitle = document.getElementById("classroom-modal-title");
+    if (modalTitle) modalTitle.textContent = "Add New Classroom";
+
+    const submitBtnText = document.getElementById("classroom-submit-btn-text");
+    if (submitBtnText) submitBtnText.textContent = "Save Classroom";
+
+    openClassroomModal();
+}
+
+// Alias for toolbar button
+function openClassroomModal() {
+    const modal = document.getElementById("addClassroomModal");
+    const container = document.getElementById("classroomModalContainer");
+    const backdrop = document.getElementById("classroomModalBackdrop");
+    if (modal) {
+        modal.classList.remove("invisible");
+        if (backdrop) backdrop.classList.remove("opacity-0");
+        if (container) container.classList.remove("translate-x-full");
+    }
+}
+
+// Close Modal Drawer
+function closeClassroomModal() {
+    const modal = document.getElementById("addClassroomModal");
+    const container = document.getElementById("classroomModalContainer");
+    const backdrop = document.getElementById("classroomModalBackdrop");
+    if (container) container.classList.add("translate-x-full");
+    if (backdrop) backdrop.classList.add("opacity-0");
+    setTimeout(() => {
+        if (modal) modal.classList.add("invisible");
+    }, 300);
+}
+
+// 5. Open Modal for Editing Existing Classroom
+async function openEditClassroomModal(id) {
+    const editIdInput = document.getElementById("classroom-edit-id");
+    if (editIdInput) editIdInput.value = id;
+
+    const modalTitle = document.getElementById("classroom-modal-title");
+    if (modalTitle) modalTitle.textContent = "Edit Classroom";
+
+    const submitBtnText = document.getElementById("classroom-submit-btn-text");
+    if (submitBtnText) submitBtnText.textContent = "Update Classroom";
+
+    let classroom = currentClassrooms.find(c => c.id === id);
+    if (!classroom) {
+        try {
+            classroom = await ApiService.getClassroom(id);
+        } catch (err) {
+            notify(`Error finding classroom: ${err.message}`, "error");
+            return;
+        }
+    }
+
+    const nameInput = document.getElementById("classroom-name-input");
+    const deptInput = document.getElementById("classroom-dept-input");
+    const capacityInput = document.getElementById("classroom-capacity-input");
+    const statusInput = document.getElementById("classroom-status-input");
+
+    if (nameInput) nameInput.value = classroom.name || "";
+    if (deptInput) deptInput.value = classroom.department || "";
+    if (capacityInput) capacityInput.value = classroom.capacity || 30;
+    if (statusInput) statusInput.value = classroom.status || "Active";
+
+    openClassroomModal();
+}
+
+// 6. Form Submission Handler (Handles both Create [POST] and Update [PUT])
+async function handleClassroomSubmit(e) {
+    e.preventDefault();
+
+    const submitBtn = document.getElementById("classroom-submit-btn");
+    const submitBtnText = document.getElementById("classroom-submit-btn-text");
+    const editId = document.getElementById("classroom-edit-id")?.value.trim();
+
+    const name = document.getElementById("classroom-name-input")?.value.trim();
+    const dept = document.getElementById("classroom-dept-input")?.value.trim();
+    const capacity = parseInt(document.getElementById("classroom-capacity-input")?.value, 10) || 30;
+    const status = document.getElementById("classroom-status-input")?.value || "Active";
+
+    if (!name || !dept) {
+        notify("Classroom Name and Department are required.", "error");
+        return;
+    }
+
+    // Button loading state
+    if (submitBtn) submitBtn.disabled = true;
+    if (submitBtnText) submitBtnText.innerHTML = `
+        <div class="flex items-center gap-2">
+            <div class="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+            <span>${editId ? 'Updating...' : 'Saving...'}</span>
+        </div>
+    `;
+
+    try {
+        if (editId) {
+            // Update [PUT /api/classrooms/{id}]
+            const updatePayload = {
+                name: name,
+                department: dept,
+                capacity: capacity,
+                status: status
+            };
+            await ApiService.updateClassroom(editId, updatePayload);
+            notify(`Classroom ${name} updated successfully!`, "success");
+        } else {
+            // Create [POST /api/classrooms]
+            const createPayload = {
+                name: name,
+                department: dept,
+                capacity: capacity,
+                status: status
+            };
+            await ApiService.createClassroom(createPayload);
+            notify(`Classroom ${name} created successfully!`, "success");
+        }
+
+        closeClassroomModal();
+        await renderClassroomsList();
+    } catch (err) {
+        console.error("Save classroom error:", err);
+        notify(`Error: ${err.message}`, "error");
+    } finally {
+        if (submitBtn) submitBtn.disabled = false;
+        if (submitBtnText) submitBtnText.textContent = editId ? "Update Classroom" : "Save Classroom";
+    }
+}
+
+// 7. Toggle Classroom Active/Inactive Status
+async function toggleClassroomStatus(id, currentStatus) {
+    const nextStatus = currentStatus === "Active" ? "Inactive" : "Active";
+    try {
+        await ApiService.updateClassroom(id, { status: nextStatus });
+        notify(`Classroom status updated to ${nextStatus}`, "success");
+        await renderClassroomsList();
+    } catch (err) {
+        console.error("Toggle status error:", err);
+        notify(`Could not update status: ${err.message}`, "error");
+    }
+}
+
+// 8. Delete Classroom Handler [DELETE /api/classrooms/{id}]
+async function deleteClassroom(id, name) {
+    const displayName = name ? `classroom "${name}"` : `classroom #${id}`;
+    if (!confirm(`Are you sure you want to delete ${displayName}? Any students assigned to this classroom will become unassigned.`)) {
+        return;
+    }
+
+    try {
+        await ApiService.deleteClassroom(id);
+        notify(`Classroom ${name || id} deleted successfully.`, "success");
+        await renderClassroomsList();
+    } catch (err) {
+        console.error("Delete classroom error:", err);
+        notify(`Failed to delete classroom: ${err.message}`, "error");
+    }
+}
+
+// Utility: HTML escaping
+function escapeHtml(text) {
+    if (text == null) return "";
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function escapeAttr(text) {
+    if (text == null) return "";
+    return String(text).replace(/'/g, "\\'").replace(/"/g, "&quot;");
+}
+
+// 9. Initial Setup on DOM Ready
+document.addEventListener("DOMContentLoaded", async () => {
+    // Load classrooms from MySQL
+    await renderClassroomsList();
+
+    // Bind form submission
+    const form = document.getElementById("add-classroom-form");
+    if (form) {
+        form.addEventListener("submit", handleClassroomSubmit);
+    }
+
+    // Bind filters
+    const deptFilter = document.getElementById("classroom-dept-filter");
+    if (deptFilter) {
+        deptFilter.addEventListener("change", () => renderClassroomsList());
+    }
+
+    const statusFilter = document.getElementById("classroom-status-filter");
+    if (statusFilter) {
+        statusFilter.addEventListener("change", () => renderClassroomsList());
+    }
+
+    // Bind search input in navbar
+    const navSearch = document.getElementById("nav-search-input");
+    if (navSearch) {
+        navSearch.addEventListener("input", () => {
+            clearTimeout(classroomSearchDebounceTimer);
+            classroomSearchDebounceTimer = setTimeout(() => {
+                renderClassroomsList();
+            }, 300);
+        });
+    }
+});
+</script>
 </body></html>

@@ -1,8 +1,14 @@
 <!DOCTYPE html>
-<html class="dark" lang="en" ><svg class="inline-defs-container inline-style-1" aria-hidden="true"></svg><head>
+<html class="dark" lang="en">
+<head>
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>ClassMind AI - Dashboard</title>
+<script>
+  window.isDashboardApiManaged = true;
+</script>
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
 <script src="../js/data.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="../js/charts.js"></script>
@@ -129,67 +135,73 @@
 <main class="px-4 md:px-6 lg:px-8 pb-6">
 <!-- Stats Grid -->
 <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:p-5 lg:p-6 mb-8">
-<!-- Card 1 -->
+<!-- Card 1: Total Students -->
 <div class="glass-card rounded-glass p-4 md:p-5 lg:p-6 flex flex-col gap-2 inline-style-3">
 <div class="flex justify-between items-center">
 <span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">group</span>
 <span class="text-tertiary font-label-sm md:text-base flex items-center gap-1">
-<span class="material-symbols-outlined text-sm">trending_up</span> 4%
+<span class="material-symbols-outlined text-sm">verified</span> Live
           </span>
 </div>
 <p class="text-on-surface-variant font-label-sm md:text-base">Total Students</p>
-<h3 class="font-headline-md text-headline-md md:text-2xl lg:text-3xl font-bold text-on-surface">450</h3>
+<h3 id="dash-kpi-total-students" class="font-headline-md text-headline-md md:text-2xl lg:text-3xl font-bold text-on-surface">--</h3>
 </div>
-<!-- Card 2 -->
+
+<!-- Card 2: Present Students -->
 <div class="glass-card rounded-glass p-4 md:p-5 lg:p-6 flex flex-col gap-2 inline-style-3">
 <div class="flex justify-between items-center">
 <span class="material-symbols-outlined text-secondary bg-secondary/10 p-2 rounded-lg">how_to_reg</span>
 <span class="text-tertiary font-label-sm md:text-base flex items-center gap-1">
-<span class="material-symbols-outlined text-sm">trending_up</span> 2%
+<span class="material-symbols-outlined text-sm">check_circle</span> Today
           </span>
 </div>
-<p class="text-on-surface-variant font-label-sm md:text-base">Present Students</p>
-<h3 class="font-headline-md text-headline-md md:text-2xl lg:text-3xl font-bold text-on-surface">412</h3>
+<p class="text-on-surface-variant font-label-sm md:text-base">Present Today</p>
+<h3 id="dash-kpi-present-students" class="font-headline-md text-headline-md md:text-2xl lg:text-3xl font-bold text-on-surface">--</h3>
 </div>
-<!-- Card 3 -->
+
+<!-- Card 3: Today's Attendance Percentage -->
 <div class="glass-card rounded-glass p-4 md:p-5 lg:p-6 flex flex-col gap-2 inline-style-3">
 <div class="flex justify-between items-center">
 <span class="material-symbols-outlined text-tertiary bg-tertiary/10 p-2 rounded-lg">analytics</span>
-<span class="text-error font-label-sm md:text-base flex items-center gap-1">
-<span class="material-symbols-outlined text-sm">trending_down</span> 1%
+<span class="text-tertiary font-label-sm md:text-base flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">percent</span> Today
           </span>
 </div>
-<p class="text-on-surface-variant font-label-sm md:text-base">Avg. Attention</p>
-<h3 class="font-headline-md text-headline-md md:text-2xl lg:text-3xl font-bold text-on-surface">88%</h3>
+<p class="text-on-surface-variant font-label-sm md:text-base">Attendance Rate</p>
+<h3 id="dash-kpi-attendance-rate" class="font-headline-md text-headline-md md:text-2xl lg:text-3xl font-bold text-on-surface">--%</h3>
 </div>
-<!-- Card 4 -->
+
+<!-- Card 4: Total Classrooms -->
 <div class="glass-card rounded-glass p-4 md:p-5 lg:p-6 flex flex-col gap-2 inline-style-3">
 <div class="flex justify-between items-center">
-<span class="material-symbols-outlined text-primary-container bg-primary-container/10 p-2 rounded-lg">thermostat</span>
-<span class="text-on-surface-variant font-label-sm md:text-base">Stable</span>
+<span class="material-symbols-outlined text-primary-container bg-primary-container/10 p-2 rounded-lg">meeting_room</span>
+<span class="text-on-surface-variant font-label-sm md:text-base">Database</span>
 </div>
-<p class="text-on-surface-variant font-label-sm md:text-base">Classroom Temp</p>
-<h3 class="font-headline-md text-headline-md md:text-2xl lg:text-3xl font-bold text-on-surface">22°C</h3>
+<p class="text-on-surface-variant font-label-sm md:text-base">Total Classrooms</p>
+<h3 id="dash-kpi-total-classrooms" class="font-headline-md text-headline-md md:text-2xl lg:text-3xl font-bold text-on-surface">--</h3>
 </div>
-<!-- Card 5 -->
+
+<!-- Card 5: Active Classrooms -->
 <div class="glass-card rounded-glass p-4 md:p-5 lg:p-6 flex flex-col gap-2">
 <div class="flex justify-between items-center">
-<span class="material-symbols-outlined text-secondary-container bg-secondary-container/10 p-2 rounded-lg">sentiment_satisfied</span>
-<span class="text-primary font-label-sm md:text-base">High</span>
+<span class="material-symbols-outlined text-secondary-container bg-secondary-container/10 p-2 rounded-lg">door_open</span>
+<span class="text-tertiary font-label-sm md:text-base">Active</span>
 </div>
-<p class="text-on-surface-variant font-label-sm md:text-base">Dominant Emotion</p>
-<h3 class="font-headline-md text-headline-md md:text-2xl lg:text-3xl font-bold text-on-surface text-lg">Focused</h3>
+<p class="text-on-surface-variant font-label-sm md:text-base">Active Classrooms</p>
+<h3 id="dash-kpi-active-classrooms" class="font-headline-md text-headline-md md:text-2xl lg:text-3xl font-bold text-on-surface">--</h3>
 </div>
-<!-- Card 6 -->
-<div class="glass-card rounded-glass p-4 md:p-5 lg:p-6 flex flex-col gap-2 border-error/20">
+
+<!-- Card 6: Attendance Records -->
+<div class="glass-card rounded-glass p-4 md:p-5 lg:p-6 flex flex-col gap-2 border-primary/20">
 <div class="flex justify-between items-center">
-<span class="material-symbols-outlined text-error bg-error/10 p-2 rounded-lg">error</span>
-<span class="text-error font-label-sm md:text-base">Alert</span>
+<span class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">history</span>
+<span class="text-primary font-label-sm md:text-base">Records</span>
 </div>
-<p class="text-on-surface-variant font-label-sm md:text-base">Active Alerts</p>
-<h3 class="font-headline-md text-headline-md md:text-2xl lg:text-3xl font-bold text-error">2</h3>
+<p class="text-on-surface-variant font-label-sm md:text-base">Today's Logs</p>
+<h3 id="dash-kpi-attendance-records" class="font-headline-md text-headline-md md:text-2xl lg:text-3xl font-bold text-primary">--</h3>
 </div>
 </section>
+
 <!-- Analytics Section -->
 <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
 <!-- Left Column -->
@@ -197,65 +209,30 @@
 <div class="glass-card rounded-glass p-4 md:p-5 lg:p-6 inline-style-3">
 <div class="flex justify-between items-center mb-6">
 <h4 class="font-headline-md text-lg font-bold">Attendance Trend</h4>
-<select class="bg-surface-container text-label-sm rounded-lg border-none focus:ring-1 focus:ring-primary">
-<option>Last 7 Days</option>
-<option>Last 30 Days</option>
-</select>
+<span class="text-xs text-on-surface-variant">Live MySQL Synchronized</span>
 </div>
 <div class="h-64 relative">
 <canvas id="attendanceTrendChart"></canvas>
 </div>
 </div>
 <div class="glass-card rounded-glass p-4 md:p-5 lg:p-6 inline-style-3">
-<h4 class="font-headline-md text-lg font-bold mb-6">Emotion Distribution</h4>
+<h4 class="font-headline-md text-lg font-bold mb-6">Emotion Distribution (Sample)</h4>
 <div class="h-64 relative">
 <canvas id="emotionDistributionChart"></canvas>
 </div>
 </div>
 </div>
+
 <!-- Right Column -->
 <div class="flex flex-col gap-6">
 <div class="glass-card rounded-glass p-4 md:p-5 lg:p-6 flex-1 inline-style-3">
-<h4 class="font-headline-md text-lg font-bold mb-6">Attention Monitoring</h4>
-<div class="space-y-6">
-<div class="space-y-2">
-<div class="flex justify-between font-label-sm md:text-base">
-<span class="">Room 101 - Math</span>
-<span class="text-primary">94%</span>
-</div>
-<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
-<div class="bg-primary h-full rounded-full inline-style-5"></div>
+<h4 class="font-headline-md text-lg font-bold mb-6">Classroom Occupancy &amp; Status</h4>
+<div id="dash-classrooms-list" class="space-y-6">
+  <!-- Dynamic MySQL Classrooms rendering -->
+  <p class="text-xs text-on-surface-variant text-center py-4">Loading classrooms from MySQL...</p>
 </div>
 </div>
-<div class="space-y-2">
-<div class="flex justify-between font-label-sm md:text-base">
-<span class="">Room 204 - Science</span>
-<span class="text-secondary">82%</span>
-</div>
-<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
-<div class="bg-secondary h-full rounded-full inline-style-6"></div>
-</div>
-</div>
-<div class="space-y-2">
-<div class="flex justify-between font-label-sm md:text-base">
-<span class="">Room 102 - History</span>
-<span class="text-error">58%</span>
-</div>
-<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
-<div class="bg-error h-full rounded-full inline-style-7"></div>
-</div>
-</div>
-<div class="space-y-2">
-<div class="flex justify-between font-label-sm md:text-base">
-<span class="">Room 301 - Art</span>
-<span class="text-tertiary">91%</span>
-</div>
-<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
-<div class="bg-tertiary h-full rounded-full inline-style-8"></div>
-</div>
-</div>
-</div>
-</div>
+
 <div class="glass-card rounded-glass p-4 md:p-5 lg:p-6">
 <h4 class="font-headline-md text-lg font-bold mb-6">Temperature Trend</h4>
 <div class="h-64 relative">
@@ -281,141 +258,97 @@
 </div>
 </div>
 </section>
+
 <!-- Middle Section: Live Feed & Notifications -->
 <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
 <div class="lg:col-span-2 glass-card rounded-glass overflow-hidden">
 <div class="p-4 md:p-5 lg:p-6 flex justify-between items-center bg-surface-container-lowest/50 border-b border-white/10">
 <h4 class="font-headline-md text-lg font-bold flex items-center gap-2">
-<span class="material-symbols-outlined text-error animate-pulse">videocam</span> Live Monitoring: Room 4
-          </h4>
+<span class="material-symbols-outlined text-tertiary animate-pulse">videocam</span> AI Monitoring Feed
+</h4>
 <div class="flex gap-4">
-<span class="text-label-sm bg-primary/20 text-primary px-3 py-1 rounded-full">Students: 32</span>
-<span class="text-label-sm bg-tertiary/20 text-tertiary px-3 py-1 rounded-full">Engagement: 91%</span>
+<span class="text-label-sm bg-primary/20 text-primary px-3 py-1 rounded-full">Backend: Active</span>
+<span class="text-label-sm bg-tertiary/20 text-tertiary px-3 py-1 rounded-full">MySQL: Connected</span>
 </div>
 </div>
 <div class="relative h-96 group">
-<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 inline-style-9" data-alt="A high-resolution interior view of a futuristic classroom with students wearing sleek VR headsets. The room is dimly lit with ambient blue and magenta neon lights. Transparent holographic HUD displays hover over student desks, showing real-time engagement and emotion metrics. The atmosphere is quiet, high-tech, and immersive."></div>
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105 inline-style-9" data-alt="Futuristic classroom preview"></div>
 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
 <!-- Scanning Overlay -->
 <div class="absolute top-1/4 left-1/4 w-32 h-32 border-2 border-primary/50 rounded-lg animate-pulse">
-<span class="absolute top-0 left-0 -mt-6 text-[10px] text-primary uppercase font-bold bg-black/50 px-1">ID: ST-0842</span>
-</div>
-<div class="absolute bottom-1/4 right-1/3 w-24 h-24 border-2 border-tertiary/50 rounded-lg">
-<span class="absolute top-0 left-0 -mt-6 text-[10px] text-tertiary uppercase font-bold bg-black/50 px-1">Engagement: High</span>
+<span class="absolute top-0 left-0 -mt-6 text-[10px] text-primary uppercase font-bold bg-black/50 px-1">Face Recognition Ready</span>
 </div>
 </div>
 </div>
+
 <div class="glass-card rounded-glass p-4 md:p-5 lg:p-6 flex flex-col">
-<h4 class="font-headline-md text-lg font-bold mb-6">Notifications Panel</h4>
+<h4 class="font-headline-md text-lg font-bold mb-6">System Feed</h4>
 <div class="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
-<div class="p-4 rounded-xl bg-error/10 border border-error/20 flex gap-4">
-<span class="material-symbols-outlined text-error">warning</span>
-<div>
-<p class="text-body-md font-bold">Low Attention detected</p>
-<p class="text-label-sm text-on-surface-variant">Room 4 • Just now</p>
-</div>
-</div>
-<div class="p-4 rounded-xl bg-primary/10 border border-primary/20 flex gap-4">
-<span class="material-symbols-outlined text-primary">info</span>
-<div>
-<p class="text-body-md font-bold">Attendance Completed</p>
-<p class="text-label-sm text-on-surface-variant">Room 102 • 5 mins ago</p>
-</div>
-</div>
 <div class="p-4 rounded-xl bg-tertiary/10 border border-tertiary/20 flex gap-4">
 <span class="material-symbols-outlined text-tertiary">check_circle</span>
 <div>
-<p class="text-body-md font-bold">HVAC Optimized</p>
-<p class="text-label-sm text-on-surface-variant">All Rooms • 15 mins ago</p>
+<p class="text-body-md font-bold">FastAPI Backend Connected</p>
+<p class="text-label-sm text-on-surface-variant">Database: MySQL • Live</p>
 </div>
 </div>
-<div class="p-4 rounded-xl bg-surface-container-high border border-white/10 flex gap-4 opacity-70">
-<span class="material-symbols-outlined">update</span>
+<div class="p-4 rounded-xl bg-primary/10 border border-primary/20 flex gap-4">
+<span class="material-symbols-outlined text-primary">groups</span>
 <div>
-<p class="text-body-md">Daily Report Ready</p>
-<p class="text-label-sm text-on-surface-variant">System • 1 hr ago</p>
+<p class="text-body-md font-bold">Students &amp; Classrooms Synced</p>
+<p class="text-label-sm text-on-surface-variant">Real MySQL Records</p>
 </div>
 </div>
 </div>
-<button class="mt-6 w-full py-2 text-label-sm text-primary hover:underline">View All Notifications</button>
+<button onclick="window.location.href='notifications_alerts_smart_classroom_ai.html'" class="mt-6 w-full py-2 text-label-sm text-primary hover:underline">View All Notifications</button>
 </div>
 </section>
-<!-- Bottom Section: Quick Actions & Table -->
+
+<!-- Bottom Section: Quick Actions & Recent Activity Table -->
 <section class="flex flex-col gap-6">
 <div class="flex items-center gap-4 md:p-5 lg:p-6 flex-wrap">
 <button class="bg-gradient-to-r from-primary to-secondary text-on-primary-container px-6 py-2.5 md:py-3 rounded-full font-bold flex items-center gap-2 hover:scale-105 active:scale-95 transition-all shadow-lg glow-primary" onclick="window.location.href='student_management_smart_classroom_ai.html'">
-<span class="material-symbols-outlined">person_add</span> Add Student
-        </button>
+<span class="material-symbols-outlined">person_add</span> Manage Students
+</button>
 <button class="glass-card px-6 py-2.5 md:py-3 rounded-full font-bold flex items-center gap-2 hover:scale-105 active:scale-95 transition-all" onclick="window.location.href='classroom_management_smart_classroom_ai.html'">
-<span class="material-symbols-outlined">add_home</span> Create Classroom
-        </button>
-<button class="glass-card px-6 py-2.5 md:py-3 rounded-full font-bold flex items-center gap-2 hover:scale-105 active:scale-95 transition-all" onclick="window.location.href='reports_analytics_smart_classroom_ai.html'">
-<span class="material-symbols-outlined">summarize</span> Export Report
-        </button>
-<button class="glass-card px-6 py-2.5 md:py-3 rounded-full font-bold flex items-center gap-2 hover:scale-105 active:scale-95 transition-all ml-auto" onclick="window.location.reload()">
+<span class="material-symbols-outlined">add_home</span> Manage Classrooms
+</button>
+<button class="glass-card px-6 py-2.5 md:py-3 rounded-full font-bold flex items-center gap-2 hover:scale-105 active:scale-95 transition-all" onclick="window.location.href='attendance_smart_classroom_ai.html'">
+<span class="material-symbols-outlined">event_available</span> Attendance Logs
+</button>
+<button class="glass-card px-6 py-2.5 md:py-3 rounded-full font-bold flex items-center gap-2 hover:scale-105 active:scale-95 transition-all ml-auto text-primary" onclick="loadDashboardData()">
 <span class="material-symbols-outlined">sync</span> Refresh Data
-        </button>
+</button>
 </div>
+
 <div class="glass-card rounded-glass overflow-hidden">
 <div class="p-4 md:p-5 lg:p-6 border-b border-white/10 flex justify-between items-center">
-<h4 class="font-headline-md text-lg font-bold">Recent Activities</h4>
-<span class="text-label-sm text-on-surface-variant">Updated every 60s</span>
+<div>
+<h4 class="font-headline-md text-lg font-bold">Recent Attendance Activity</h4>
+<p class="text-xs text-on-surface-variant mt-0.5">Real-time attendance logs stored in MySQL</p>
+</div>
+<button onclick="loadDashboardData()" class="p-1.5 rounded-lg bg-surface-container hover:bg-surface-variant text-on-surface-variant transition-colors" title="Refresh Dashboard">
+  <span class="material-symbols-outlined text-[18px]">refresh</span>
+</button>
 </div>
 <div class="overflow-x-auto">
 <table class="w-full text-left">
 <thead>
 <tr class="text-label-sm text-on-surface-variant uppercase tracking-wider bg-surface-container-lowest/30">
 <th class="px-4 md:px-6 lg:px-8 py-4 font-bold">Time</th>
-<th class="px-4 md:px-6 lg:px-8 py-4 font-bold">Event</th>
+<th class="px-4 md:px-6 lg:px-8 py-4 font-bold">Student Name &amp; ID</th>
 <th class="px-4 md:px-6 lg:px-8 py-4 font-bold">Classroom</th>
+<th class="px-4 md:px-6 lg:px-8 py-4 font-bold">Method</th>
 <th class="px-4 md:px-6 lg:px-8 py-4 font-bold">Status</th>
-<th class="px-4 md:px-6 lg:px-8 py-4 font-bold">Action</th>
 </tr>
 </thead>
-<tbody class="divide-y divide-white/5">
-<tr class="hover:bg-white/5 transition-colors">
-<td class="px-4 md:px-6 lg:px-8 py-4 text-body-md">10:42 AM</td>
-<td class="px-4 md:px-6 lg:px-8 py-4 text-body-md font-medium">Attention Drop Detected</td>
-<td class="px-4 md:px-6 lg:px-8 py-4 text-body-md">Room 4 (Science)</td>
-<td class="px-4 md:px-6 lg:px-8 py-4">
-<span class="text-label-sm px-3 py-1 rounded-full bg-error/20 text-error">Warning</span>
-</td>
-<td class="px-4 md:px-6 lg:px-8 py-4">
-<button class="text-primary hover:underline">Detail</button>
-</td>
-</tr>
-<tr class="hover:bg-white/5 transition-colors">
-<td class="px-4 md:px-6 lg:px-8 py-4 text-body-md">10:35 AM</td>
-<td class="px-4 md:px-6 lg:px-8 py-4 text-body-md font-medium">Session Started</td>
-<td class="px-4 md:px-6 lg:px-8 py-4 text-body-md">Room 102 (History)</td>
-<td class="px-4 md:px-6 lg:px-8 py-4">
-<span class="text-label-sm px-3 py-1 rounded-full bg-tertiary/20 text-tertiary">Active</span>
-</td>
-<td class="px-4 md:px-6 lg:px-8 py-4">
-<button class="text-primary hover:underline">View</button>
-</td>
-</tr>
-<tr class="hover:bg-white/5 transition-colors">
-<td class="px-4 md:px-6 lg:px-8 py-4 text-body-md">10:15 AM</td>
-<td class="px-4 md:px-6 lg:px-8 py-4 text-body-md font-medium">Student Onboarding</td>
-<td class="px-4 md:px-6 lg:px-8 py-4 text-body-md">System Level</td>
-<td class="px-4 md:px-6 lg:px-8 py-4">
-<span class="text-label-sm px-3 py-1 rounded-full bg-primary/20 text-primary">Completed</span>
-</td>
-<td class="px-4 md:px-6 lg:px-8 py-4">
-<button class="text-primary hover:underline">Log</button>
-</td>
-</tr>
-<tr class="hover:bg-white/5 transition-colors">
-<td class="px-4 md:px-6 lg:px-8 py-4 text-body-md">09:50 AM</td>
-<td class="px-4 md:px-6 lg:px-8 py-4 text-body-md font-medium">Anomaly Resolved</td>
-<td class="px-4 md:px-6 lg:px-8 py-4 text-body-md">Room 301 (Art)</td>
-<td class="px-4 md:px-6 lg:px-8 py-4">
-<span class="text-label-sm px-3 py-1 rounded-full bg-tertiary/20 text-tertiary">Resolved</span>
-</td>
-<td class="px-4 md:px-6 lg:px-8 py-4">
-<button class="text-primary hover:underline">Archive</button>
-</td>
+<tbody id="dash-recent-activities-tbody" class="divide-y divide-white/5">
+<tr>
+  <td colspan="5" class="px-6 py-8 text-center text-on-surface-variant">
+    <div class="flex items-center justify-center gap-3">
+      <div class="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+      <span>Connecting to FastAPI backend...</span>
+    </div>
+  </td>
 </tr>
 </tbody>
 </table>
@@ -423,8 +356,256 @@
 </div>
 </section>
 </main>
-<!-- Interactive Logic -->
 
+<!-- Dynamic Dashboard API Controller -->
+<script>
+let dashboardTrendChartInstance = null;
 
+function formatDashboardTime(isoString) {
+  if (!isoString) return "--:--";
+  try {
+    const d = new Date(isoString);
+    if (isNaN(d.getTime())) return "--:--";
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  } catch (e) {
+    return "--:--";
+  }
+}
 
-</body></html>
+async function loadDashboardData() {
+  const kpiStudents = document.getElementById("dash-kpi-total-students");
+  const kpiPresent = document.getElementById("dash-kpi-present-students");
+  const kpiRate = document.getElementById("dash-kpi-attendance-rate");
+  const kpiClassrooms = document.getElementById("dash-kpi-total-classrooms");
+  const kpiActive = document.getElementById("dash-kpi-active-classrooms");
+  const kpiRecords = document.getElementById("dash-kpi-attendance-records");
+  const classroomsList = document.getElementById("dash-classrooms-list");
+  const recentTbody = document.getElementById("dash-recent-activities-tbody");
+
+  if (recentTbody) {
+    recentTbody.innerHTML = `
+      <tr>
+        <td colspan="5" class="px-6 py-8 text-center text-on-surface-variant">
+          <div class="flex items-center justify-center gap-3">
+            <div class="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+            <span>Synchronizing live MySQL data...</span>
+          </div>
+        </td>
+      </tr>
+    `;
+  }
+
+  try {
+    const data = await ApiService.getDashboardData();
+
+    // 1. Update KPI Cards
+    if (kpiStudents) kpiStudents.textContent = data.totalStudents;
+    if (kpiPresent) kpiPresent.textContent = data.presentToday;
+    if (kpiRate) kpiRate.textContent = `${data.attendanceRate}%`;
+    if (kpiClassrooms) kpiClassrooms.textContent = data.totalClassrooms;
+    if (kpiActive) kpiActive.textContent = data.activeClassrooms;
+    if (kpiRecords) kpiRecords.textContent = data.todaySummary.total_records;
+
+    // 2. Render Classroom Monitoring List
+    if (classroomsList) {
+      if (!data.classrooms || data.classrooms.length === 0) {
+        classroomsList.innerHTML = `
+          <div class="p-6 text-center text-on-surface-variant bg-surface-container/30 rounded-xl border border-outline-variant/10">
+            <span class="material-symbols-outlined text-3xl opacity-50 mb-1">meeting_room</span>
+            <p class="text-sm font-medium">No classrooms configured in MySQL.</p>
+            <a href="classroom_management_smart_classroom_ai.html" class="mt-2 inline-block text-xs font-bold text-primary hover:underline">Create Classroom</a>
+          </div>
+        `;
+      } else {
+        classroomsList.innerHTML = data.classrooms.map((c, idx) => {
+          const colors = ["text-primary bg-primary", "text-secondary bg-secondary", "text-tertiary bg-tertiary", "text-primary-container bg-primary-container"];
+          const theme = colors[idx % colors.length];
+          const textColor = theme.split(' ')[0];
+          const bgColor = theme.split(' ')[1];
+          const statusBadge = (c.status || '').toLowerCase() === 'active'
+            ? `<span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-tertiary/10 text-tertiary border border-tertiary/20">Active</span>`
+            : `<span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-surface-container-high text-on-surface-variant border border-outline-variant/20">Inactive</span>`;
+
+          return `
+            <div class="space-y-2">
+              <div class="flex justify-between items-center font-label-sm md:text-base">
+                <span class="font-semibold text-white">${c.name} <span class="text-xs text-on-surface-variant font-normal">(${c.department || 'General'})</span></span>
+                <div class="flex items-center gap-2">
+                  ${statusBadge}
+                  <span class="${textColor} font-bold text-xs">${c.capacity || 30} Capacity</span>
+                </div>
+              </div>
+              <div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+                <div class="${bgColor} h-full rounded-full transition-all duration-500" style="width: ${Math.min(100, Math.max(20, (c.capacity || 30) * 2))}%"></div>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+    }
+
+    // 3. Render Recent Activity Table
+    if (recentTbody) {
+      if (!data.recentAttendance || data.recentAttendance.length === 0) {
+        recentTbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="px-6 py-8 text-center text-on-surface-variant">
+              <span class="material-symbols-outlined text-3xl opacity-50 mb-1">history</span>
+              <p class="text-sm font-medium">No recent attendance records in MySQL.</p>
+              <p class="text-xs opacity-70 mt-0.5">Use Attendance Management page to record student check-ins.</p>
+            </td>
+          </tr>
+        `;
+      } else {
+        recentTbody.innerHTML = data.recentAttendance.map(r => {
+          const timeStr = formatDashboardTime(r.timestamp);
+          const studentName = r.student_name || 'Student';
+          const studentId = r.student_id;
+          const classroomName = r.classroom_name || (r.classroom_id ? `Room ${r.classroom_id}` : 'General');
+          const status = r.status || 'Present';
+
+          let statusChip = '<span class="text-label-sm px-3 py-1 rounded-full bg-tertiary/20 text-tertiary border border-tertiary/30">Present</span>';
+          if (status === 'Late') statusChip = '<span class="text-label-sm px-3 py-1 rounded-full bg-secondary/20 text-secondary border border-secondary/30">Late</span>';
+          else if (status === 'Absent') statusChip = '<span class="text-label-sm px-3 py-1 rounded-full bg-error/20 text-error border border-error/30">Absent</span>';
+
+          const methodBadge = `<span class="text-[11px] text-on-surface-variant font-mono">${r.verification_method || 'Manual'}</span>`;
+
+          return `
+            <tr class="hover:bg-white/5 transition-colors">
+              <td class="px-4 md:px-6 lg:px-8 py-4 text-body-md text-on-surface-variant">${timeStr}</td>
+              <td class="px-4 md:px-6 lg:px-8 py-4 text-body-md font-medium text-white">
+                <div>${studentName}</div>
+                <div class="text-[11px] font-mono text-on-surface-variant opacity-80">${studentId}</div>
+              </td>
+              <td class="px-4 md:px-6 lg:px-8 py-4 text-body-md text-on-surface-variant">${classroomName}</td>
+              <td class="px-4 md:px-6 lg:px-8 py-4">${methodBadge}</td>
+              <td class="px-4 md:px-6 lg:px-8 py-4">${statusChip}</td>
+            </tr>
+          `;
+        }).join("");
+      }
+    }
+
+    // 4. Update Attendance Trend Chart
+    renderDashboardTrendChart(data.recentAttendance, data.totalStudents);
+
+  } catch (err) {
+    console.error("Error loading dashboard data:", err);
+    if (recentTbody) {
+      recentTbody.innerHTML = `
+        <tr>
+          <td colspan="5" class="px-6 py-8 text-center">
+            <div class="flex flex-col items-center justify-center gap-2 text-error">
+              <span class="material-symbols-outlined text-4xl">error</span>
+              <p class="font-bold text-sm">Failed to load live data from FastAPI backend.</p>
+              <p class="text-xs text-on-surface-variant mb-2">${err.message}</p>
+              <button onclick="loadDashboardData()" class="px-4 py-2 rounded-xl bg-primary/20 text-primary text-xs font-bold hover:bg-primary/30 transition-all">
+                Retry Connection
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+    if (typeof showToast === "function") {
+      showToast(`Dashboard sync error: ${err.message}`, "error");
+    }
+  }
+}
+
+// Render dynamic 7-day Attendance Trend Chart
+function renderDashboardTrendChart(records, totalStudents) {
+  const canvas = document.getElementById("attendanceTrendChart");
+  if (!canvas) return;
+
+  // Generate last 7 days labels
+  const days = [];
+  const dayRates = [];
+  const today = new Date();
+
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toISOString().split('T')[0];
+    const dayLabel = d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+    days.push(dayLabel);
+
+    // Filter records for this day
+    const dayRecords = (records || []).filter(r => r.date === dateStr);
+    const presentCount = dayRecords.filter(r => r.status === 'Present' || r.status === 'Late').length;
+    
+    let rate = 100; // default 100% baseline if no data for past days
+    if (dayRecords.length > 0) {
+      const base = totalStudents > 0 ? totalStudents : dayRecords.length;
+      rate = Math.round((presentCount / base) * 100);
+    }
+    dayRates.push(rate);
+  }
+
+  if (dashboardTrendChartInstance) {
+    dashboardTrendChartInstance.destroy();
+  }
+
+  const ctx = canvas.getContext("2d");
+  dashboardTrendChartInstance = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: days,
+      datasets: [{
+        label: "Attendance Rate (%)",
+        data: dayRates,
+        borderColor: "#adc6ff",
+        backgroundColor: "rgba(173, 198, 255, 0.15)",
+        borderWidth: 3,
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: "#adc6ff",
+        pointBorderColor: "#101415",
+        pointBorderWidth: 2,
+        pointRadius: 5,
+        pointHoverRadius: 7
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: { color: "#c2c6d6", font: { family: "Inter", size: 11 } }
+        },
+        tooltip: {
+          backgroundColor: "#1d2022",
+          titleColor: "#e0e3e5",
+          bodyColor: "#c2c6d6",
+          borderColor: "rgba(255, 255, 255, 0.1)",
+          borderWidth: 1,
+          padding: 10,
+          cornerRadius: 10
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: "rgba(255, 255, 255, 0.05)" },
+          ticks: { color: "#8c909f", font: { family: "Inter", size: 10 } }
+        },
+        y: {
+          grid: { color: "rgba(255, 255, 255, 0.05)" },
+          ticks: {
+            color: "#8c909f",
+            callback: value => value + "%",
+            font: { family: "Inter", size: 10 }
+          },
+          min: 0,
+          max: 100
+        }
+      }
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadDashboardData();
+});
+</script>
+</body>
+</html>

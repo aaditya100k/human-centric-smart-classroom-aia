@@ -7,9 +7,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const currentPath = window.location.pathname;
     const pageName = currentPath.substring(currentPath.lastIndexOf("/") + 1);
 
-    // Fetch dynamic admin settings
+    // Fetch dynamic admin settings / user state
+    const currentUser = typeof AuthService !== "undefined" ? AuthService.getCurrentUser() : null;
     const settings = DataAPI.getSettings();
-    const adminInitials = settings.adminName ? settings.adminName.split(" ").map(n => n[0]).join("").substring(0, 2) : "AD";
+    const displayName = currentUser ? (currentUser.full_name || currentUser.username) : (settings.adminName || "Admin");
+    const displayRole = currentUser ? (currentUser.role || "Administrator") : (settings.adminRole || "Senior Administrator");
+    const adminInitials = displayName ? displayName.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase() : "AD";
     
     // Fetch notifications count
     const notifications = DataAPI.getNotifications();
@@ -149,8 +152,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 <!-- Admin Profile Info -->
                 <div class="flex items-center gap-3 pl-4 border-l border-white/10">
                     <div class="text-right hidden sm:block">
-                        <p class="text-xs font-bold text-on-surface">${settings.adminName}</p>
-                        <p class="text-[9px] text-on-surface-variant tracking-wider uppercase opacity-80">${settings.adminRole}</p>
+                        <p class="text-xs font-bold text-on-surface">${displayName}</p>
+                        <p class="text-[9px] text-on-surface-variant tracking-wider uppercase opacity-80">${displayRole}</p>
                     </div>
                     <div class="w-9 h-9 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center font-bold text-primary text-xs shadow-inner cursor-pointer" onclick="window.location.href='settings_smart_classroom_ai.html'">
                         ${adminInitials}
@@ -227,9 +230,13 @@ function setupLayoutListeners() {
     if (logoutBtn) {
         logoutBtn.addEventListener("click", (e) => {
             e.preventDefault();
-            // Simulate clearing session
-            sessionStorage.removeItem("activeSession");
-            window.location.href = "edumonitor_ai_login_page.html";
+            if (typeof AuthService !== "undefined") {
+                AuthService.logout();
+            } else {
+                localStorage.removeItem("sc_token");
+                sessionStorage.removeItem("sc_token");
+                window.location.href = "edumonitor_ai_login_page.html";
+            }
         });
     }
 
