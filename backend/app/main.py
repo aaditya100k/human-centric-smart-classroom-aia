@@ -18,6 +18,8 @@ from app.routers import (
     analytics_router,
     alerts_router,
     notifications_router,
+    privacy_router,
+    research_router,
 )
 
 # Configure logging
@@ -97,6 +99,8 @@ app.include_router(face_recognition_router)
 app.include_router(analytics_router, dependencies=[Depends(get_current_user)])
 app.include_router(alerts_router, dependencies=[Depends(get_current_user)])
 app.include_router(notifications_router, dependencies=[Depends(get_current_user)])
+app.include_router(privacy_router, dependencies=[Depends(get_current_user)])
+app.include_router(research_router, dependencies=[Depends(get_current_user)])
 
 
 # Serve frontend_refactored static files and redirect root URL
@@ -112,6 +116,11 @@ if os.path.exists(frontend_dir):
     def redirect_to_frontend():
         """Redirect root URL to the interactive frontend login page."""
         return RedirectResponse(url="/frontend/html/edumonitor_ai_login_page.html")
+
+# Serve uploaded student photos and other assets
+uploads_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "uploads"))
+os.makedirs(uploads_dir, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=uploads_dir), name="uploads")
 
 # Global Exception Handler for friendly error messages
 @app.exception_handler(Exception)

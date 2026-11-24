@@ -254,12 +254,23 @@
 <div class="space-y-2">
 <label class="text-sm font-bold text-on-surface-variant uppercase tracking-wider">Student Profile Photo</label>
 <div class="flex items-center gap-6">
-<div class="w-24 h-24 rounded-2xl border-2 border-dashed border-white/20 bg-white/5 flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 transition-colors">
-<span class="material-symbols-outlined text-3xl opacity-30">add_a_photo</span>
+<div id="profile-photo-preview"
+     class="w-24 h-24 rounded-2xl border-2 border-dashed border-white/20 bg-white/5 flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 transition-colors overflow-hidden relative shrink-0"
+     onclick="document.getElementById('profile-photo-input').click()" title="Click to upload profile photo">
+  <span class="material-symbols-outlined text-3xl opacity-30" id="profile-photo-icon">add_a_photo</span>
+  <img id="profile-photo-img" class="w-full h-full object-cover hidden absolute inset-0 rounded-2xl" src="" alt="Profile Photo">
+  <button id="profile-photo-remove" type="button" onclick="removeProfilePhoto(event)"
+    class="hidden absolute top-0.5 right-0.5 bg-error/80 hover:bg-error rounded-full w-5 h-5 flex items-center justify-center text-white leading-none z-10"
+    title="Remove photo">
+    <span class="material-symbols-outlined" style="font-size:12px">close</span>
+  </button>
 </div>
+<input type="file" id="profile-photo-input" accept="image/jpeg,image/png,image/webp" class="hidden">
 <div class="flex-1">
-<p class="text-sm text-on-surface-variant mb-2">Upload a clear front-facing portrait for identification.</p>
-<button class="text-xs font-bold text-primary underline" type="button">Browse files</button>
+  <p class="text-sm text-on-surface-variant mb-2">Upload a clear front-facing portrait for identification.</p>
+  <button class="text-xs font-bold text-primary underline" type="button"
+    onclick="document.getElementById('profile-photo-input').click()">Browse files</button>
+  <p id="profile-photo-name" class="text-xs text-on-surface-variant opacity-60 mt-1 truncate max-w-[180px]"></p>
 </div>
 </div>
 </div>
@@ -313,25 +324,47 @@
 </div>
 <p class="text-xs text-on-surface-variant">Upload at least 5 face images from different angles to enable AI-powered automated attendance monitoring.</p>
 <div class="grid grid-cols-5 gap-2">
-<div class="aspect-square bg-white/5 border border-white/10 rounded-lg flex items-center justify-center hover:bg-white/10 cursor-pointer">
-<span class="material-symbols-outlined text-sm opacity-50">add</span>
+  <div id="bio-slot-0" class="aspect-square bg-white/5 border border-white/10 rounded-lg flex items-center justify-center hover:bg-white/10 cursor-pointer relative overflow-hidden transition-colors" onclick="triggerBioSlot(0)" title="Upload face image 1">
+    <span class="material-symbols-outlined text-sm opacity-50">add</span>
+    <img class="bio-thumb hidden w-full h-full object-cover absolute inset-0" src="" alt="Face 1">
+    <button class="bio-remove hidden absolute top-0.5 right-0.5 bg-error/80 rounded w-4 h-4 flex items-center justify-center text-white leading-none z-10 text-[9px]" onclick="removeBioSlot(event,0)" type="button">âœ•</button>
+  </div>
+  <div id="bio-slot-1" class="aspect-square bg-white/5 border border-white/10 rounded-lg flex items-center justify-center hover:bg-white/10 cursor-pointer relative overflow-hidden transition-colors" onclick="triggerBioSlot(1)" title="Upload face image 2">
+    <span class="material-symbols-outlined text-sm opacity-50">add</span>
+    <img class="bio-thumb hidden w-full h-full object-cover absolute inset-0" src="" alt="Face 2">
+    <button class="bio-remove hidden absolute top-0.5 right-0.5 bg-error/80 rounded w-4 h-4 flex items-center justify-center text-white leading-none z-10 text-[9px]" onclick="removeBioSlot(event,1)" type="button">âœ•</button>
+  </div>
+  <div id="bio-slot-2" class="aspect-square bg-white/5 border border-white/10 rounded-lg flex items-center justify-center hover:bg-white/10 cursor-pointer relative overflow-hidden transition-colors" onclick="triggerBioSlot(2)" title="Upload face image 3">
+    <span class="material-symbols-outlined text-sm opacity-50">add</span>
+    <img class="bio-thumb hidden w-full h-full object-cover absolute inset-0" src="" alt="Face 3">
+    <button class="bio-remove hidden absolute top-0.5 right-0.5 bg-error/80 rounded w-4 h-4 flex items-center justify-center text-white leading-none z-10 text-[9px]" onclick="removeBioSlot(event,2)" type="button">âœ•</button>
+  </div>
+  <div id="bio-slot-3" class="aspect-square bg-white/5 border border-white/10 rounded-lg flex items-center justify-center hover:bg-white/10 cursor-pointer relative overflow-hidden transition-colors" onclick="triggerBioSlot(3)" title="Upload face image 4">
+    <span class="material-symbols-outlined text-sm opacity-50">add</span>
+    <img class="bio-thumb hidden w-full h-full object-cover absolute inset-0" src="" alt="Face 4">
+    <button class="bio-remove hidden absolute top-0.5 right-0.5 bg-error/80 rounded w-4 h-4 flex items-center justify-center text-white leading-none z-10 text-[9px]" onclick="removeBioSlot(event,3)" type="button">âœ•</button>
+  </div>
+  <div id="bio-slot-4" class="aspect-square bg-white/5 border border-white/10 rounded-lg flex items-center justify-center hover:bg-white/10 cursor-pointer relative overflow-hidden transition-colors" onclick="triggerBioSlot(4)" title="Upload face image 5">
+    <span class="material-symbols-outlined text-sm opacity-50">add</span>
+    <img class="bio-thumb hidden w-full h-full object-cover absolute inset-0" src="" alt="Face 5">
+    <button class="bio-remove hidden absolute top-0.5 right-0.5 bg-error/80 rounded w-4 h-4 flex items-center justify-center text-white leading-none z-10 text-[9px]" onclick="removeBioSlot(event,4)" type="button">âœ•</button>
+  </div>
 </div>
-<div class="aspect-square bg-white/5 border border-white/10 rounded-lg flex items-center justify-center hover:bg-white/10 cursor-pointer">
-<span class="material-symbols-outlined text-sm opacity-50">add</span>
+<!-- Hidden file inputs for each biometric slot -->
+<input type="file" id="bio-input-0" accept="image/*" class="hidden" onchange="onBioSlotChange(0,this)">
+<input type="file" id="bio-input-1" accept="image/*" class="hidden" onchange="onBioSlotChange(1,this)">
+<input type="file" id="bio-input-2" accept="image/*" class="hidden" onchange="onBioSlotChange(2,this)">
+<input type="file" id="bio-input-3" accept="image/*" class="hidden" onchange="onBioSlotChange(3,this)">
+<input type="file" id="bio-input-4" accept="image/*" class="hidden" onchange="onBioSlotChange(4,this)">
+<!-- Bio count label -->
+<div class="flex items-center justify-between">
+  <span id="bio-count-label" class="text-xs text-on-surface-variant">0/5 face images selected</span>
+  <span id="bio-ready-badge" class="hidden text-xs font-bold text-tertiary bg-tertiary/10 border border-tertiary/20 rounded-full px-2 py-0.5">âœ“ Ready for Enrollment</span>
 </div>
-<div class="aspect-square bg-white/5 border border-white/10 rounded-lg flex items-center justify-center hover:bg-white/10 cursor-pointer">
-<span class="material-symbols-outlined text-sm opacity-50">add</span>
-</div>
-<div class="aspect-square bg-white/5 border border-white/10 rounded-lg flex items-center justify-center hover:bg-white/10 cursor-pointer">
-<span class="material-symbols-outlined text-sm opacity-50">add</span>
-</div>
-<div class="aspect-square bg-white/5 border border-white/10 rounded-lg flex items-center justify-center hover:bg-white/10 cursor-pointer">
-<span class="material-symbols-outlined text-sm opacity-50">add</span>
-</div>
-</div>
-<button class="w-full py-2 bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary text-xs font-bold rounded-lg transition-all" type="button">
-                            Initialize Calibration
-                        </button>
+<button id="btn-initiate-calibration" class="w-full py-2 bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary text-xs font-bold rounded-lg transition-all" type="button" onclick="initiateCalibration()">
+  Initialize Calibration
+</button>
+<div id="calibration-status" class="text-xs text-center text-on-surface-variant min-h-[1.25rem]"></div>
 </div>
 <div class="pt-4 flex gap-4">
 <button id="student-submit-btn" class="flex-1 gradient-btn text-on-primary-container py-2.5 md:py-3.5 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2" type="submit">
@@ -348,12 +381,19 @@
 
 
 <script>
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Student Management â€“ inline script
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
 // State cache
 let currentStudents = [];
 let availableClassrooms = [];
 let searchDebounceTimer = null;
 
-// Helper: Show notification toast using page-handlers.js showToast or fallback
+// â”€â”€ Biometric state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+const bioFiles = [null, null, null, null, null];
+
+// â”€â”€ Helper: toast notification â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function notifyUser(message, type = "success") {
     if (typeof showToast === "function") {
         showToast(message, type);
@@ -362,7 +402,7 @@ function notifyUser(message, type = "success") {
     }
 }
 
-// 1. Fetch and render classrooms in the room dropdown
+// â”€â”€ 1. Fetch and render classrooms in the room dropdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function loadClassroomOptions() {
     const roomSelect = document.getElementById("student-room-select");
     if (!roomSelect) return;
@@ -378,7 +418,7 @@ async function loadClassroomOptions() {
     }
 }
 
-// 2. Fetch and render students table from MySQL
+// â”€â”€ 2. Fetch and render students table from MySQL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function renderStudentsTable() {
     const tbody = document.getElementById("students-table-body");
     if (!tbody) return;
@@ -436,16 +476,21 @@ async function renderStudentsTable() {
         tbody.innerHTML = currentStudents.map(s => {
             const initials = s.name ? s.name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2) : "ST";
             const attendance = Math.round(s.attendance_rate != null ? s.attendance_rate : 100);
-            const statusClass = s.status === "Active" 
-                ? "bg-tertiary/10 text-tertiary border-tertiary/20" 
+            const statusClass = s.status === "Active"
+                ? "bg-tertiary/10 text-tertiary border-tertiary/20"
                 : "bg-white/10 text-on-surface-variant border-white/10";
             const attendanceColor = attendance >= 85 ? "bg-tertiary text-tertiary" : (attendance >= 75 ? "bg-primary text-primary" : "bg-error text-error");
             const attendanceText = attendance >= 85 ? "text-tertiary" : (attendance >= 75 ? "text-primary" : "text-error");
 
+            // Show profile photo avatar if available
+            const avatarHtml = s.profile_photo_path
+                ? `<img src="${escapeHtml(s.profile_photo_path)}" alt="${escapeHtml(s.name)}" class="w-9 h-9 rounded-full object-cover border border-primary/30">`
+                : `<div class="w-9 h-9 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center font-bold text-primary text-xs shrink-0">${initials}</div>`;
+
             return `
                 <tr class="hover:bg-white/5 transition-colors group">
                     <td class="px-6 py-4 flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center font-bold text-primary text-xs shrink-0">${initials}</div>
+                        ${avatarHtml}
                         <div>
                             <p class="font-bold text-sm text-on-surface">${escapeHtml(s.name)}</p>
                             <p class="text-xs text-on-surface-variant opacity-70">${escapeHtml(s.id)}</p>
@@ -506,7 +551,7 @@ async function renderStudentsTable() {
     }
 }
 
-// 3. Update top KPI statistics dynamically from real data
+// â”€â”€ 3. Update top KPI statistics dynamically from real data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function updateStatistics(students) {
     if (!Array.isArray(students)) return;
     const total = students.length;
@@ -527,7 +572,7 @@ function updateStatistics(students) {
     if (statLow) statLow.textContent = lowAttendance;
 }
 
-// 4. Clear filters helper
+// â”€â”€ 4. Clear filters helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function clearFilters() {
     const navSearch = document.getElementById("nav-search-input");
     const deptFilter = document.getElementById("dept-filter");
@@ -539,7 +584,45 @@ function clearFilters() {
     renderStudentsTable();
 }
 
-// 5. Open Modal for Adding New Student
+// â”€â”€ 5. Reset form state (photos + biometric slots) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function resetFormState() {
+    // Reset profile photo
+    const imgEl = document.getElementById("profile-photo-img");
+    const iconEl = document.getElementById("profile-photo-icon");
+    const removeBtn = document.getElementById("profile-photo-remove");
+    const nameEl = document.getElementById("profile-photo-name");
+    const photoInput = document.getElementById("profile-photo-input");
+    if (imgEl) { imgEl.src = ""; imgEl.classList.add("hidden"); }
+    if (iconEl) iconEl.classList.remove("hidden");
+    if (removeBtn) removeBtn.classList.add("hidden");
+    if (nameEl) nameEl.textContent = "";
+    if (photoInput) photoInput.value = "";
+
+    // Reset bio slots
+    for (let i = 0; i < 5; i++) {
+        bioFiles[i] = null;
+        const slot = document.getElementById(`bio-slot-${i}`);
+        if (slot) {
+            const thumb = slot.querySelector(".bio-thumb");
+            const addIcon = slot.querySelector("span");
+            const removeBtn = slot.querySelector(".bio-remove");
+            if (thumb) { thumb.src = ""; thumb.classList.add("hidden"); }
+            if (addIcon) addIcon.classList.remove("hidden");
+            if (removeBtn) removeBtn.classList.add("hidden");
+        }
+        const inp = document.getElementById(`bio-input-${i}`);
+        if (inp) inp.value = "";
+    }
+    updateBioCount();
+
+    // Reset calibration status
+    const calStatus = document.getElementById("calibration-status");
+    if (calStatus) calStatus.textContent = "";
+    const calBtn = document.getElementById("btn-initiate-calibration");
+    if (calBtn) calBtn.disabled = false;
+}
+
+// â”€â”€ 6. Open Modal for Adding New Student â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function openAddModal() {
     const form = document.getElementById("add-student-form");
     if (form) form.reset();
@@ -559,6 +642,7 @@ function openAddModal() {
     const submitBtnText = document.getElementById("submit-btn-text");
     if (submitBtnText) submitBtnText.textContent = "Save Student Profile";
 
+    resetFormState();
     openModal();
 }
 
@@ -586,7 +670,7 @@ function closeModal() {
     }, 300);
 }
 
-// 6. Open Modal for Editing Existing Student
+// â”€â”€ 7. Open Modal for Editing Existing Student â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function openEditModal(studentId) {
     const editIdInput = document.getElementById("student-edit-id");
     if (editIdInput) editIdInput.value = studentId;
@@ -628,10 +712,188 @@ async function openEditModal(studentId) {
     if (deptSelect) deptSelect.value = student.department || "";
     if (roomSelect) roomSelect.value = student.classroom_id != null ? String(student.classroom_id) : "";
 
+    // Show existing profile photo if available
+    resetFormState();
+    if (student.profile_photo_path) {
+        const imgEl = document.getElementById("profile-photo-img");
+        const iconEl = document.getElementById("profile-photo-icon");
+        const removeBtn = document.getElementById("profile-photo-remove");
+        if (imgEl) { imgEl.src = student.profile_photo_path; imgEl.classList.remove("hidden"); }
+        if (iconEl) iconEl.classList.add("hidden");
+        if (removeBtn) removeBtn.classList.remove("hidden");
+    }
+
     openModal();
 }
 
-// 7. Form Submission Handler (Handles both Create [POST] and Update [PUT])
+// â”€â”€ 8. Profile Photo Handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function onProfilePhotoChange(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate type
+    const allowed = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+    if (!allowed.includes(file.type)) {
+        notifyUser("Invalid file type. Please upload JPEG, PNG, or WebP.", "error");
+        e.target.value = "";
+        return;
+    }
+    // Validate size (5 MB)
+    if (file.size > 5 * 1024 * 1024) {
+        notifyUser("Photo must be smaller than 5 MB.", "error");
+        e.target.value = "";
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+        const imgEl = document.getElementById("profile-photo-img");
+        const iconEl = document.getElementById("profile-photo-icon");
+        const removeBtn = document.getElementById("profile-photo-remove");
+        const nameEl = document.getElementById("profile-photo-name");
+        if (imgEl) { imgEl.src = ev.target.result; imgEl.classList.remove("hidden"); }
+        if (iconEl) iconEl.classList.add("hidden");
+        if (removeBtn) removeBtn.classList.remove("hidden");
+        if (nameEl) nameEl.textContent = file.name;
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeProfilePhoto(e) {
+    e.stopPropagation();
+    const imgEl = document.getElementById("profile-photo-img");
+    const iconEl = document.getElementById("profile-photo-icon");
+    const removeBtn = document.getElementById("profile-photo-remove");
+    const nameEl = document.getElementById("profile-photo-name");
+    const photoInput = document.getElementById("profile-photo-input");
+    if (imgEl) { imgEl.src = ""; imgEl.classList.add("hidden"); }
+    if (iconEl) iconEl.classList.remove("hidden");
+    if (removeBtn) removeBtn.classList.add("hidden");
+    if (nameEl) nameEl.textContent = "";
+    if (photoInput) photoInput.value = "";
+}
+
+// â”€â”€ 9. Biometric Slot Handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function triggerBioSlot(idx) {
+    document.getElementById(`bio-input-${idx}`)?.click();
+}
+
+function onBioSlotChange(idx, input) {
+    const file = input.files[0];
+    if (!file) return;
+    bioFiles[idx] = file;
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+        const slot = document.getElementById(`bio-slot-${idx}`);
+        if (!slot) return;
+        const thumb = slot.querySelector(".bio-thumb");
+        const addIcon = slot.querySelector("span");
+        const removeBtn = slot.querySelector(".bio-remove");
+        if (thumb) { thumb.src = ev.target.result; thumb.classList.remove("hidden"); }
+        if (addIcon) addIcon.classList.add("hidden");
+        if (removeBtn) removeBtn.classList.remove("hidden");
+        // Highlight slot border green
+        slot.classList.add("border-tertiary/40");
+        slot.classList.remove("border-white/10");
+    };
+    reader.readAsDataURL(file);
+    updateBioCount();
+}
+
+function removeBioSlot(e, idx) {
+    e.stopPropagation();
+    bioFiles[idx] = null;
+    const slot = document.getElementById(`bio-slot-${idx}`);
+    if (slot) {
+        const thumb = slot.querySelector(".bio-thumb");
+        const addIcon = slot.querySelector("span");
+        const removeBtn = slot.querySelector(".bio-remove");
+        if (thumb) { thumb.src = ""; thumb.classList.add("hidden"); }
+        if (addIcon) addIcon.classList.remove("hidden");
+        if (removeBtn) removeBtn.classList.add("hidden");
+        slot.classList.remove("border-tertiary/40");
+        slot.classList.add("border-white/10");
+    }
+    const inp = document.getElementById(`bio-input-${idx}`);
+    if (inp) inp.value = "";
+    updateBioCount();
+}
+
+function updateBioCount() {
+    const count = bioFiles.filter(f => f !== null).length;
+    const counter = document.getElementById("bio-count-label");
+    const badge = document.getElementById("bio-ready-badge");
+    if (counter) counter.textContent = `${count}/5 face images selected`;
+    if (badge) {
+        if (count >= 5) {
+            badge.classList.remove("hidden");
+        } else {
+            badge.classList.add("hidden");
+        }
+    }
+}
+
+// â”€â”€ 10. Initiate Calibration (Face Enrollment) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+async function initiateCalibration() {
+    const studentId = document.getElementById("student-edit-id")?.value?.trim();
+    const filled = bioFiles.filter(f => f !== null).length;
+
+    if (filled < 5) {
+        notifyUser(`Please upload at least 5 face images. Currently have ${filled}/5.`, "error");
+        return;
+    }
+    if (!studentId) {
+        notifyUser("Save the student profile first before initiating calibration.", "error");
+        return;
+    }
+
+    const statusEl = document.getElementById("calibration-status");
+    const btn = document.getElementById("btn-initiate-calibration");
+    if (statusEl) statusEl.textContent = "â³ Enrolling face images...";
+    if (btn) btn.disabled = true;
+
+    let successCount = 0;
+    let errorMessages = [];
+
+    for (let i = 0; i < 5; i++) {
+        if (!bioFiles[i]) continue;
+        try {
+            const base64 = await fileToBase64(bioFiles[i]);
+            await ApiService.enrollStudentFace(studentId, base64);
+            successCount++;
+            if (statusEl) statusEl.textContent = `â³ Enrolling... ${successCount}/${filled} done`;
+        } catch (err) {
+            console.warn(`Face image ${i + 1} enrollment error:`, err);
+            errorMessages.push(`Image ${i + 1}: ${err.message}`);
+        }
+    }
+
+    if (btn) btn.disabled = false;
+
+    if (successCount >= 5) {
+        if (statusEl) statusEl.innerHTML = `<span class="text-tertiary font-bold">âœ“ Calibration complete: ${successCount}/5 faces enrolled successfully.</span>`;
+        notifyUser(`AI biometric calibration complete: ${successCount} face images enrolled.`, "success");
+    } else if (successCount > 0) {
+        if (statusEl) statusEl.innerHTML = `<span class="text-primary font-bold">âš  Partial: ${successCount}/${filled} enrolled. ${errorMessages.length > 0 ? errorMessages[0] : ''}</span>`;
+        notifyUser(`Partial calibration: ${successCount}/${filled} faces enrolled.`, "error");
+    } else {
+        if (statusEl) statusEl.innerHTML = `<span class="text-error font-bold">âœ— Enrollment failed. Check that the student is saved and images contain a clear face.</span>`;
+        notifyUser("Face enrollment failed. Ensure the student is saved and each image contains exactly one clear face.", "error");
+    }
+}
+
+// Helper: File â†’ base64 data URL
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => resolve(e.target.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+// â”€â”€ 11. Form Submission Handler (Create [POST] and Update [PUT]) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function handleStudentSubmit(e) {
     e.preventDefault();
 
@@ -651,7 +913,7 @@ async function handleStudentSubmit(e) {
     const email = emailInput?.value.trim().toLowerCase();
     const dept = deptSelect?.value.trim();
     const roomId = roomSelect?.value ? parseInt(roomSelect.value, 10) : null;
-    const status = statusSelect?.value || "Active";
+    const studentStatus = statusSelect?.value || "Active";
 
     if (!name || (!editId && !roll) || !email || !dept) {
         notifyUser("Please fill in all required fields (Name, Roll, Email, Department).", "error");
@@ -667,6 +929,8 @@ async function handleStudentSubmit(e) {
         </div>
     `;
 
+    let resultId = editId;
+
     try {
         if (editId) {
             // Update Student [PUT /api/students/{id}]
@@ -675,10 +939,11 @@ async function handleStudentSubmit(e) {
                 email: email,
                 department: dept,
                 classroom_id: roomId,
-                status: status
+                status: studentStatus
             };
             await ApiService.updateStudent(editId, updatePayload);
             notifyUser(`Student ${name} (${editId}) updated successfully!`, "success");
+            resultId = editId;
         } else {
             // Create Student [POST /api/students]
             const createPayload = {
@@ -687,14 +952,66 @@ async function handleStudentSubmit(e) {
                 email: email,
                 department: dept,
                 classroom_id: roomId,
-                status: status
+                status: studentStatus
             };
             await ApiService.createStudent(createPayload);
             notifyUser(`Student ${name} (${roll}) registered successfully!`, "success");
+            resultId = roll;
+        }
+
+        // â”€â”€ Upload profile photo if one was selected â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        const profileInput = document.getElementById("profile-photo-input");
+        if (profileInput && profileInput.files[0]) {
+            try {
+                const formData = new FormData();
+                formData.append("file", profileInput.files[0]);
+                const token = typeof AuthService !== "undefined" ? AuthService.getToken() : localStorage.getItem("access_token");
+                const photoRes = await fetch(`${typeof API_BASE_URL !== "undefined" ? API_BASE_URL : "http://127.0.0.1:8000/api"}/students/${encodeURIComponent(resultId)}/photo`, {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${token}` },
+                    body: formData
+                });
+                if (!photoRes.ok) {
+                    const errData = await photoRes.json().catch(() => ({}));
+                    console.warn("Photo upload failed:", errData.detail || photoRes.status);
+                    notifyUser(`Profile photo upload failed: ${errData.detail || "Unknown error"}`, "error");
+                } else {
+                    console.log("Profile photo uploaded successfully.");
+                }
+            } catch (photoErr) {
+                console.warn("Profile photo upload error:", photoErr);
+            }
+        }
+
+        // â”€â”€ Auto-enroll biometric images if any are selected â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // (silent auto-enroll on save; full calibration available via button)
+        const bioCount = bioFiles.filter(f => f !== null).length;
+        if (bioCount > 0) {
+            let enrolled = 0;
+            const calStatus = document.getElementById("calibration-status");
+            if (calStatus) calStatus.textContent = `â³ Auto-enrolling ${bioCount} face images...`;
+            for (let i = 0; i < 5; i++) {
+                if (!bioFiles[i]) continue;
+                try {
+                    const base64 = await fileToBase64(bioFiles[i]);
+                    await ApiService.enrollStudentFace(resultId, base64);
+                    enrolled++;
+                } catch (bioErr) {
+                    console.warn(`Auto-enroll face ${i + 1}:`, bioErr.message);
+                }
+            }
+            if (calStatus) {
+                if (enrolled >= bioCount) {
+                    calStatus.innerHTML = `<span class="text-tertiary font-bold">âœ“ ${enrolled}/${bioCount} face images enrolled.</span>`;
+                } else {
+                    calStatus.innerHTML = `<span class="text-primary">âš  ${enrolled}/${bioCount} face images enrolled.</span>`;
+                }
+            }
         }
 
         closeModal();
         await renderStudentsTable();
+
     } catch (err) {
         console.error("Save error:", err);
         notifyUser(`Error: ${err.message}`, "error");
@@ -704,7 +1021,7 @@ async function handleStudentSubmit(e) {
     }
 }
 
-// 8. Delete Student Handler [DELETE /api/students/{id}]
+// â”€â”€ 12. Delete Student Handler [DELETE /api/students/{id}] â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function deleteStudent(id, name) {
     const displayName = name ? `student "${name}" (${id})` : `student ${id}`;
     if (!confirm(`Are you sure you want to delete ${displayName}? This action will permanently remove their records from MySQL.`)) {
@@ -721,7 +1038,7 @@ async function deleteStudent(id, name) {
     }
 }
 
-// Utility: HTML escaping to prevent XSS
+// â”€â”€ Utility: HTML escaping â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function escapeHtml(text) {
     if (text == null) return "";
     return String(text)
@@ -737,7 +1054,7 @@ function escapeAttr(text) {
     return String(text).replace(/'/g, "\\'").replace(/"/g, "&quot;");
 }
 
-// 9. Initial Setup on DOM Ready
+// â”€â”€ 13. Initial Setup on DOM Ready â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 document.addEventListener("DOMContentLoaded", async () => {
     // Load classrooms for modal dropdown
     await loadClassroomOptions();
@@ -749,6 +1066,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const form = document.getElementById("add-student-form");
     if (form) {
         form.addEventListener("submit", handleStudentSubmit);
+    }
+
+    // Bind profile photo input change
+    const profilePhotoInput = document.getElementById("profile-photo-input");
+    if (profilePhotoInput) {
+        profilePhotoInput.addEventListener("change", onProfilePhotoChange);
     }
 
     // Bind department filter

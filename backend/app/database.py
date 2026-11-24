@@ -67,6 +67,9 @@ def init_db():
             temperature,
             alert,
             notification,
+            student_consent,
+            retention_policy,
+            audit_log,
         )
         Base.metadata.create_all(bind=engine)
         logger.info("Database tables verified / created successfully.")
@@ -107,6 +110,68 @@ def init_db():
             db.add_all([admin_user, teacher_user])
             db.commit()
             logger.info("Default admin and teacher user accounts seeded (admin/admin123, teacher/teacher123).")
+
+        # Seed default retention policies if table is empty
+        from app.models.retention_policy import RetentionPolicy
+        if db.query(RetentionPolicy).count() == 0:
+            default_policies = [
+                RetentionPolicy(
+                    policy_name="raw_video_frames",
+                    description="Live Camera Stream Buffer: Zero-persistence RAM processing only; never saved to disk.",
+                    retention_days=0,
+                    storage_type="Volatile RAM (Ephemeral)",
+                    auto_purge_enabled=True,
+                ),
+                RetentionPolicy(
+                    policy_name="face_embeddings",
+                    description="128-D SFace biometric vectors: Retained for active academic term or until consent revoked.",
+                    retention_days=180,
+                    storage_type="Encrypted Vector Store",
+                    auto_purge_enabled=True,
+                ),
+                RetentionPolicy(
+                    policy_name="attendance_records",
+                    description="Classroom attendance logs & verification audit history.",
+                    retention_days=365,
+                    storage_type="Relational Database",
+                    auto_purge_enabled=True,
+                ),
+                RetentionPolicy(
+                    policy_name="emotion_records",
+                    description="Aggregated engagement and emotion distribution summaries for pedagogical feedback.",
+                    retention_days=90,
+                    storage_type="Pseudonymized Relational DB",
+                    auto_purge_enabled=True,
+                ),
+            ]
+            db.add_all(default_policies)
+            db.commit()
+            logger.info("Default data retention policies seeded.")
+
+        # Ensure all existing students have a default consent record
+        from app.models.student import Student
+        from app.models.student_consent import StudentConsent
+        students_without_consent = (
+            db.query(Student)
+            .outerjoin(StudentConsent, Student.id == StudentConsent.student_id)
+            .filter(StudentConsent.id.is_(None))
+            .all()
+        )
+        for s in students_without_consent:
+            consent = StudentConsent(
+                student_id=s.id,
+                camera_processing=True,
+                face_recognition=True,
+                attendance_processing=True,
+                emotion_inference=True,
+                status="Granted",
+                notes="Initial academic enrollment consent",
+            )
+            db.add(consent)
+        if students_without_consent:
+            db.commit()
+            logger.info(f"Initialized consent records for {len(students_without_consent)} existing students.")
+
         db.close()
     except Exception as seed_err:
         logger.warning(f"Could not seed default users: {seed_err}")

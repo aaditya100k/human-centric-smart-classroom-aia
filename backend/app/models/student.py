@@ -12,6 +12,7 @@ class Student(Base):
     department = Column(String(100), nullable=False)
     classroom_id = Column(Integer, ForeignKey("classrooms.id", ondelete="SET NULL"), nullable=True)
     status = Column(String(20), default="Active", nullable=False)  # "Active", "Inactive"
+    profile_photo_path = Column(String(500), nullable=True)  # Relative path to uploaded profile photo
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
@@ -23,3 +24,4 @@ class Student(Base):
     temperature_records = relationship("TemperatureRecord", back_populates="student", cascade="all, delete-orphan")
     alerts = relationship("Alert", back_populates="student", cascade="all, delete-orphan")
     face_embeddings = relationship("StudentFaceEmbedding", back_populates="student", cascade="all, delete-orphan")
+    consent = relationship("StudentConsent", back_populates="student", uselist=False, cascade="all, delete-orphan")

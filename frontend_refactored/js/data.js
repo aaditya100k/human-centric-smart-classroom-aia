@@ -4,7 +4,7 @@ const INITIAL_STUDENTS = [
     { id: "ST-2024-001", name: "Alex Johnson", email: "alex.j@aura.edu", class: "Room 101", dept: "Science", attendance: 95, status: "Active" },
     { id: "ST-2024-042", name: "Elena Rodriguez", email: "elena.r@aura.edu", class: "Room 302", dept: "Arts", attendance: 82, status: "Active" },
     { id: "ST-2024-015", name: "Marcus Chen", email: "marcus.c@aura.edu", class: "Room 205", dept: "Engineering", attendance: 89, status: "Active" },
-    { id: "ST-2024-088", name: "Sarah Jenkins", email: "sarah.j@aura.edu", class: "Room 101", dept: "Science", attendance: 92, status: "Active" },
+    { id: "ST-2024-088", name: "Sarah Miller", email: "sarah.m@aura.edu", class: "Room 101", dept: "Science", attendance: 92, status: "Active" },
     { id: "ST-2024-112", name: "David Kim", email: "david.k@aura.edu", class: "Room 205", dept: "Engineering", attendance: 76, status: "Active" }
 ];
 

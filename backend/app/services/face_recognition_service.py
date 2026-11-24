@@ -62,6 +62,16 @@ class FaceRecognitionService:
                 detail=f"Student with ID '{student_id}' does not exist."
             )
 
+        # Check student consent
+        from app.models.student_consent import StudentConsent
+        consent = db.query(StudentConsent).filter(StudentConsent.student_id == student_id).first()
+        if consent and (consent.status == "Revoked" or not consent.camera_processing or not consent.face_recognition):
+            return {
+                "success": False,
+                "message": f"Face enrollment rejected: Student '{student_id}' has not granted required camera and face recognition consent (Status: {consent.status}).",
+                "faces_detected": 0
+            }
+
         # Decode image
         nparr = np.frombuffer(image_bytes, np.uint8)
         frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)

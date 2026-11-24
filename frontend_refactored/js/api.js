@@ -567,6 +567,155 @@ const ApiService = {
             console.warn("Could not initiate WebSocket connection:", e);
             return null;
         }
+    },
+
+    // ==========================================
+    // PRIVACY & FAIRNESS APIS
+    // ==========================================
+
+    async getStudentConsents(params = {}) {
+        const query = new URLSearchParams();
+        if (params.status) query.append("status", params.status);
+        if (params.department) query.append("department", params.department);
+        if (params.search) query.append("search", params.search.trim());
+        if (params.limit) query.append("limit", params.limit);
+        if (params.offset) query.append("offset", params.offset);
+
+        const url = `${API_BASE_URL}/privacy/consent${query.toString() ? '?' + query.toString() : ''}`;
+        const response = await fetchWithAuth(url);
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({ detail: response.statusText }));
+            throw new Error(errData.detail || `Failed to fetch consent records (${response.status})`);
+        }
+        return await response.json();
+    },
+
+    async getStudentConsent(studentId) {
+        const response = await fetchWithAuth(`${API_BASE_URL}/privacy/consent/${encodeURIComponent(studentId)}`);
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({ detail: response.statusText }));
+            throw new Error(errData.detail || `Failed to fetch student consent (${response.status})`);
+        }
+        return await response.json();
+    },
+
+    async updateStudentConsent(studentId, consentData) {
+        const response = await fetchWithAuth(`${API_BASE_URL}/privacy/consent/${encodeURIComponent(studentId)}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(consentData)
+        });
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({ detail: response.statusText }));
+            throw new Error(errData.detail || `Failed to update student consent (${response.status})`);
+        }
+        return await response.json();
+    },
+
+    async withdrawStudentConsent(studentId, reason = "Consent withdrawn via portal") {
+        const response = await fetchWithAuth(`${API_BASE_URL}/privacy/consent/${encodeURIComponent(studentId)}/withdraw`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ reason })
+        });
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({ detail: response.statusText }));
+            throw new Error(errData.detail || `Failed to withdraw consent (${response.status})`);
+        }
+        return await response.json();
+    },
+
+    async getRetentionPolicies() {
+        const response = await fetchWithAuth(`${API_BASE_URL}/privacy/retention`);
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({ detail: response.statusText }));
+            throw new Error(errData.detail || `Failed to fetch retention policies (${response.status})`);
+        }
+        return await response.json();
+    },
+
+    async updateRetentionPolicy(policyId, updateData) {
+        const response = await fetchWithAuth(`${API_BASE_URL}/privacy/retention/${encodeURIComponent(policyId)}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updateData)
+        });
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({ detail: response.statusText }));
+            throw new Error(errData.detail || `Failed to update retention policy (${response.status})`);
+        }
+        return await response.json();
+    },
+
+    async purgeRetentionData(policyName) {
+        const response = await fetchWithAuth(`${API_BASE_URL}/privacy/retention/purge/${encodeURIComponent(policyName)}`, {
+            method: "POST"
+        });
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({ detail: response.statusText }));
+            throw new Error(errData.detail || `Failed to purge retention data (${response.status})`);
+        }
+        return await response.json();
+    },
+
+    async purgeStudentData(studentId, options = {}) {
+        const response = await fetchWithAuth(`${API_BASE_URL}/privacy/student/${encodeURIComponent(studentId)}/purge`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(options)
+        });
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({ detail: response.statusText }));
+            throw new Error(errData.detail || `Failed to execute student data purge (${response.status})`);
+        }
+        return await response.json();
+    },
+
+    async getAuditLogs(params = {}) {
+        const query = new URLSearchParams();
+        if (params.action) query.append("action", params.action);
+        if (params.target_type) query.append("target_type", params.target_type);
+        if (params.limit) query.append("limit", params.limit);
+        if (params.offset) query.append("offset", params.offset);
+
+        const url = `${API_BASE_URL}/privacy/audit-logs${query.toString() ? '?' + query.toString() : ''}`;
+        const response = await fetchWithAuth(url);
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({ detail: response.statusText }));
+            throw new Error(errData.detail || `Failed to fetch audit logs (${response.status})`);
+        }
+        return await response.json();
+    },
+
+    async getFairnessEvaluation() {
+        const response = await fetchWithAuth(`${API_BASE_URL}/privacy/fairness`);
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({ detail: response.statusText }));
+            throw new Error(errData.detail || `Failed to fetch fairness evaluation (${response.status})`);
+        }
+        return await response.json();
+    },
+
+    // ==========================================
+    // RESEARCH METHODOLOGY APIS
+    // ==========================================
+
+    async getResearchMethodology() {
+        const response = await fetchWithAuth(`${API_BASE_URL}/research/methodology`);
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({ detail: response.statusText }));
+            throw new Error(errData.detail || `Failed to fetch research methodology (${response.status})`);
+        }
+        return await response.json();
+    },
+
+    async getResearchBenchmarks() {
+        const response = await fetchWithAuth(`${API_BASE_URL}/research/benchmarks`);
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({ detail: response.statusText }));
+            throw new Error(errData.detail || `Failed to fetch research benchmarks (${response.status})`);
+        }
+        return await response.json();
     }
 };
 

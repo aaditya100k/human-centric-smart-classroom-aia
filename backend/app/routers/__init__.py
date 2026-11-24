@@ -10,6 +10,8 @@ from app.routers.face_recognition import router as face_recognition_router
 from app.routers.analytics import router as analytics_router
 from app.routers.alerts import router as alerts_router
 from app.routers.notifications import router as notifications_router
+from app.routers.privacy import router as privacy_router
+from app.routers.research import router as research_router
 
 __all__ = [
     "auth_router",
@@ -21,4 +23,6 @@ __all__ = [
     "analytics_router",
     "alerts_router",
     "notifications_router",
+    "privacy_router",
+    "research_router",
 ]

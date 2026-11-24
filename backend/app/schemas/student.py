@@ -27,6 +27,7 @@ class StudentUpdate(BaseModel):
 class StudentResponse(StudentBase):
     classroom_name: Optional[str] = None
     attendance_rate: Optional[float] = 100.0
+    profile_photo_path: Optional[str] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 

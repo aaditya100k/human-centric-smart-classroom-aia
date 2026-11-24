@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>ClassMind AI - Privacy & Fairness</title>
+<script src="../js/api.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/data.js"></script>
+<script src="../js/page-handlers.js"></script>
+<script src="../js/layout.js"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Inter:ital,wght@0,300..900;1,300..900&family=Geist:wght@300..800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "tertiary-fixed": "#6bff8f",
+            "on-secondary-fixed": "#07006c",
+            "surface-variant": "#323537",
+            "on-secondary-fixed-variant": "#2f2ebe",
+            "on-error-container": "#ffdad6",
+            "primary-container": "#4d8eff",
+            "on-tertiary-fixed": "#002109",
+            "primary-fixed": "#d8e2ff",
+            "primary": "#adc6ff",
+            "on-primary-fixed": "#001a42",
+            "on-error": "#690005",
+            "tertiary-container": "#00a74b",
+            "surface-dim": "#101415",
+            "inverse-on-surface": "#2d3133",
+            "error": "#ffb4ab",
+            "tertiary": "#4ae176",
+            "on-surface": "#e0e3e5",
+            "secondary-fixed": "#e1e0ff",
+            "outline": "#8c909f",
+            "secondary": "#c0c1ff",
+            "secondary-container": "#3131c0",
+            "surface-container-low": "#191c1e",
+            "background": "#101415",
+            "tertiary-fixed-dim": "#4ae176",
+            "primary-fixed-dim": "#adc6ff",
+            "on-tertiary": "#003915",
+            "on-primary-container": "#00285d",
+            "surface-container-lowest": "#0b0f10",
+            "on-secondary": "#1000a9",
+            "secondary-fixed-dim": "#c0c1ff",
+            "on-tertiary-fixed-variant": "#005321",
+            "outline-variant": "#424754",
+            "inverse-primary": "#005ac2",
+            "surface-container": "#1d2022",
+            "on-primary-fixed-variant": "#004395",
+            "surface": "#101415",
+            "surface-container-high": "#272a2c",
+            "on-surface-variant": "#c2c6d6",
+            "on-primary": "#002e6a",
+            "on-background": "#e0e3e5",
+            "surface-tint": "#adc6ff",
+            "on-tertiary-container": "#003111",
+            "error-container": "#93000a",
+            "surface-container-highest": "#323537",
+            "inverse-surface": "#e0e3e5",
+            "surface-bright": "#363a3b",
+            "on-secondary-container": "#b0b2ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "glass": "16px",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "body-lg": ["Inter"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "headline-xl": ["Plus Jakarta Sans"],
+            "label-sm": ["Geist"],
+            "body-md": ["Inter"]
+          }
+        }
+      }
+    }
+</script>
+<link rel="stylesheet" href="../css/responsive-system.css">
+<style>
+  body {
+    background-color: #101415;
+    color: #e0e3e5;
+    font-family: 'Inter', sans-serif;
+  }
+  .glass-card {
+    background: rgba(29, 32, 34, 0.7);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .bg-blob {
+    position: fixed;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.12;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .tag-granted {
+    background: rgba(74, 225, 118, 0.15);
+    color: #4ae176;
+    border: 1px solid rgba(74, 225, 118, 0.3);
+  }
+  .tag-revoked {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+  .tag-partial {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+  }
+  .tag-eval {
+    background: rgba(173, 198, 255, 0.15);
+    color: #adc6ff;
+    border: 1px solid rgba(173, 198, 255, 0.3);
+  }
+</style>
+</head>
+<body class="font-body-md overflow-x-hidden min-h-screen">
+<!-- Background Atmospheric Blobs -->
+<div class="bg-blob bg-primary top-[-10%] right-[-5%]"></div>
+<div class="bg-blob bg-secondary bottom-[-10%] left-[-5%]"></div>
+
+<!-- Unified Sidebar -->
+<aside id="layout-sidebar"></aside>
+
+<!-- Unified Top Navbar -->
+<header id="layout-navbar"></header>
+
+<!-- Main Content Area -->
+<main class="px-4 md:px-8 pb-16 pt-28 max-w-7xl mx-auto relative z-10">
+
+  <!-- Header Banner -->
+  <div class="glass-card rounded-glass p-6 md:p-8 mb-8 border border-white/10 relative overflow-hidden">
+    <div class="absolute -right-8 -top-8 w-48 h-48 bg-primary/10 rounded-full blur-2xl pointer-events-none"></div>
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+      <div>
+        <div class="flex items-center gap-3 mb-2">
+          <span class="px-3 py-1 rounded-full text-xs font-bold tag-granted flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm">shield</span> Active Privacy Controls
+          </span>
+          <span class="px-3 py-1 rounded-full text-xs font-bold tag-eval flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm">gavel</span> Zero Raw Video Storage
+          </span>
+          <span class="text-xs text-on-surface-variant font-mono">Review Comment 2 Compliance</span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-extrabold text-on-surface font-headline-md tracking-tight">
+          Privacy, Student Consent & Algorithmic Fairness
+        </h1>
+        <p class="text-on-surface-variant mt-2 text-sm md:text-base max-w-3xl leading-relaxed">
+          Comprehensive governance framework governing camera-based face attendance, non-intrusive emotion inference, 
+          granular student consent lifecycle, automated data retention, immutable audit logging, and empirical lighting & demographic fairness evaluations.
+        </p>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="openRightToBeForgottenModal()" class="px-4 py-2.5 rounded-xl bg-error/15 border border-error/30 text-error hover:bg-error/25 text-xs font-bold transition flex items-center gap-2">
+          <span class="material-symbols-outlined text-sm">delete_forever</span>
+          Right to be Forgotten
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Nav Tabs -->
+  <div class="flex border-b border-white/10 mb-8 space-x-6 text-sm font-semibold overflow-x-auto">
+    <button onclick="switchTab('consent-section')" id="tab-btn-consent" class="pb-3 border-b-2 border-primary text-primary flex items-center gap-2">
+      <span class="material-symbols-outlined text-base">how_to_reg</span> Student Consent Management
+    </button>
+    <button onclick="switchTab('retention-section')" id="tab-btn-retention" class="pb-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface flex items-center gap-2">
+      <span class="material-symbols-outlined text-base">auto_delete</span> Data Retention Policies
+    </button>
+    <button onclick="switchTab('security-section')" id="tab-btn-security" class="pb-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface flex items-center gap-2">
+      <span class="material-symbols-outlined text-base">verified_user</span> Security & Audit Trail
+    </button>
+    <button onclick="switchTab('fairness-section')" id="tab-btn-fairness" class="pb-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface flex items-center gap-2">
+      <span class="material-symbols-outlined text-base">balance</span> Fairness & Lighting Benchmarks
+    </button>
+  </div>
+
+  <!-- SECTION A: STUDENT CONSENT MANAGEMENT -->
+  <section id="consent-section" class="tab-content space-y-6">
+    <div class="glass-card rounded-glass p-6 md:p-8 border border-white/10">
+      <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 mb-6 border-b border-white/10 gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-on-surface font-headline-md flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">person_check</span>
+            A. Student Consent Management
+          </h2>
+          <p class="text-xs text-on-surface-variant mt-1">
+            Camera processing, face recognition, automated attendance, and emotion inference permissions are strictly gated by explicit consent.
+          </p>
+        </div>
+        
+        <!-- Filter Controls -->
+        <div class="flex flex-wrap items-center gap-3">
+          <input type="text" id="consent-search-input" onkeyup="filterConsents()" placeholder="Search name or ID..." class="px-3 py-1.5 rounded-lg bg-surface-container-high/60 border border-white/10 text-xs text-on-surface placeholder-on-surface-variant/50 focus:outline-none focus:border-primary">
+          <select id="consent-status-filter" onchange="filterConsents()" class="px-3 py-1.5 rounded-lg bg-surface-container-high/60 border border-white/10 text-xs text-on-surface focus:outline-none focus:border-primary">
+            <option value="All">All Consent Statuses</option>
+            <option value="Granted">Granted</option>
+            <option value="Revoked">Revoked</option>
+            <option value="Pending">Pending</option>
+            <option value="Partially Granted">Partially Granted</option>
+          </select>
+          <button onclick="loadConsents()" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-primary transition" title="Refresh">
+            <span class="material-symbols-outlined text-sm">refresh</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Enforcement Notice Alert -->
+      <div class="p-4 rounded-xl bg-primary/10 border border-primary/20 text-xs text-on-surface-variant mb-6 flex items-start gap-3">
+        <span class="material-symbols-outlined text-primary text-lg mt-0.5">lock</span>
+        <div class="leading-relaxed">
+          <strong class="text-primary font-semibold">Strict Consent-Gated Architecture:</strong>
+          If a student revokes or withholds consent for <em>Camera Processing</em> or <em>Face Recognition</em>, the backend strictly rejects automatic attendance marking. If <em>Emotion Inference</em> is not granted, emotion logging is withheld and suppressed.
+        </div>
+      </div>
+
+      <!-- Consent Table -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs md:text-sm">
+          <thead>
+            <tr class="border-b border-white/10 text-on-surface-variant uppercase text-xs tracking-wider">
+              <th class="py-3 px-4">Student ID & Name</th>
+              <th class="py-3 px-4">Department</th>
+              <th class="py-3 px-4 text-center">Camera Consent</th>
+              <th class="py-3 px-4 text-center">Face Recognition</th>
+              <th class="py-3 px-4 text-center">Attendance Processing</th>
+              <th class="py-3 px-4 text-center">Emotion Inference</th>
+              <th class="py-3 px-4">Status</th>
+              <th class="py-3 px-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="consent-table-body" class="divide-y divide-white/5">
+            <tr>
+              <td colspan="8" class="text-center py-8 text-on-surface-variant">
+                <div class="inline-block animate-spin w-6 h-6 border-2 border-primary border-t-transparent rounded-full mb-2"></div>
+                <p>Loading student consent records...</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION B: DATA RETENTION -->
+  <section id="retention-section" class="tab-content space-y-6 hidden">
+    <div class="glass-card rounded-glass p-6 md:p-8 border border-white/10">
+      <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 mb-6 border-b border-white/10 gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-on-surface font-headline-md flex items-center gap-2">
+            <span class="material-symbols-outlined text-secondary">auto_delete</span>
+            B. Data Retention Policies & Automated Deletion
+          </h2>
+          <p class="text-xs text-on-surface-variant mt-1">
+            Zero-persistence volatile frame buffers and automated retention expiration schedules.
+          </p>
+        </div>
+        <button onclick="loadRetentionPolicies()" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-secondary transition" title="Refresh">
+          <span class="material-symbols-outlined text-sm">refresh</span>
+        </button>
+      </div>
+
+      <!-- Policies Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8" id="retention-cards-container">
+        <!-- Dynamically populated -->
+      </div>
+
+      <!-- Technical Guarantees -->
+      <div class="p-5 rounded-xl bg-surface-container-high/60 border border-white/10 text-xs text-on-surface-variant space-y-3">
+        <h3 class="font-bold text-on-surface text-sm flex items-center gap-2">
+          <span class="material-symbols-outlined text-tertiary">verified</span>
+          Data Minimization & Deletion Guarantees:
+        </h3>
+        <ul class="space-y-2 list-disc list-inside">
+          <li><strong>Raw Camera Frames:</strong> Retained for exactly <strong>0 seconds</strong>. Decoded into volatile OpenCV numpy memory buffers and immediately released upon feature vector extraction.</li>
+          <li><strong>Biometric Vectors:</strong> Stored as 128-dimensional floating-point vectors only. Irreversible; original photographic facial geometry cannot be reconstructed from the vector.</li>
+          <li><strong>Automatic Expiration:</strong> Attendance records older than the configured threshold (default 365 days) are automatically purged during periodic scheduled runs.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION C: PRIVACY, SECURITY & AUDIT LOGS -->
+  <section id="security-section" class="tab-content space-y-6 hidden">
+    <div class="glass-card rounded-glass p-6 md:p-8 border border-white/10">
+      <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 mb-6 border-b border-white/10 gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-on-surface font-headline-md flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">security</span>
+            C. Security Architecture & Immutable Audit Trail
+          </h2>
+          <p class="text-xs text-on-surface-variant mt-1">
+            Role-Based Access Control, JWT cryptographic signing, and audit tracking for sensitive biometric actions.
+          </p>
+        </div>
+        <button onclick="loadAuditLogs()" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-primary transition" title="Refresh Audit Logs">
+          <span class="material-symbols-outlined text-sm">refresh</span>
+        </button>
+      </div>
+
+      <!-- Security Feature Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="p-5 rounded-xl bg-surface-container-high/40 border border-white/5">
+          <div class="flex items-center gap-2 mb-2 text-primary">
+            <span class="material-symbols-outlined">key</span>
+            <h3 class="font-bold text-sm">JWT Authentication</h3>
+          </div>
+          <p class="text-xs text-on-surface-variant leading-relaxed">
+            HS256 signed access tokens with strict expiration. All monitoring, face recognition, and consent endpoints require valid Bearer authorization headers.
+          </p>
+        </div>
+        <div class="p-5 rounded-xl bg-surface-container-high/40 border border-white/5">
+          <div class="flex items-center gap-2 mb-2 text-secondary">
+            <span class="material-symbols-outlined">admin_panel_settings</span>
+            <h3 class="font-bold text-sm">Role-Based Access (RBAC)</h3>
+          </div>
+          <p class="text-xs text-on-surface-variant leading-relaxed">
+            Granular privilege tiers for Administrators, Faculty Teachers, and Students. Unauthorized students cannot access peer biometric records or classroom feeds.
+          </p>
+        </div>
+        <div class="p-5 rounded-xl bg-surface-container-high/40 border border-white/5">
+          <div class="flex items-center gap-2 mb-2 text-tertiary">
+            <span class="material-symbols-outlined">fingerprint</span>
+            <h3 class="font-bold text-sm">One-Way Feature Vectors</h3>
+          </div>
+          <p class="text-xs text-on-surface-variant leading-relaxed">
+            SFace deep embeddings (128-D) store mathematical cosine spatial projections, preventing inverse facial image synthesis.
+          </p>
+        </div>
+      </div>
+
+      <!-- Audit Logs Viewer -->
+      <div class="pt-4 border-t border-white/10">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-bold text-on-surface text-sm flex items-center gap-2">
+            <span class="material-symbols-outlined text-amber-400">history_edu</span>
+            Sensitive Operations Audit Log
+          </h3>
+          <span class="text-xs text-on-surface-variant font-mono">Last 50 Events</span>
+        </div>
+        <div class="overflow-x-auto max-h-96 custom-scrollbar border border-white/5 rounded-xl">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-surface-container-high/80 sticky top-0 text-on-surface-variant uppercase text-[11px] tracking-wider">
+              <tr>
+                <th class="py-2.5 px-3">Timestamp</th>
+                <th class="py-2.5 px-3">Action</th>
+                <th class="py-2.5 px-3">Operator</th>
+                <th class="py-2.5 px-3">Target</th>
+                <th class="py-2.5 px-3">Details</th>
+              </tr>
+            </thead>
+            <tbody id="audit-log-body" class="divide-y divide-white/5">
+              <tr>
+                <td colspan="5" class="text-center py-6 text-on-surface-variant">Loading audit logs...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION D: FAIRNESS EVALUATION -->
+  <section id="fairness-section" class="tab-content space-y-6 hidden">
+    <div class="glass-card rounded-glass p-6 md:p-8 border border-white/10">
+      <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 mb-6 border-b border-white/10 gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-on-surface font-headline-md flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">balance</span>
+            D. Algorithmic Fairness & Lighting Evaluation
+          </h2>
+          <p class="text-xs text-on-surface-variant mt-1">
+            Empirical benchmarking across lighting conditions, False Acceptance & Rejection rates, and lawful non-discriminatory audit documentation.
+          </p>
+        </div>
+      </div>
+
+      <!-- Lawful Collection Statement -->
+      <div class="p-4 rounded-xl bg-surface-container-high/70 border border-white/10 text-xs text-on-surface-variant mb-6 leading-relaxed">
+        <strong class="text-on-surface font-semibold">Institutional Ethics & Lawful Data Collection Statement:</strong>
+        In strict adherence to student privacy regulations (FERPA / GDPR-compliant educational data governance), individual student demographic characteristics (e.g., race, ethnicity, or socioeconomic indicators) are <strong>NOT collected, stored, or indexed</strong> in student records. Demographic fairness evaluations are conducted on de-identified benchmark validation cohorts only. Missing experimental data is explicitly labeled <em>"Evaluation Pending"</em>.
+      </div>
+
+      <!-- 1. Lighting Benchmark Table -->
+      <div class="mb-8">
+        <h3 class="font-bold text-on-surface text-sm mb-3 flex items-center gap-2">
+          <span class="material-symbols-outlined text-amber-300">wb_sunny</span>
+          Lighting Condition Comparison & Biometric Reliability
+        </h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs md:text-sm">
+            <thead>
+              <tr class="border-b border-white/10 text-on-surface-variant uppercase text-xs tracking-wider">
+                <th class="py-3 px-4">Lighting Environment</th>
+                <th class="py-3 px-4">Illumination Lux</th>
+                <th class="py-3 px-4">Detection Rate</th>
+                <th class="py-3 px-4">SFace Accuracy</th>
+                <th class="py-3 px-4">False Acceptance (FAR)</th>
+                <th class="py-3 px-4">False Rejection (FRR)</th>
+                <th class="py-3 px-4">Evaluation Status</th>
+              </tr>
+            </thead>
+            <tbody id="lighting-table-body" class="divide-y divide-white/5">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 2. Demographic Benchmarks -->
+      <div class="mb-8">
+        <h3 class="font-bold text-on-surface text-sm mb-3 flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">groups</span>
+          Demographic Cohort Fairness Assessments
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="demographic-cards-container">
+          <!-- Dynamically populated with Evaluation Pending badges -->
+        </div>
+      </div>
+
+      <!-- 3. Documented Biases & Mitigations -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="p-5 rounded-xl bg-surface-container-high/40 border border-white/5">
+          <h4 class="font-bold text-error text-xs uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm">warning</span> Documented Bias & Limitations
+          </h4>
+          <ul class="space-y-2 text-xs text-on-surface-variant list-disc list-inside leading-relaxed" id="bias-list">
+            <!-- Dynamically populated -->
+          </ul>
+        </div>
+
+        <div class="p-5 rounded-xl bg-surface-container-high/40 border border-white/5">
+          <h4 class="font-bold text-tertiary text-xs uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm">check_circle</span> Active Mitigation Strategies
+          </h4>
+          <ul class="space-y-2 text-xs text-on-surface-variant list-disc list-inside leading-relaxed" id="mitigation-list">
+            <!-- Dynamically populated -->
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- MODAL: EDIT CONSENT PERMISSIONS -->
+<div id="consent-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden">
+  <div class="glass-card rounded-2xl p-6 max-w-md w-full mx-4 border border-white/10 shadow-2xl">
+    <div class="flex justify-between items-center pb-3 border-b border-white/10 mb-4">
+      <h3 class="font-bold text-on-surface text-base" id="modal-student-title">Edit Student Consent</h3>
+      <button onclick="closeConsentModal()" class="text-on-surface-variant hover:text-on-surface">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <input type="hidden" id="modal-student-id">
+
+    <div class="space-y-4 text-xs">
+      <label class="flex items-center justify-between p-3 rounded-xl bg-surface-container-high/50 border border-white/5 cursor-pointer">
+        <div>
+          <strong class="text-on-surface block">Camera Processing</strong>
+          <span class="text-on-surface-variant text-[11px]">Allow live camera stream capture</span>
+        </div>
+        <input type="checkbox" id="modal-cam-consent" class="rounded text-primary focus:ring-primary w-4 h-4">
+      </label>
+
+      <label class="flex items-center justify-between p-3 rounded-xl bg-surface-container-high/50 border border-white/5 cursor-pointer">
+        <div>
+          <strong class="text-on-surface block">Face Recognition</strong>
+          <span class="text-on-surface-variant text-[11px]">Allow SFace biometric identity matching</span>
+        </div>
+        <input type="checkbox" id="modal-face-consent" class="rounded text-primary focus:ring-primary w-4 h-4">
+      </label>
+
+      <label class="flex items-center justify-between p-3 rounded-xl bg-surface-container-high/50 border border-white/5 cursor-pointer">
+        <div>
+          <strong class="text-on-surface block">Attendance Processing</strong>
+          <span class="text-on-surface-variant text-[11px]">Allow automatic Face AI attendance logging</span>
+        </div>
+        <input type="checkbox" id="modal-att-consent" class="rounded text-primary focus:ring-primary w-4 h-4">
+      </label>
+
+      <label class="flex items-center justify-between p-3 rounded-xl bg-surface-container-high/50 border border-white/5 cursor-pointer">
+        <div>
+          <strong class="text-on-surface block">Emotion Inference</strong>
+          <span class="text-on-surface-variant text-[11px]">Allow non-intrusive engagement estimation</span>
+        </div>
+        <input type="checkbox" id="modal-emo-consent" class="rounded text-primary focus:ring-primary w-4 h-4">
+      </label>
+
+      <div>
+        <label class="block text-on-surface-variant mb-1 font-medium">Consent Notes / Documentation:</label>
+        <input type="text" id="modal-notes" placeholder="e.g. Guardian signed consent form 2026-B" class="w-full px-3 py-2 rounded-lg bg-surface-container-high border border-white/10 text-on-surface text-xs focus:outline-none focus:border-primary">
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-3 mt-6 pt-3 border-t border-white/10">
+      <button onclick="closeConsentModal()" class="px-4 py-2 rounded-lg text-on-surface-variant hover:text-on-surface text-xs">
+        Cancel
+      </button>
+      <button onclick="saveConsentModal()" class="px-4 py-2 rounded-lg bg-primary text-on-primary-container font-bold text-xs hover:bg-primary-container transition">
+        Save Changes
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: RIGHT TO BE FORGOTTEN DATA PURGE -->
+<div id="purge-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden">
+  <div class="glass-card rounded-2xl p-6 max-w-md w-full mx-4 border border-error/30 shadow-2xl">
+    <div class="flex justify-between items-center pb-3 border-b border-white/10 mb-4">
+      <div class="flex items-center gap-2 text-error">
+        <span class="material-symbols-outlined">delete_forever</span>
+        <h3 class="font-bold text-base">Right to be Forgotten</h3>
+      </div>
+      <button onclick="closePurgeModal()" class="text-on-surface-variant hover:text-on-surface">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <p class="text-xs text-on-surface-variant mb-4 leading-relaxed">
+      Permanently delete all biometric face embeddings, emotion logs, and revoke all camera consent for a student.
+    </p>
+
+    <div class="space-y-4 text-xs">
+      <div>
+        <label class="block text-on-surface-variant mb-1 font-medium">Select Student ID:</label>
+        <select id="purge-student-select" class="w-full px-3 py-2 rounded-lg bg-surface-container-high border border-white/10 text-on-surface text-xs focus:outline-none focus:border-primary">
+          <option value="">Select student...</option>
+        </select>
+      </div>
+
+      <div class="space-y-2 p-3 rounded-xl bg-surface-container-high/40 border border-white/5">
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" id="purge-opt-embeddings" checked class="rounded text-error focus:ring-error w-4 h-4">
+          <span class="text-on-surface">Delete Face Biometric Embeddings (128-D)</span>
+        </label>
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" id="purge-opt-emotions" checked class="rounded text-error focus:ring-error w-4 h-4">
+          <span class="text-on-surface">Delete Inferred Emotion Records</span>
+        </label>
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" id="purge-opt-attendance" class="rounded text-error focus:ring-error w-4 h-4">
+          <span class="text-on-surface">Delete Attendance History (Optional)</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-3 mt-6 pt-3 border-t border-white/10">
+      <button onclick="closePurgeModal()" class="px-4 py-2 rounded-lg text-on-surface-variant hover:text-on-surface text-xs">
+        Cancel
+      </button>
+      <button onclick="confirmStudentPurge()" class="px-4 py-2 rounded-lg bg-error text-on-error font-bold text-xs hover:bg-error-container transition">
+        Execute Deletion
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+let allConsents = [];
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadConsents();
+    loadRetentionPolicies();
+    loadAuditLogs();
+    loadFairnessData();
+});
+
+function switchTab(tabId) {
+    document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
+    document.getElementById(tabId).classList.remove("hidden");
+
+    const tabs = ["consent", "retention", "security", "fairness"];
+    tabs.forEach(t => {
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (`${t}-section` === tabId) {
+            btn.className = "pb-3 border-b-2 border-primary text-primary flex items-center gap-2";
+        } else {
+            btn.className = "pb-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface flex items-center gap-2";
+        }
+    });
+}
+
+// ==========================================
+// A. CONSENT MANAGEMENT
+// ==========================================
+
+async function loadConsents() {
+    const tbody = document.getElementById("consent-table-body");
+    try {
+        const consents = await ApiService.getStudentConsents();
+        allConsents = consents;
+        renderConsents(consents);
+        populatePurgeStudentSelect(consents);
+    } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-error">Failed to load consents: ${err.message}</td></tr>`;
+    }
+}
+
+function renderConsents(consents) {
+    const tbody = document.getElementById("consent-table-body");
+    if (!consents || consents.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-on-surface-variant">No student consent records found.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = consents.map(c => {
+        const statusBadge = c.status === "Granted"
+            ? '<span class="px-2.5 py-1 rounded-full text-xs font-bold tag-granted">Granted</span>'
+            : (c.status === "Revoked"
+                ? '<span class="px-2.5 py-1 rounded-full text-xs font-bold tag-revoked">Revoked</span>'
+                : '<span class="px-2.5 py-1 rounded-full text-xs font-bold tag-partial">' + c.status + '</span>');
+
+        const checkIcon = (val) => val
+            ? '<span class="material-symbols-outlined text-tertiary text-sm">check_circle</span>'
+            : '<span class="material-symbols-outlined text-error text-sm">cancel</span>';
+
+        return `
+            <tr class="hover:bg-white/5 transition">
+                <td class="py-3 px-4">
+                    <strong class="text-on-surface block">${c.student_name || 'Student'}</strong>
+                    <span class="text-on-surface-variant text-xs font-mono">${c.student_id}</span>
+                </td>
+                <td class="py-3 px-4 text-on-surface-variant">${c.student_department || 'General'}</td>
+                <td class="py-3 px-4 text-center">${checkIcon(c.camera_processing)}</td>
+                <td class="py-3 px-4 text-center">${checkIcon(c.face_recognition)}</td>
+                <td class="py-3 px-4 text-center">${checkIcon(c.attendance_processing)}</td>
+                <td class="py-3 px-4 text-center">${checkIcon(c.emotion_inference)}</td>
+                <td class="py-3 px-4">${statusBadge}</td>
+                <td class="py-3 px-4 text-right space-x-2">
+                    <button onclick="openConsentModal('${c.student_id}')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-primary text-xs font-medium transition">
+                        Edit
+                    </button>
+                    ${c.status !== 'Revoked' ? `
+                        <button onclick="handleWithdrawConsent('${c.student_id}')" class="px-2.5 py-1 rounded-lg bg-error/10 hover:bg-error/20 text-error text-xs font-medium transition" title="Revoke all consents">
+                            Withdraw
+                        </button>
+                    ` : ''}
+                </td>
+            </tr>
+        `;
+    }).join("");
+}
+
+function filterConsents() {
+    const searchVal = document.getElementById("consent-search-input").value.toLowerCase();
+    const statusVal = document.getElementById("consent-status-filter").value;
+
+    const filtered = allConsents.filter(c => {
+        const matchesSearch = !searchVal || 
+            (c.student_name && c.student_name.toLowerCase().includes(searchVal)) ||
+            (c.student_id && c.student_id.toLowerCase().includes(searchVal));
+        const matchesStatus = statusVal === "All" || c.status === statusVal;
+        return matchesSearch && matchesStatus;
+    });
+    renderConsents(filtered);
+}
+
+function openConsentModal(studentId) {
+    const consent = allConsents.find(c => c.student_id === studentId);
+    if (!consent) return;
+
+    document.getElementById("modal-student-id").value = studentId;
+    document.getElementById("modal-student-title").innerText = `Edit Consent: ${consent.student_name || studentId}`;
+    document.getElementById("modal-cam-consent").checked = consent.camera_processing;
+    document.getElementById("modal-face-consent").checked = consent.face_recognition;
+    document.getElementById("modal-att-consent").checked = consent.attendance_processing;
+    document.getElementById("modal-emo-consent").checked = consent.emotion_inference;
+    document.getElementById("modal-notes").value = consent.notes || "";
+
+    document.getElementById("consent-modal").classList.remove("hidden");
+}
+
+function closeConsentModal() {
+    document.getElementById("consent-modal").classList.add("hidden");
+}
+
+async function saveConsentModal() {
+    const studentId = document.getElementById("modal-student-id").value;
+    const updateData = {
+        camera_processing: document.getElementById("modal-cam-consent").checked,
+        face_recognition: document.getElementById("modal-face-consent").checked,
+        attendance_processing: document.getElementById("modal-att-consent").checked,
+        emotion_inference: document.getElementById("modal-emo-consent").checked,
+        notes: document.getElementById("modal-notes").value
+    };
+
+    try {
+        await ApiService.updateStudentConsent(studentId, updateData);
+        if (typeof showToast === "function") showToast("Consent updated successfully!");
+        closeConsentModal();
+        loadConsents();
+        loadAuditLogs();
+    } catch (err) {
+        alert(`Error updating consent: ${err.message}`);
+    }
+}
+
+async function handleWithdrawConsent(studentId) {
+    if (!confirm(`Are you sure you want to withdraw all camera and inference consents for student ${studentId}? Future camera attendance will be blocked.`)) {
+        return;
+    }
+    try {
+        await ApiService.withdrawStudentConsent(studentId, "User requested consent revocation via dashboard");
+        if (typeof showToast === "function") showToast(`Consent revoked for ${studentId}.`);
+        loadConsents();
+        loadAuditLogs();
+    } catch (err) {
+        alert(`Error withdrawing consent: ${err.message}`);
+    }
+}
+
+// ==========================================
+// B. DATA RETENTION
+// ==========================================
+
+async function loadRetentionPolicies() {
+    const container = document.getElementById("retention-cards-container");
+    try {
+        const policies = await ApiService.getRetentionPolicies();
+        container.innerHTML = policies.map(p => `
+            <div class="glass-card p-5 rounded-xl border border-white/10 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-start mb-2">
+                        <strong class="text-sm font-bold text-on-surface">${p.policy_name.replace(/_/g, ' ').toUpperCase()}</strong>
+                        <span class="px-2 py-0.5 rounded text-[11px] font-mono tag-eval">${p.storage_type}</span>
+                    </div>
+                    <p class="text-xs text-on-surface-variant mb-4 leading-relaxed">${p.description || ''}</p>
+                    <div class="flex items-center gap-4 text-xs font-mono">
+                        <div>Retention: <strong class="text-primary">${p.retention_days === 0 ? '0 Days (Ephemeral RAM)' : p.retention_days + ' Days'}</strong></div>
+                        <div>Auto-Purge: <strong class="${p.auto_purge_enabled ? 'text-tertiary' : 'text-error'}">${p.auto_purge_enabled ? 'Enabled' : 'Disabled'}</strong></div>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-white/5 flex justify-between items-center text-xs">
+                    <span class="text-on-surface-variant text-[11px]">Last Purged: ${p.last_purged_at ? new Date(p.last_purged_at).toLocaleDateString() : 'Never'}</span>
+                    <button onclick="handlePurgePolicy('${p.policy_name}')" class="px-3 py-1 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary text-xs font-medium transition">
+                        Purge Expired
+                    </button>
+                </div>
+            </div>
+        `).join("");
+    } catch (err) {
+        container.innerHTML = `<p class="text-error text-xs">Failed to load retention policies: ${err.message}</p>`;
+    }
+}
+
+async function handlePurgePolicy(policyName) {
+    if (!confirm(`Execute data retention purge for '${policyName}'?`)) return;
+    try {
+        const res = await ApiService.purgeRetentionData(policyName);
+        if (typeof showToast === "function") showToast(res.message);
+        loadRetentionPolicies();
+        loadAuditLogs();
+    } catch (err) {
+        alert(`Purge failed: ${err.message}`);
+    }
+}
+
+// Right to be forgotten
+function populatePurgeStudentSelect(consents) {
+    const select = document.getElementById("purge-student-select");
+    if (!select) return;
+    select.innerHTML = '<option value="">Select student...</option>' + 
+        consents.map(c => `<option value="${c.student_id}">${c.student_name} (${c.student_id})</option>`).join("");
+}
+
+function openRightToBeForgottenModal() {
+    document.getElementById("purge-modal").classList.remove("hidden");
+}
+
+function closePurgeModal() {
+    document.getElementById("purge-modal").classList.add("hidden");
+}
+
+async function confirmStudentPurge() {
+    const studentId = document.getElementById("purge-student-select").value;
+    if (!studentId) {
+        alert("Please select a student.");
+        return;
+    }
+    const options = {
+        delete_embeddings: document.getElementById("purge-opt-embeddings").checked,
+        delete_emotions: document.getElementById("purge-opt-emotions").checked,
+        delete_attendance: document.getElementById("purge-opt-attendance").checked,
+        confirm: true
+    };
+
+    if (!confirm(`Execute permanent deletion for ${studentId}? This action is irreversible.`)) return;
+
+    try {
+        const res = await ApiService.purgeStudentData(studentId, options);
+        if (typeof showToast === "function") showToast(res.message);
+        closePurgeModal();
+        loadConsents();
+        loadAuditLogs();
+    } catch (err) {
+        alert(`Deletion error: ${err.message}`);
+    }
+}
+
+// ==========================================
+// C. AUDIT LOGS
+// ==========================================
+
+async function loadAuditLogs() {
+    const tbody = document.getElementById("audit-log-body");
+    try {
+        const logs = await ApiService.getAuditLogs({ limit: 50 });
+        if (!logs || logs.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-on-surface-variant">No audit logs recorded yet.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = logs.map(l => {
+            const dateStr = new Date(l.timestamp).toLocaleString();
+            let actionColor = "text-primary";
+            if (l.action.includes("WITHDRAWN") || l.action.includes("PURGE")) actionColor = "text-error";
+            else if (l.action.includes("UPDATED")) actionColor = "text-amber-400";
+            else if (l.action.includes("ENROLLED")) actionColor = "text-tertiary";
+
+            return `
+                <tr class="hover:bg-white/5">
+                    <td class="py-2.5 px-3 font-mono text-[11px] text-on-surface-variant whitespace-nowrap">${dateStr}</td>
+                    <td class="py-2.5 px-3 font-bold font-mono text-xs ${actionColor}">${l.action}</td>
+                    <td class="py-2.5 px-3 text-on-surface">${l.username || 'System'} <span class="text-[10px] text-on-surface-variant">(${l.role || 'sys'})</span></td>
+                    <td class="py-2.5 px-3 font-mono text-xs text-primary">${l.target_type || ''}: ${l.target_id || ''}</td>
+                    <td class="py-2.5 px-3 text-on-surface-variant max-w-xs truncate" title="${l.details || ''}">${l.details || ''}</td>
+                </tr>
+            `;
+        }).join("");
+    } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-error">Failed to load audit logs: ${err.message}</td></tr>`;
+    }
+}
+
+// ==========================================
+// D. FAIRNESS & LIGHTING BENCHMARKS
+// ==========================================
+
+async function loadFairnessData() {
+    try {
+        const data = await ApiService.getFairnessEvaluation();
+
+        // 1. Lighting table
+        const lightingTbody = document.getElementById("lighting-table-body");
+        if (lightingTbody && data.lighting_benchmarks) {
+            lightingTbody.innerHTML = data.lighting_benchmarks.map(b => `
+                <tr class="hover:bg-white/5">
+                    <td class="py-3 px-4 font-bold text-on-surface">${b.condition}</td>
+                    <td class="py-3 px-4 font-mono text-xs text-primary">${b.lux_range}</td>
+                    <td class="py-3 px-4 font-bold text-tertiary">${b.detection_rate}%</td>
+                    <td class="py-3 px-4 font-bold ${b.recognition_accuracy >= 90 ? 'text-tertiary' : (b.recognition_accuracy >= 75 ? 'text-amber-400' : 'text-error')}">${b.recognition_accuracy}%</td>
+                    <td class="py-3 px-4 font-mono text-xs text-on-surface">${b.far}%</td>
+                    <td class="py-3 px-4 font-mono text-xs text-on-surface">${b.frr}%</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold tag-granted">${b.status}</span>
+                    </td>
+                </tr>
+            `).join("");
+        }
+
+        // 2. Demographic cards (With Evaluation Pending tags)
+        const demoContainer = document.getElementById("demographic-cards-container");
+        if (demoContainer && data.demographic_benchmarks) {
+            demoContainer.innerHTML = data.demographic_benchmarks.map(d => `
+                <div class="glass-card p-5 rounded-xl border border-white/10 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <strong class="text-sm font-bold text-on-surface">${d.cohort}</strong>
+                        </div>
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold tag-eval mb-3 inline-block">${d.status}</span>
+                        <p class="text-xs text-on-surface-variant mb-3 leading-relaxed">${d.description}</p>
+                        <p class="text-[11px] text-amber-300/90 italic mb-4 leading-relaxed">${d.notes}</p>
+                    </div>
+                    <div class="pt-3 border-t border-white/5 flex justify-between text-xs font-mono text-on-surface-variant">
+                        <span>FAR: <strong class="text-amber-400">${d.far}</strong></span>
+                        <span>FRR: <strong class="text-amber-400">${d.frr}</strong></span>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        // 3. Biases & Mitigations
+        const biasList = document.getElementById("bias-list");
+        if (biasList && data.bias_documentation) {
+            biasList.innerHTML = data.bias_documentation.map(b => `<li>${b}</li>`).join("");
+        }
+
+        const mitList = document.getElementById("mitigation-list");
+        if (mitList && data.mitigation_strategies) {
+            mitList.innerHTML = data.mitigation_strategies.map(m => `<li>${m}</li>`).join("");
+        }
+
+    } catch (err) {
+        console.error("Error loading fairness data:", err);
+    }
+}
+</script>
+</body>
+</html>

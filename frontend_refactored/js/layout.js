@@ -70,6 +70,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     <span class="material-symbols-outlined">analytics</span>
                     <span class="text-sm">Reports & Analytics</span>
                 </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${isActive("research_methodology_smart_classroom_ai.html") ? 'active' : 'text-on-surface-variant font-medium hover:bg-white/5 hover:text-primary hover:translate-x-1'}" href="research_methodology_smart_classroom_ai.html">
+                    <span class="material-symbols-outlined">menu_book</span>
+                    <span class="text-sm">Research Methodology</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${isActive("privacy_fairness_smart_classroom_ai.html") ? 'active' : 'text-on-surface-variant font-medium hover:bg-white/5 hover:text-primary hover:translate-x-1'}" href="privacy_fairness_smart_classroom_ai.html">
+                    <span class="material-symbols-outlined">shield</span>
+                    <span class="text-sm">Privacy & Fairness</span>
+                </a>
                 <a class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${isActive("notifications_alerts_smart_classroom_ai.html") ? 'active' : 'text-on-surface-variant font-medium hover:bg-white/5 hover:text-primary hover:translate-x-1'}" href="notifications_alerts_smart_classroom_ai.html">
                     <div class="relative flex items-center gap-3 w-full">
                         <span class="material-symbols-outlined">notifications</span>
@@ -107,6 +115,8 @@ document.addEventListener("DOMContentLoaded", () => {
         else if (isActive("attendance_smart_classroom_ai.html")) headerTitle = "Attendance Logs";
         else if (isActive("emotion_analytics_smart_classroom_ai.html")) headerTitle = "Emotion Analytics";
         else if (isActive("reports_analytics_smart_classroom_ai.html")) headerTitle = "Reports & Analytics";
+        else if (isActive("research_methodology_smart_classroom_ai.html")) headerTitle = "Research Methodology";
+        else if (isActive("privacy_fairness_smart_classroom_ai.html")) headerTitle = "Privacy & Fairness Controls";
         else if (isActive("notifications_alerts_smart_classroom_ai.html")) headerTitle = "Notifications & Alerts";
         else if (isActive("settings_smart_classroom_ai.html")) headerTitle = "System Settings";
 

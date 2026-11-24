@@ -7,6 +7,12 @@ from app.schemas.attention import AttentionRecordBase, AttentionRecordCreate, At
 from app.schemas.temperature import TemperatureRecordBase, TemperatureRecordCreate, TemperatureRecordResponse, TemperatureAnalyticsResponse
 from app.schemas.alert import AlertBase, AlertCreate, AlertUpdate, AlertResponse
 from app.schemas.notification import NotificationBase, NotificationCreate, NotificationResponse
+from app.schemas.privacy import (
+    StudentConsentBase, StudentConsentCreate, StudentConsentUpdate, StudentConsentResponse,
+    ConsentWithdrawRequest, RetentionPolicyBase, RetentionPolicyUpdate, RetentionPolicyResponse,
+    AuditLogResponse, FairnessEvaluationResponse, DataDeletionRequest, DataDeletionResponse
+)
+from app.schemas.research import ResearchMethodologyResponse, BaselineModelItem, EvaluationMetricsItem, ConfusionMatrixData
 
 __all__ = [
     "UserBase", "UserCreate", "UserLogin", "UserResponse", "Token", "TokenData",
@@ -18,4 +24,8 @@ __all__ = [
     "TemperatureRecordBase", "TemperatureRecordCreate", "TemperatureRecordResponse", "TemperatureAnalyticsResponse",
     "AlertBase", "AlertCreate", "AlertUpdate", "AlertResponse",
     "NotificationBase", "NotificationCreate", "NotificationResponse",
+    "StudentConsentBase", "StudentConsentCreate", "StudentConsentUpdate", "StudentConsentResponse",
+    "ConsentWithdrawRequest", "RetentionPolicyBase", "RetentionPolicyUpdate", "RetentionPolicyResponse",
+    "AuditLogResponse", "FairnessEvaluationResponse", "DataDeletionRequest", "DataDeletionResponse",
+    "ResearchMethodologyResponse", "BaselineModelItem", "EvaluationMetricsItem", "ConfusionMatrixData",
 ]

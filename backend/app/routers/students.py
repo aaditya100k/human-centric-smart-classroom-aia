@@ -1,5 +1,8 @@
+import os
+import shutil
+import uuid
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -9,6 +12,11 @@ from app.schemas.student import StudentCreate, StudentUpdate, StudentResponse
 from app.services.attendance_service import AttendanceService
 
 router = APIRouter(prefix="/api/students", tags=["Students"])
+
+# Base directory for student file uploads (profile photos)
+UPLOADS_BASE = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..", "..", "uploads")
+)
 
 
 def _format_student(student: Student, db: Session) -> StudentResponse:
@@ -22,6 +30,7 @@ def _format_student(student: Student, db: Session) -> StudentResponse:
         classroom_name=student.classroom.name if student.classroom else None,
         status=student.status,
         attendance_rate=rate,
+        profile_photo_path=student.profile_photo_path,
         created_at=student.created_at,
         updated_at=student.updated_at,
     )
@@ -107,6 +116,20 @@ def create_student(student_in: StudentCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(student)
 
+    # Automatically initialize student consent record
+    from app.models.student_consent import StudentConsent
+    consent = StudentConsent(
+        student_id=student.id,
+        camera_processing=True,
+        face_recognition=True,
+        attendance_processing=True,
+        emotion_inference=True,
+        status="Granted",
+        notes="Standard institutional enrollment consent",
+    )
+    db.add(consent)
+    db.commit()
+
     return _format_student(student, db)
 
 
@@ -166,3 +189,75 @@ def delete_student(id: str, db: Session = Depends(get_db)):
     db.delete(student)
     db.commit()
     return {"success": True, "message": f"Student '{id}' deleted successfully."}
+
+
+@router.post("/{id}/photo", status_code=status.HTTP_200_OK)
+async def upload_student_photo(
+    id: str,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+):
+    """
+    Upload or replace the profile photo for a student.
+    Accepts JPEG, PNG or WebP images. Max size 5 MB.
+    Returns the URL path to the saved photo.
+    """
+    student = db.query(Student).filter(Student.id == id).first()
+    if not student:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Student with ID '{id}' was not found.",
+        )
+
+    # Validate content type
+    allowed_types = {"image/jpeg", "image/jpg", "image/png", "image/webp"}
+    if file.content_type not in allowed_types:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid file type '{file.content_type}'. Allowed: JPEG, PNG, WebP.",
+        )
+
+    # Read and validate file size (5 MB limit)
+    contents = await file.read()
+    if len(contents) > 5 * 1024 * 1024:
+        raise HTTPException(
+            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            detail="Profile photo must be smaller than 5 MB.",
+        )
+
+    # Determine file extension
+    ext_map = {
+        "image/jpeg": ".jpg",
+        "image/jpg": ".jpg",
+        "image/png": ".png",
+        "image/webp": ".webp",
+    }
+    ext = ext_map.get(file.content_type, ".jpg")
+
+    # Build save path: uploads/students/{student_id}/profile{ext}
+    student_upload_dir = os.path.join(UPLOADS_BASE, "students", id)
+    os.makedirs(student_upload_dir, exist_ok=True)
+
+    # Remove any old profile photo file for this student
+    for old_ext in [".jpg", ".png", ".webp"]:
+        old_path = os.path.join(student_upload_dir, f"profile{old_ext}")
+        if os.path.exists(old_path):
+            os.remove(old_path)
+
+    save_path = os.path.join(student_upload_dir, f"profile{ext}")
+    with open(save_path, "wb") as f:
+        f.write(contents)
+
+    # Store relative URL path for serving
+    photo_url = f"/uploads/students/{id}/profile{ext}"
+    student.profile_photo_path = photo_url
+    db.commit()
+    db.refresh(student)
+
+    return {
+        "success": True,
+        "student_id": id,
+        "photo_url": photo_url,
+        "message": "Profile photo uploaded successfully.",
+    }
+

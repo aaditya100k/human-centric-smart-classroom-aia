@@ -252,6 +252,14 @@ class AttendanceService:
         if not classroom:
             return {"status": "rejected", "detail": f"Classroom with ID '{classroom_id}' does not exist."}
 
+        # 2b. Privacy & Consent Check: Validate student has granted camera and attendance processing consent
+        from app.services.privacy_service import PrivacyService
+        if not PrivacyService.has_attendance_consent(db, student_id):
+            return {
+                "status": "rejected",
+                "detail": f"Automatic attendance blocked: Student '{student_id}' has not granted required camera and attendance consent or consent has been withdrawn."
+            }
+
         today_date = date.today()
 
         # 3. Check for existing attendance record today

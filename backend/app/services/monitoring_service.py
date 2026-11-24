@@ -80,9 +80,9 @@ class MonitoringService:
                 "face_detection": "active" if detector.is_loaded() else "unavailable",
                 "face_recognition": "active" if recognizer.is_loaded() else "ready",
                 "auto_attendance": "active" if (cls._is_active and cls._classroom_id is not None) else "ready",
-                "emotion_detection": "ready",
-                "attention_monitoring": "ready",
-                "esp32_sensor": "ready",
+                "emotion_detection": "not_implemented",
+                "attention_monitoring": "not_implemented",
+                "esp32_sensor": "disconnected",
                 "websocket_stream": "ready",
             },
         }
@@ -212,6 +212,19 @@ class MonitoringService:
                             student_id = match_res["student_id"]
                             active_room = cls._classroom_id
 
+                            # Privacy Enforcement: Check emotion inference consent
+                            from app.services.privacy_service import PrivacyService
+                            if not PrivacyService.has_emotion_consent(db, student_id):
+                                face_item["emotion"] = {
+                                    "status": "withheld",
+                                    "reason": "Emotion inference consent absent or revoked"
+                                }
+                            else:
+                                face_item["emotion"] = {
+                                    "status": "not_implemented",
+                                    "detail": "Emotion Analysis: Not Implemented"
+                                }
+
                             if active_room is not None:
                                 cache_key = (student_id, active_room)
                                 now_ts = time.time()
@@ -252,12 +265,16 @@ class MonitoringService:
         if db_created and db:
             db.close()
 
+        recognized_count = sum(1 for f in recognized_faces if f.get("recognized"))
+        unknown_count = len(recognized_faces) - recognized_count
         cls._students_detected = len(recognized_faces)
         cls._last_update = datetime.now(timezone.utc)
 
         return {
             "type": "face_recognition",
             "faces_detected": len(recognized_faces),
+            "recognized_count": recognized_count,
+            "unknown_count": unknown_count,
             "faces": recognized_faces,
             "timestamp": now_iso
         }
